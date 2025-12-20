@@ -1,52 +1,43 @@
-'use client';
-
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import Image from "next/image";
 
 export default function Home() {
-  const router = useRouter();
-  const [entering, setEntering] = useState(false);
-
-  function enterGateway() {
-    setEntering(true);
-    setTimeout(() => {
-      router.push('/dashboard');
-    }, 900);
-  }
-
   return (
-    <main
-      className={`min-h-screen bg-black flex items-center justify-center transition-all duration-700
-      ${entering ? 'opacity-0 scale-110' : 'opacity-100 scale-100'}`}
-    >
-      <div className="text-center">
-        {/* Gateway Image */}
-        <div className="mb-10 flex justify-center">
-          <img
-            src="/aes-gateway.png"
-            alt="AES Gateway"
-            className="w-[280px] md:w-[360px] animate-pulse drop-shadow-[0_0_30px_#00ff88]"
-          />
-        </div>
+    <main className="min-h-screen bg-black text-green-400 flex flex-col items-center justify-center p-10">
+      
+      {/* AES Gateway Image */}
+      <div className="relative mb-10
+                      hover:scale-105
+                      transition-transform duration-500
+                      shadow-[0_0_80px_rgba(0,255,140,0.35)]">
+        <Image
+          src="/aes-gateway.png"
+          alt="AES Gateway"
+          width={420}
+          height={420}
+          priority
+        />
+      </div>
 
-        {/* Title */}
-        <h1 className="text-5xl font-extrabold text-green-400 mb-4 tracking-wide">
-          PoWERPiN
-        </h1>
+      {/* Title */}
+      <h1 className="text-5xl font-bold tracking-wide text-center">
+        PoWERPiN
+      </h1>
 
-        <p className="text-gray-400 mb-10">
-          Gateway to Proof • Intent • Trust
-        </p>
+      <p className="mt-4 text-center text-green-300">
+        Gateway to Proof · Intent · Trust
+      </p>
 
-        {/* Enter Button */}
-        <button
-          onClick={enterGateway}
-          className="px-10 py-4 border border-green-400 text-green-400
+      {/* Primary Entry */}
+      <div className="mt-12">
+        <a
+          href="/dashboard"
+          className="px-12 py-4 border border-green-400 text-lg
                      hover:bg-green-400 hover:text-black
-                     transition-all duration-300 tracking-widest"
+                     transition-all
+                     hover:shadow-[0_0_40px_rgba(0,255,140,0.4)]"
         >
           ENTER GATEWAY
-        </button>
+        </a>
       </div>
     </main>
   );
