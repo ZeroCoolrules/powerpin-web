@@ -32,3 +32,20 @@ body {
 .animate-fadeIn {
   animation: fadeIn 0.8s ease-out forwards;
 }
+/* Theme variables */
+:root {
+  --bg: #000000;
+  --fg: #00ff88;
+}
+
+html.light {
+  --bg: #ffffff;
+  --fg: #000000;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--fg);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
