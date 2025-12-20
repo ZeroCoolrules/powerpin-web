@@ -1,8 +1,36 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
 export default function Home() {
+  const router = useRouter();
+  const [entering, setEntering] = useState(false);
+
+  function enterGateway() {
+    setEntering(true);
+    setTimeout(() => {
+      router.push('/dashboard');
+    }, 900);
+  }
+
   return (
-    <main className="min-h-screen bg-black flex items-center justify-center">
+    <main
+      className={`min-h-screen bg-black flex items-center justify-center transition-all duration-700
+      ${entering ? 'opacity-0 scale-110' : 'opacity-100 scale-100'}`}
+    >
       <div className="text-center">
-        <h1 className="text-6xl font-extrabold text-green-400 mb-6 tracking-wide">
+        {/* Gateway Image */}
+        <div className="mb-10 flex justify-center">
+          <img
+            src="/aes-gateway.png"
+            alt="AES Gateway"
+            className="w-[280px] md:w-[360px] animate-pulse drop-shadow-[0_0_30px_#00ff88]"
+          />
+        </div>
+
+        {/* Title */}
+        <h1 className="text-5xl font-extrabold text-green-400 mb-4 tracking-wide">
           PoWERPiN
         </h1>
 
@@ -10,13 +38,15 @@ export default function Home() {
           Gateway to Proof • Intent • Trust
         </p>
 
-        <a
-          href="/dashboard"
-          className="inline-block px-10 py-4 border border-green-400 text-green-400
-                     hover:bg-green-400 hover:text-black transition-all duration-300"
+        {/* Enter Button */}
+        <button
+          onClick={enterGateway}
+          className="px-10 py-4 border border-green-400 text-green-400
+                     hover:bg-green-400 hover:text-black
+                     transition-all duration-300 tracking-widest"
         >
           ENTER GATEWAY
-        </a>
+        </button>
       </div>
     </main>
   );
