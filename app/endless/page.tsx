@@ -1,27 +1,30 @@
 import Nav from "@/app/components/Nav";
+import Link from "next/link";
 
-export default function Time() {
+export default function Endless() {
   return (
-    <main className="min-h-screen bg-black text-green-400 p-10">
+    <main className="min-h-screen p-10">
       <Nav />
 
-      <h1 className="text-4xl font-bold text-center mt-20">Endless Coin</h1>
+      <h1 className="text-4xl font-bold text-center mt-20">
+        Endless Coin
+      </h1>
 
       <p className="mt-6 text-center max-w-2xl mx-auto">
-        Time Coin measures proof of presence, duration, and contribution across Streets and Rooms.
+        Endless Coin represents infinite participation, circulation,
+        and value generated through activity across Streets and Rooms.
       </p>
 
-      {/* 👇 ADD THIS BLOCK RIGHT HERE */}
+      {/* Back to Streets */}
       <div className="mt-10 text-center">
-        <a
+        <Link
           href="/streets"
-          className="inline-block px-8 py-3 border border-green-400
-                     hover:bg-green-400 hover:text-black transition-all"
+          className="inline-block px-8 py-3 border border-current
+                     hover:bg-current hover:text-black transition-all"
         >
           ← Back to Streets
-        </a>
+        </Link>
       </div>
-
     </main>
   );
 }
