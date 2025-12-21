@@ -1,9 +1,11 @@
 import Nav from "@/app/components/Nav";
+import Link from "next/link";
 
 export default function Rooms() {
   return (
-    <main className="min-h-screen bg-black text-green-400 p-10">
-      <Nav /><br></br>
+    <main className="min-h-screen p-10">
+
+      <Nav /><br></br><br></br><br></br>
 	  <h1 className="text-4xl font-extrabold mb-8">Streets / Rooms</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

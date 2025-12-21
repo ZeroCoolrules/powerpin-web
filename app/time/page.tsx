@@ -1,8 +1,9 @@
 import Nav from "@/app/components/Nav";
+import Link from "next/link";
 
 export default function Time() {
   return (
-    <main className="min-h-screen bg-black text-green-400 p-10">
+	<main className="min-h-screen p-10">
       <Nav />
 
       <h1 className="text-4xl font-bold text-center mt-20">Time Coin</h1>

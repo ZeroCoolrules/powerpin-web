@@ -1,9 +1,11 @@
 import Nav from "@/app/components/Nav";
+import Link from "next/link";
 
 export default function Streets() {
   return (
-    <main className="min-h-screen bg-black text-green-400 p-10">
-      <Nav /><br></br>
+    <main className="min-h-screen p-10">
+
+      <Nav /><br></br><br></br><br></br>
 
       <h1 className="text-4xl font-bold mb-10">Streets</h1>
 

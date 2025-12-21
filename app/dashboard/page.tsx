@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Nav from "@/app/components/Nav";
 
 export default function Dashboard() {
@@ -8,23 +9,24 @@ export default function Dashboard() {
   ];
 
   return (
-    <main className="min-h-screen bg-black text-green-400 p-10">
+    <main className="min-h-screen p-10">
       <Nav />
 
+      {/* Title */}
       <h1 className="text-4xl font-bold text-center mt-20">
         PoWERPiN Dashboard
       </h1>
 
-      <p className="text-center mt-4 text-green-300">
+      <p className="text-center mt-4 opacity-80">
         Live system snapshot — proof, intent, and trust
       </p>
 
-      {/* Stats */}
+      {/* Stats Grid */}
       <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
         {stats.map((item) => (
           <div
             key={item.label}
-            className="border border-green-400 p-10 text-center
+            className="border border-current p-10 text-center
                        hover:shadow-[0_0_40px_rgba(0,255,140,0.35)]
                        transition-all"
           >
@@ -40,32 +42,32 @@ export default function Dashboard() {
 
       {/* Primary Navigation */}
       <div className="mt-16 flex flex-wrap justify-center gap-6">
-        <a
+        <Link
           href="/streets"
-          className="px-10 py-4 border border-green-400
-                     hover:bg-green-400 hover:text-black
+          className="px-10 py-4 border border-current
+                     hover:bg-current hover:text-black
                      transition-all"
         >
           Enter Streets
-        </a>
+        </Link>
 
-        <a
+        <Link
           href="/endless"
-          className="px-10 py-4 border border-green-400
-                     hover:bg-green-400 hover:text-black
+          className="px-10 py-4 border border-current
+                     hover:bg-current hover:text-black
                      transition-all"
         >
           Endless Coin
-        </a>
+        </Link>
 
-        <a
+        <Link
           href="/time"
-          className="px-10 py-4 border border-green-400
-                     hover:bg-green-400 hover:text-black
+          className="px-10 py-4 border border-current
+                     hover:bg-current hover:text-black
                      transition-all"
         >
           Time Coin
-        </a>
+        </Link>
       </div>
     </main>
   );
