@@ -37,7 +37,7 @@ export default function Home() {
           {/* CTAs */}
           <div className="flex gap-4 justify-center pt-6">
             <button className="btn-primary">
-              Enter Gateway
+              ENTER GATEWAY TEST 123Enter Gateway
             </button>
 
             <button className="btn-secondary">
