@@ -1,29 +1,27 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function HeroClient() {
-  const router = useRouter();
-
   return (
-    <main className="min-h-screen bg-gate text-white flex flex-col">
+    <main className="min-h-screen bg-gate text-white flex flex-col items-center">
 
       {/* =========================
-          HERO / GATEWAY (FULL VIEWPORT)
+          HERO / GATEWAY
       ========================== */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden">
 
-        {/* 🔮 Visual Layer */}
+        {/* Visual-only gateway */}
         <div className="gateway-container pointer-events-none absolute inset-0 flex items-center justify-center">
           <div className="gateway-ring">
             <div className="gateway-core" />
           </div>
         </div>
 
-        {/* 🧠 Interactive Layer */}
+        {/* Interactive content */}
         <div className="relative z-20 text-center space-y-8 px-6">
 
-          <h1 className="text-6xl md:text-7xl font-semibold glow-text">
+          <h1 className="text-5xl md:text-6xl font-semibold tracking-tight glow-text">
             PoWERPiN
           </h1>
 
@@ -35,19 +33,16 @@ export default function HeroClient() {
             The system is live. Entry is intentional.
           </p>
 
-          <div className="flex gap-4 justify-center pt-8">
-            <button
-              className="btn-primary"
-              onClick={() => router.push("/system")}
-            >
+          <div className="flex gap-4 justify-center pt-6">
+            <Link href="/system" className="btn-primary">
               Enter Gateway
-            </button>
+            </Link>
 
             <button
               className="btn-secondary"
               onClick={() =>
                 document
-                  .getElementById("guided-path")
+                  .getElementById("system-console")
                   ?.scrollIntoView({ behavior: "smooth" })
               }
             >
@@ -61,10 +56,7 @@ export default function HeroClient() {
       {/* =========================
           GUIDED PATH
       ========================== */}
-      <section
-        id="guided-path"
-        className="guided-path mt-24"
-      >
+      <section className="guided-path">
         <div className="path-item">
           <h2>Proof</h2>
           <p>Signals verified. Reality anchored.</p>
@@ -84,7 +76,7 @@ export default function HeroClient() {
       {/* =========================
           SYSTEM CONSOLE
       ========================== */}
-      <section className="system-console mt-32">
+      <section id="system-console" className="system-console">
 
         <div className="console-header">
           <span className="console-dot green" />
@@ -114,8 +106,14 @@ export default function HeroClient() {
             <span className="value">moments ago</span>
           </div>
         </div>
-      </section>
 
+        <div className="console-actions">
+          <Link href="/system" className="btn-secondary">
+            System Architecture
+          </Link>
+        </div>
+
+      </section>
     </main>
   );
 }
