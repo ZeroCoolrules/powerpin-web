@@ -57,6 +57,9 @@ body {
   background:
     radial-gradient(circle at center, rgba(0,255,200,0.08), transparent 60%),
     linear-gradient(180deg, #020617, #000);
+	pointer-events: none;
+}
+
 }
 
 /* === GATEWAY CONTAINER === */
@@ -158,6 +161,8 @@ body {
   font-weight: 600;
   box-shadow: 0 0 25px rgba(0,255,200,0.4);
   transition: all 0.3s ease;
+  pointer-events: auto;
+  cursor: pointer;
 }
 
 .btn-primary:hover {
@@ -171,6 +176,8 @@ body {
   border: 1px solid rgba(255,255,255,0.25);
   color: white;
   backdrop-filter: blur(6px);
+  pointer-events: auto;
+  cursor: pointer;
 }
 
 .btn-secondary:hover {

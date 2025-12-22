@@ -3,7 +3,8 @@ import Link from "next/link";
 export default function Home() {
   return (
     <main className="min-h-screen bg-gate text-white flex items-center justify-center">
-      <section className="text-center space-y-8 px-6">
+      <section className="relative z-10 text-center space-y-8 px-6">
+
 
         {/* Holographic Gateway */}
         <div className="gateway-container mx-auto">
@@ -28,7 +29,7 @@ export default function Home() {
         </p>
 
         {/* CTAs */}
-        <div className="flex gap-4 justify-center pt-6">
+        <div className="relative z-20 flex gap-4 justify-center pt-6">
           <button className="btn-primary">
             Enter Gateway
           </button>
