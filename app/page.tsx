@@ -53,6 +53,64 @@ export default function Home() {
 		<p>Access earned, not assumed.</p>
 	</div>
 	</section>
+	{/* System Console */}
+	<section className="system-console">
+	<div className="console-header">
+		<span className="console-dot green" />
+		<span className="console-dot yellow" />
+		<span className="console-dot red" />
+		<span className="console-title">SYSTEM STATUS</span>
+	</div>
+
+	<div className="console-body">
+		<div className="console-line">
+		<span className="label">Proof Engine</span>
+		<span className="value active">ACTIVE</span>
+    </div>
+
+    <div className="console-line">
+      <span className="label">Intent Signal</span>
+      <span className="value monitoring">MONITORING</span>
+    </div>
+
+    <div className="console-line">
+      <span className="label">Trust Graph</span>
+      <span className="value init">INITIALIZING</span>
+    </div>
+
+    <div className="console-line subtle">
+      <span className="label">Last Verification</span>
+      <span className="value">moments ago</span>
+    </div>
+	</div>
+
+	<div className="console-actions">
+	  <button
+		className="btn-secondary"
+		onClick={() =>
+		document.getElementById("proof-logs")?.scrollIntoView({ behavior: "smooth" })
+	  }
+	>
+	  View Proof Logs
+	</button>
+
+	 <Link href="/system" className="btn-secondary">
+		System Architecture
+	 </Link>
+		</div>
+	</section>
+		{/* Proof Logs Reveal */}
+	<section id="proof-logs" className="proof-logs">
+		<h3>Proof Logs</h3>
+
+		 <ul>
+		  <li>✔ Signal integrity verified</li>
+		  <li>✔ Intent classification completed</li>
+		  <li>✔ Trust state propagated</li>
+		  <li className="dim">↻ Continuous verification active</li>
+		 </ul>
+	</section>
+
 
     </main>
   );
