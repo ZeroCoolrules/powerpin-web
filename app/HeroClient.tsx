@@ -9,33 +9,32 @@ export default function HeroClient() {
       {/* =========================
           HERO / GATEWAY
       ========================== */}
-      <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative w-full min-h-screen overflow-hidden">
 
-        {/* Visual-only gateway */}
+        {/* Visual gateway — nudged UP */}
         <div className="gateway-container pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className="gateway-ring">
+          <div className="gateway-ring translate-y-[-120px]">
             <div className="gateway-core" />
           </div>
         </div>
 
-        {/* Interactive content */}
-        <div className="relative z-20 text-center px-6">
+        {/* Content — pushed DOWN */}
+        <div className="relative z-20 flex flex-col items-center text-center px-6 pt-[55vh] space-y-6">
 
           <h1 className="text-5xl md:text-6xl font-semibold tracking-tight glow-text">
             PoWERPiN
           </h1>
 
-          <p className="text-sm uppercase tracking-widest text-cyan-300 mt-4">
+          <p className="text-sm uppercase tracking-widest text-cyan-300">
             Gateway to Proof • Intent • Trust
           </p>
 
-          {/* ↓↓ 2 breaks */}
-          <p className="text-base text-slate-300 max-w-md mx-auto mt-8">
+          <p className="text-base text-slate-300 max-w-md">
             The system is live. Entry is intentional.
           </p>
 
-          {/* ↓↓ 4 breaks */}
-          <div className="mt-16 flex gap-4 justify-center">
+          {/* Buttons clearly BELOW text */}
+          <div className="mt-10 flex gap-4 justify-center">
             <Link href="/system" className="btn-primary">
               Enter Gateway
             </Link>
@@ -63,12 +62,10 @@ export default function HeroClient() {
           <h2>Proof</h2>
           <p>Signals verified. Reality anchored.</p>
         </div>
-
         <div className="path-item">
           <h2>Intent</h2>
           <p>Purpose measured before action.</p>
         </div>
-
         <div className="path-item">
           <h2>Trust</h2>
           <p>Access earned, not assumed.</p>
@@ -79,7 +76,6 @@ export default function HeroClient() {
           SYSTEM CONSOLE
       ========================== */}
       <section id="system-console" className="system-console">
-
         <div className="console-header">
           <span className="console-dot green" />
           <span className="console-dot yellow" />
@@ -92,17 +88,14 @@ export default function HeroClient() {
             <span className="label">Proof Engine</span>
             <span className="value active">ACTIVE</span>
           </div>
-
           <div className="console-line">
             <span className="label">Intent Signal</span>
             <span className="value monitoring">MONITORING</span>
           </div>
-
           <div className="console-line">
             <span className="label">Trust Graph</span>
             <span className="value init">INITIALIZING</span>
           </div>
-
           <div className="console-line subtle">
             <span className="label">Last Verification</span>
             <span className="value">moments ago</span>
