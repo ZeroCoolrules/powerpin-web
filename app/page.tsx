@@ -1,13 +1,15 @@
+"use client";
+
 import Link from "next/link";
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-gate text-white flex flex-col items-center justify-center">
-      
+
       {/* =========================
           HERO / GATEWAY SECTION
       ========================== */}
-      <section className="relative w-full flex items-center justify-center py-24">
+      <section className="relative w-full flex items-center justify-center py-24 overflow-hidden">
 
         {/* 🔮 Visual Layer (NON-INTERACTIVE) */}
         <div className="gateway-container pointer-events-none absolute inset-0 flex items-center justify-center">
@@ -19,25 +21,21 @@ export default function Home() {
         {/* 🧠 Interactive Layer */}
         <div className="relative z-20 text-center space-y-8 px-6">
 
-          {/* Title */}
           <h1 className="text-5xl md:text-6xl font-semibold tracking-tight glow-text">
             PoWERPiN
           </h1>
 
-          {/* Subheading */}
           <p className="text-sm uppercase tracking-widest text-cyan-300">
             Gateway to Proof • Intent • Trust
           </p>
 
-          {/* AI Guide Line */}
           <p className="text-base text-slate-300 max-w-md mx-auto">
             The system is live. Entry is intentional.
           </p>
 
-          {/* CTAs */}
           <div className="flex gap-4 justify-center pt-6">
             <button className="btn-primary">
-              ENTER GATEWAY TEST 123
+              Enter Gateway
             </button>
 
             <button className="btn-secondary">
@@ -105,7 +103,6 @@ export default function Home() {
         </div>
 
         <div className="console-actions">
-
           <button
             className="btn-secondary"
             onClick={() =>
@@ -120,7 +117,6 @@ export default function Home() {
           <Link href="/system" className="btn-secondary">
             System Architecture
           </Link>
-
         </div>
       </section>
 
@@ -129,7 +125,6 @@ export default function Home() {
       ========================== */}
       <section id="proof-logs" className="proof-logs">
         <h3>Proof Logs</h3>
-
         <ul>
           <li>✔ Signal integrity verified</li>
           <li>✔ Intent classification completed</li>
