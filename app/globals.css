@@ -2,17 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+/* =========================================================
+   ROOT / THEME
+========================================================= */
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  --bg: #000000;
+  --fg: #00ff88;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html.light {
+  --bg: #ffffff;
+  --fg: #000000;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -23,10 +27,26 @@
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background-color: var(--bg);
+  color: var(--fg);
   font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* =========================================================
+   BACKGROUND
+========================================================= */
+
+.bg-gate {
+  background:
+    radial-gradient(circle at center, rgba(0,255,200,0.08), transparent 60%),
+    linear-gradient(180deg, #020617, #000);
+}
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
@@ -35,41 +55,42 @@ body {
 .animate-fadeIn {
   animation: fadeIn 0.8s ease-out forwards;
 }
-/* Theme variables */
-:root {
-  --bg: #000000;
-  --fg: #00ff88;
+
+@keyframes gate-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
 }
 
-html.light {
-  --bg: #ffffff;
-  --fg: #000000;
+@keyframes core-pulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.12);
+    opacity: 1;
+  }
 }
 
-body {
-  background-color: var(--bg);
-  color: var(--fg);
-  transition: background-color 0.3s ease, color 0.3s ease;
+@keyframes reveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Background */
-.bg-gate {
-  background:
-    radial-gradient(circle at center, rgba(0,255,200,0.08), transparent 60%),
-    linear-gradient(180deg, #020617, #000);
-	pointer-events: none;
-}
+/* =========================================================
+   GATEWAY (VISUAL ONLY)
+========================================================= */
 
-}
-
-/* === GATEWAY CONTAINER === */
 .gateway-container {
   display: flex;
   justify-content: center;
   margin-bottom: 2rem;
   pointer-events: none;
 }
-/* === OUTER RING === */
+
+/* OUTER RING */
 .gateway-ring {
   position: relative;
   width: 180px;
@@ -77,7 +98,6 @@ body {
   border-radius: 50%;
   border: 2px solid rgba(0, 255, 200, 0.55);
 
-  /* Visual-only layer */
   pointer-events: none;
 
   box-shadow:
@@ -86,22 +106,20 @@ body {
 
   animation: gate-float 6s ease-in-out infinite;
 
-  /* Smooth response */
   transition:
     box-shadow 0.6s ease,
     transform 1.2s ease;
 }
 
-/* When user engages the hero area, gateway responds */
+/* Gateway reacts to user presence */
 section:hover .gateway-ring {
   box-shadow:
     0 0 60px rgba(0,255,200,0.6),
     inset 0 0 40px rgba(0,255,200,0.35);
-
   transform: scale(1.02);
 }
 
-/* === INNER CORE (AI PRESENCE) === */
+/* INNER CORE */
 .gateway-core {
   position: absolute;
   top: 50%;
@@ -111,27 +129,31 @@ section:hover .gateway-ring {
   border-radius: 50%;
   transform: translate(-50%, -50%);
   pointer-events: none;
+
   background: radial-gradient(
     circle at 30% 30%,
     rgba(255,255,255,0.9),
     rgba(0,255,200,0.85),
     rgba(0,120,255,0.6)
   );
- 
-./* Hover is driven by the SECTION, not the ring */
-	section:hover .gateway-core {
-	box-shadow:
-		0 0 60px rgba(0,255,200,0.6),
-		inset 0 0 40px rgba(0,255,200,0.35);
-	}
-}
 
   box-shadow:
     0 0 25px rgba(0,255,200,0.9),
     0 0 60px rgba(0,120,255,0.5);
+
   animation: core-pulse 3.8s ease-in-out infinite;
 }
-/* === GUIDED PATH === */
+
+section:hover .gateway-core {
+  box-shadow:
+    0 0 60px rgba(0,255,200,0.6),
+    inset 0 0 40px rgba(0,255,200,0.35);
+}
+
+/* =========================================================
+   GUIDED PATH
+========================================================= */
+
 .guided-path {
   max-width: 900px;
   margin: 6rem auto;
@@ -161,14 +183,16 @@ section:hover .gateway-ring {
   color: #cbd5e1;
 }
 
-/* Glow text */
+/* =========================================================
+   TEXT & BUTTONS
+========================================================= */
+
 .glow-text {
   text-shadow:
     0 0 20px rgba(0,255,200,0.4),
     0 0 40px rgba(0,255,200,0.15);
 }
 
-/* Buttons */
 .btn-primary {
   padding: 0.75rem 1.5rem;
   border-radius: 999px;
@@ -177,18 +201,9 @@ section:hover .gateway-ring {
   font-weight: 600;
   box-shadow: 0 0 25px rgba(0,255,200,0.4);
   transition: all 0.3s ease;
-  pointer-events: auto;
   cursor: pointer;
   position: relative;
-  z-index: 10;
-}
-
-/* Optional: stronger presence on button hover */
-.btn-primary:hover ~ .gateway-container .gateway-ring,
-.btn-secondary:hover ~ .gateway-container .gateway-ring {
-  box-shadow:
-    0 0 80px rgba(0,255,220,0.8),
-    inset 0 0 50px rgba(0,255,220,0.45);
+  z-index: 20;
 }
 
 .btn-secondary {
@@ -197,37 +212,15 @@ section:hover .gateway-ring {
   border: 1px solid rgba(255,255,255,0.25);
   color: white;
   backdrop-filter: blur(6px);
-  pointer-events: auto;
   cursor: pointer;
   position: relative;
-  z-index: 10;
+  z-index: 20;
 }
 
-/* === MOTION === */
-@keyframes gate-float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-}
+/* =========================================================
+   SYSTEM CONSOLE
+========================================================= */
 
-@keyframes core-pulse {
-  0%, 100% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0.9;
-  }
-  50% {
-    transform: translate(-50%, -50%) scale(1.12);
-    opacity: 1;
-  }
-}
-
-@keyframes reveal {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* === SYSTEM CONSOLE === */
 .system-console {
   max-width: 720px;
   margin: 6rem auto;
@@ -240,7 +233,6 @@ section:hover .gateway-ring {
   backdrop-filter: blur(8px);
 }
 
-/* Header */
 .console-header {
   display: flex;
   align-items: center;
@@ -266,7 +258,6 @@ section:hover .gateway-ring {
   color: #67e8f9;
 }
 
-/* Body */
 .console-body {
   padding: 1.5rem;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -284,27 +275,13 @@ section:hover .gateway-ring {
   opacity: 0.6;
 }
 
-.label {
-  color: #94a3b8;
-}
+.label { color: #94a3b8; }
 
-.value {
-  font-weight: 600;
-}
+.value { font-weight: 600; }
+.value.active { color: #22c55e; }
+.value.monitoring { color: #67e8f9; }
+.value.init { color: #facc15; }
 
-.value.active {
-  color: #22c55e;
-}
-
-.value.monitoring {
-  color: #67e8f9;
-}
-
-.value.init {
-  color: #facc15;
-}
-
-/* Actions */
 .console-actions {
   display: flex;
   justify-content: flex-end;
@@ -313,7 +290,10 @@ section:hover .gateway-ring {
   border-top: 1px solid rgba(255,255,255,0.08);
 }
 
-/* === PROOF LOGS REVEAL === */
+/* =========================================================
+   PROOF LOGS
+========================================================= */
+
 .proof-logs {
   max-width: 720px;
   margin: 6rem auto;
@@ -344,7 +324,10 @@ section:hover .gateway-ring {
   opacity: 0.6;
 }
 
-/* DEBUG: force visuals to never intercept input */
+/* =========================================================
+   HARD SAFETY: VISUALS NEVER INTERCEPT INPUT
+========================================================= */
+
 .gateway-container,
 .gateway-container *,
 .gateway-ring,
