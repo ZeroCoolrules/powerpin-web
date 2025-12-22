@@ -8,9 +8,9 @@ export default function Nav() {
   // On load: read DOM, not guesses
   useEffect(() => {
     const html = document.documentElement;
-    const light = html.classList.contains("light");
-    setIsLight(light);
-  }, []);
+    setIsLight(() => html.classList.contains("light"));
+ }, []);
+
 
   function toggleTheme() {
     const html = document.documentElement;

@@ -1,4 +1,4 @@
-import "./globals.css";
+export const dynamic = "force-dynamic";
 
 export default function RootLayout({
   children,
@@ -6,10 +6,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className="bg-black text-green-400 transition-colors duration-300">
-        {children}
-      </body>
+    <html>
+      <body>{children}</body>
     </html>
   );
 }
