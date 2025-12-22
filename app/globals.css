@@ -67,8 +67,8 @@ body {
   display: flex;
   justify-content: center;
   margin-bottom: 2rem;
+  pointer-events: none;
 }
-
 /* === OUTER RING === */
 .gateway-ring {
   position: relative;
@@ -76,16 +76,29 @@ body {
   height: 180px;
   border-radius: 50%;
   border: 2px solid rgba(0, 255, 200, 0.55);
+
+  /* Visual-only layer */
+  pointer-events: none;
+
   box-shadow:
     0 0 40px rgba(0,255,200,0.35),
     inset 0 0 30px rgba(0,255,200,0.25);
+
   animation: gate-float 6s ease-in-out infinite;
+
+  /* Smooth response */
+  transition:
+    box-shadow 0.6s ease,
+    transform 1.2s ease;
 }
 
-.gateway-ring:hover {
+/* When user engages the hero area, gateway responds */
+section:hover .gateway-ring {
   box-shadow:
     0 0 60px rgba(0,255,200,0.6),
     inset 0 0 40px rgba(0,255,200,0.35);
+
+  transform: scale(1.02);
 }
 
 /* === INNER CORE (AI PRESENCE) === */
@@ -97,6 +110,7 @@ body {
   height: 46px;
   border-radius: 50%;
   transform: translate(-50%, -50%);
+  pointer-events: none;
   background: radial-gradient(
     circle at 30% 30%,
     rgba(255,255,255,0.9),
@@ -104,16 +118,12 @@ body {
     rgba(0,120,255,0.6)
   );
  
- /* Gateway visuals must never capture clicks */
-	.gateway-container,
-	.gateway-ring,
-	.gateway-core {
-		pointer-events: none;
+./* Hover is driven by the SECTION, not the ring */
+	section:hover .gateway-core {
+	box-shadow:
+		0 0 60px rgba(0,255,200,0.6),
+		inset 0 0 40px rgba(0,255,200,0.35);
 	}
-.gateway-ring:hover .gateway-core {
-  box-shadow:
-    0 0 40px rgba(0,255,200,1),
-    0 0 90px rgba(0,120,255,0.8);
 }
 
   box-shadow:
@@ -173,9 +183,12 @@ body {
   z-index: 10;
 }
 
-.btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 0 40px rgba(0,255,200,0.7);
+/* Optional: stronger presence on button hover */
+.btn-primary:hover ~ .gateway-container .gateway-ring,
+.btn-secondary:hover ~ .gateway-container .gateway-ring {
+  box-shadow:
+    0 0 80px rgba(0,255,220,0.8),
+    inset 0 0 50px rgba(0,255,220,0.45);
 }
 
 .btn-secondary {
@@ -188,11 +201,6 @@ body {
   cursor: pointer;
   position: relative;
   z-index: 10;
-}
-
-.btn-secondary:hover {
-  border-color: rgba(0,255,200,0.6);
-  box-shadow: 0 0 20px rgba(0,255,200,0.25);
 }
 
 /* === MOTION === */
