@@ -4,15 +4,15 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gate text-white flex flex-col items-center justify-center">
+    <main className="min-h-screen bg-gate text-white flex flex-col items-center">
 
       {/* =========================
           HERO / GATEWAY SECTION
       ========================== */}
-      <section className="relative w-full flex items-center justify-center py-24 overflow-hidden">
+      <section className="relative w-full flex items-center justify-center py-32 mb-32 overflow-hidden">
 
         {/* 🔮 Visual Layer (NON-INTERACTIVE) */}
-        <div className="gateway-container pointer-events-none absolute inset-0 flex items-center justify-center">
+        <div className="gateway-container absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="gateway-ring">
             <div className="gateway-core" />
           </div>
@@ -79,7 +79,6 @@ export default function Home() {
         </div>
 
         <div className="console-body">
-
           <div className="console-line">
             <span className="label">Proof Engine</span>
             <span className="value active">ACTIVE</span>
@@ -99,7 +98,6 @@ export default function Home() {
             <span className="label">Last Verification</span>
             <span className="value">moments ago</span>
           </div>
-
         </div>
 
         <div className="console-actions">
