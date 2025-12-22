@@ -1,44 +1,59 @@
-import Image from "next/image";
-
 export default function Home() {
   return (
-    <main className="min-h-screen bg-black text-green-400 flex flex-col items-center justify-center p-10">
-      
-      {/* AES Gateway Image */}
-      <div className="relative mb-10
-                      hover:scale-105
-                      transition-transform duration-500
-                      shadow-[0_0_80px_rgba(0,255,140,0.35)]">
-        <Image
-          src="/aes-gateway.png"
-          alt="AES Gateway"
-          width={420}
-          height={420}
-          priority
-        />
-      </div>
+    <main className="min-h-screen bg-gate text-white flex items-center justify-center">
+      <section className="text-center space-y-8 px-6">
 
-      {/* Title */}
-      <h1 className="text-5xl font-bold tracking-wide text-center">
-        PoWERPiN
-      </h1>
+        {/* Holographic Gateway */}
+        <div className="gateway-container mx-auto">
+          <div className="gateway-ring">
+            <div className="gateway-core" />
+          </div>
+        </div>
 
-      <p className="mt-4 text-center text-green-300">
-        Gateway to Proof · Intent · Trust
-      </p>
+        {/* Title */}
+        <h1 className="text-5xl md:text-6xl font-semibold tracking-tight glow-text">
+          PoWERPiN
+        </h1>
 
-      {/* Primary Entry */}
-      <div className="mt-12">
-        <a
-          href="/dashboard"
-          className="px-12 py-4 border border-green-400 text-lg
-                     hover:bg-green-400 hover:text-black
-                     transition-all
-                     hover:shadow-[0_0_40px_rgba(0,255,140,0.4)]"
-        >
-          ENTER GATEWAY
-        </a>
-      </div>
+        {/* Subheading */}
+        <p className="text-sm uppercase tracking-widest text-cyan-300">
+          Gateway to Proof • Intent • Trust
+        </p>
+
+        {/* AI Guide Line (THIS IS THE LINE) */}
+        <p className="text-base text-slate-300 max-w-md mx-auto">
+          The system is live. Entry is intentional.
+        </p>
+
+        {/* CTAs */}
+        <div className="flex gap-4 justify-center pt-6">
+          <button className="btn-primary">
+            Enter Gateway
+          </button>
+          <button className="btn-secondary">
+            Observe the System
+          </button>
+        </div>
+
+      </section>
+		{/* Guided Path */}
+	<section className="guided-path">
+	<div className="path-item">
+		<h2>Proof</h2>
+		<p>Signals verified. Reality anchored.</p>
+	</div>
+
+	<div className="path-item">
+		<h2>Intent</h2>
+		<p>Purpose measured before action.</p>
+	</div>
+
+	<div className="path-item">
+		<h2>Trust</h2>
+		<p>Access earned, not assumed.</p>
+	</div>
+	</section>
+
     </main>
   );
 }
