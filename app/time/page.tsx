@@ -1,10 +1,10 @@
-import Nav from "@/app/components/Nav";
+import AppShell from "@/app/components/AppShell";
 import Link from "next/link";
 
 export default function Time() {
   return (
 	<main className="min-h-screen p-10">
-      <Nav />
+      <AppShell>
 
       <h1 className="text-4xl font-bold text-center mt-20">Time Coin</h1>
 
@@ -22,7 +22,7 @@ export default function Time() {
           ← Back to Streets
         </a>
       </div>
-
+	 </AppShell>
     </main>
   );
 }

@@ -2,11 +2,10 @@ import AppShell from "@/app/components/AppShell";
 import Link from "next/link";
 
 export default function Streets() {
-	<AppShell>
+	
   return (
     <main className="min-h-screen p-10">
-
-      <Nav /><br></br><br></br><br></br>
+	<AppShell>
 
       <h1 className="text-4xl font-bold mb-10">Streets</h1>
 
@@ -16,8 +15,9 @@ export default function Streets() {
         <Tile href="/time" title="Time Coin" desc="Presence & duration" />
         <Tile href="/dashboard" title="Dashboard" desc="System snapshot" />
       </div>
+	  </AppShell>
     </main>
-	</AppShell>
+	
   );
 }
 

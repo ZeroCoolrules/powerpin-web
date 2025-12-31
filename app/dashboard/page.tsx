@@ -9,8 +9,9 @@ export default function Dashboard() {
   ];
 
   return (
-    <AppShell>
+    
     <main className="min-h-screen p-10">
+	<AppShell>
       
 
       {/* Title */}
@@ -70,7 +71,8 @@ export default function Dashboard() {
           Time Coin
         </Link>
       </div>
+	  </AppShell>
     </main>
-	</AppShell>
+	
   );
 }

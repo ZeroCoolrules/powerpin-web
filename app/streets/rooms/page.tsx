@@ -3,9 +3,9 @@ import Link from "next/link";
 
 export default function Rooms() {
   return (
-  <AppShell>
+  
     <main className="min-h-screen p-10">
-
+	<AppShell>
       <Nav /><br></br><br></br><br></br>
 	  <h1 className="text-4xl font-extrabold mb-8">Streets / Rooms</h1>
 
@@ -15,8 +15,8 @@ export default function Rooms() {
         <Room name="Care Room" />
         <Room name="Build Room" />
       </div>
+	  </AppShell>
     </main>
-	</AppShell>
   );
 }
 
