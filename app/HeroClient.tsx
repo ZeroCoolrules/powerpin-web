@@ -1,127 +1,38 @@
+// app/HeroClient.tsx
 "use client";
 
+import { motion } from "framer-motion";
 import Link from "next/link";
 
 export default function HeroClient() {
   return (
-    <main className="min-h-screen bg-gate text-white flex flex-col items-center">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1.2, ease: "easeOut" }}
+      className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center"
+    >
+      {/* Animated pulse */}
+      <motion.div
+        animate={{ scale: [1, 1.05, 1] }}
+        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        className="relative flex items-center justify-center"
+      >
+        <div className="h-56 w-56 rounded-full border border-green-500/30 blur-sm" />
+        <div className="absolute h-40 w-40 rounded-full bg-green-500/10 blur-xl" />
+      </motion.div>
 
-      {/* =========================
-          HERO / GATEWAY
-      ========================== */}
-      <section className="relative w-full min-h-screen overflow-hidden">
-
-        {/* Visual gateway — nudged UP */}
-        <div className="gateway-container pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className="gateway-ring translate-y-[-120px]">
-            <div className="gateway-core" />
-          </div>
-        </div>
-
-        {/* Content — pushed DOWN */}
-        <div className="relative z-20 flex flex-col items-center text-center px-6 pt-[55vh] space-y-6">
-
-          <h1 className="text-5xl md:text-6xl font-semibold tracking-tight glow-text">
-            PoWERPiN
-          </h1>
-
-          <p className="text-sm uppercase tracking-widest text-cyan-300">
-            Gateway to Proof • Intent • Trust
-          </p>
-
-          <p className="text-base text-slate-300 max-w-md">
-            The system is live. Entry is intentional.
-          </p>
-
-          {/* Buttons clearly BELOW text */}
-          <div className="mt-10 flex gap-4 justify-center">
-            <Link href="/system" className="btn-primary">
-              Enter Gateway
-            </Link>
-
-            <button
-              className="btn-secondary"
-              onClick={() =>
-                document
-                  .getElementById("system-console")
-                  ?.scrollIntoView({ behavior: "smooth" })
-              }
-            >
-              Observe the System
-            </button>
-          </div>
-
-        </div>
-      </section>
-
-      {/* =========================
-          GUIDED PATH
-      ========================== */}
-      <section className="guided-path">
-        <div className="path-item">
-          <h2>Proof</h2>
-          <p>Signals verified. Reality anchored.</p>
-        </div>
-        <div className="path-item">
-          <h2>Intent</h2>
-          <p>Purpose measured before action.</p>
-        </div>
-        <div className="path-item">
-          <h2>Trust</h2>
-          <p>Access earned, not assumed.</p>
-        </div>
-      </section>
-
-      {/* =========================
-          SYSTEM CONSOLE
-      ========================== */}
-      <section id="system-console" className="system-console">
-        <div className="console-header">
-          <span className="console-dot green" />
-          <span className="console-dot yellow" />
-          <span className="console-dot red" />
-          <span className="console-title">SYSTEM STATUS</span>
-        </div>
-
-        <div className="console-body">
-          <div className="console-line">
-            <span className="label">Proof Engine</span>
-            <span className="value active">ACTIVE</span>
-          </div>
-          <div className="console-line">
-            <span className="label">Intent Signal</span>
-            <span className="value monitoring">MONITORING</span>
-          </div>
-          <div className="console-line">
-            <span className="label">Trust Graph</span>
-            <span className="value init">INITIALIZING</span>
-          </div>
-          <div className="console-line subtle">
-            <span className="label">Last Verification</span>
-            <span className="value">moments ago</span>
-          </div>
-        </div>
-
-        <div className="console-actions">
-          <Link href="/system" className="btn-secondary">
-            System Architecture
-          </Link>
-        </div>
-      </section>
-
-      {/* =========================
-          PROOF LOGS
-      ========================== */}
-      <section id="proof-logs" className="proof-logs">
-        <h3>Proof Logs</h3>
-        <ul>
-          <li>✔ Signal integrity verified</li>
-          <li>✔ Intent classification completed</li>
-          <li>✔ Trust state propagated</li>
-          <li className="dim">↻ Continuous verification active</li>
-        </ul>
-      </section>
-
-    </main>
+      {/* CTA */}
+      <div className="absolute bottom-[18%] pointer-events-auto">
+        <Link
+          href="/endless"
+          className="rounded-xl border border-green-500/40 px-6 py-3
+                     text-green-300 hover:bg-green-500/10
+                     transition-all duration-300"
+        >
+          Enter Gateway
+        </Link>
+      </div>
+    </motion.div>
   );
 }
