@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Nav from "@/app/components/Nav";
+import AppShell from "@/app/components/AppShell";
 
 export default function Dashboard() {
   const stats = [
@@ -9,8 +9,9 @@ export default function Dashboard() {
   ];
 
   return (
+    <AppShell>
     <main className="min-h-screen p-10">
-      <Nav />
+      
 
       {/* Title */}
       <h1 className="text-4xl font-bold text-center mt-20">
@@ -70,5 +71,6 @@ export default function Dashboard() {
         </Link>
       </div>
     </main>
+	</AppShell>
   );
 }

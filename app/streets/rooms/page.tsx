@@ -1,8 +1,9 @@
-import Nav from "@/app/components/Nav";
+import AppShell from "@/app/components/AppShell";
 import Link from "next/link";
 
 export default function Rooms() {
   return (
+  <AppShell>
     <main className="min-h-screen p-10">
 
       <Nav /><br></br><br></br><br></br>
@@ -15,6 +16,7 @@ export default function Rooms() {
         <Room name="Build Room" />
       </div>
     </main>
+	</AppShell>
   );
 }
 

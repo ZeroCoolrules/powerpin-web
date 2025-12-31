@@ -1,7 +1,8 @@
-import Nav from "@/app/components/Nav";
+import AppShell from "@/app/components/AppShell";
 import Link from "next/link";
 
 export default function Streets() {
+	<AppShell>
   return (
     <main className="min-h-screen p-10">
 
@@ -16,6 +17,7 @@ export default function Streets() {
         <Tile href="/dashboard" title="Dashboard" desc="System snapshot" />
       </div>
     </main>
+	</AppShell>
   );
 }
 
