@@ -58,3 +58,4 @@ node_modules/
 
 # Supabase local
 .supabase/
+app/openai
