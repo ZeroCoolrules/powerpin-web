@@ -1,21 +1,15 @@
-import { createServerClient } from "@supabase/ssr"
-import { cookies } from "next/headers"
 import { NextRequest } from "next/server"
+import { supabaseFromJWT } from "@/lib/supabase"
 
 export async function getUserFromRequest(req: NextRequest) {
-  const cookieStore = cookies()
+  const authHeader = req.headers.get("authorization")
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value
-        },
-      },
-    }
-  )
+  if (!authHeader?.startsWith("Bearer ")) {
+    return null
+  }
+
+  const jwt = authHeader.replace("Bearer ", "")
+  const supabase = supabaseFromJWT(jwt)
 
   const {
     data: { user },
