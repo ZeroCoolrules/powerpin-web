@@ -23,24 +23,24 @@ export default function GatewayAgentPage() {
   useEffect(() => {
     async function initSession() {
       try {
-        // Create browser Supabase client
-        const supabase = createClient(
-          process.env.NEXT_PUBLIC_SUPABASE_URL!,
-          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-        )
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+        const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-        // Get authenticated session
+        if (!supabaseUrl || !supabaseKey) {
+          setError("Supabase env vars missing")
+          return
+        }
+
+        const supabase = createClient(supabaseUrl, supabaseKey)
         const {
           data: { session: authSession },
-          error: authError,
         } = await supabase.auth.getSession()
 
-        if (authError || !authSession?.access_token) {
+        if (!authSession?.access_token) {
           setError("Not authenticated")
           return
         }
 
-        // Create Gateway session using JWT
         const res = await fetch("/api/gateway/session", {
           method: "POST",
           headers: {
@@ -49,41 +49,41 @@ export default function GatewayAgentPage() {
           },
         })
 
-        if (!res.ok) {
-          const msg = await res.text()
-          throw new Error(msg)
-        }
+        if (!res.ok) throw new Error("Gateway session failed")
 
         const data: GatewaySession = await res.json()
-
         setSession(data)
-        setCommands(
-          (data.allowed_commands || []).map((name) => ({
-            name,
-            description: "",
-          }))
-        )
+        setCommands(data.allowed_commands.map((name) => ({ name })))
       } catch (e: any) {
-        console.error(e)
-        setError(e.message || "Failed to start gateway session")
+        setError(e.message)
       }
     }
 
     initSession()
   }, [])
 
-  function invoke(name: string) {
-    setEvents((e) => [
-      ...e,
-      { time: Date.now(), action: `requested:${name}` },
-    ])
+  async function invoke(name: string) {
+    setEvents((e) => [...e, { time: Date.now(), action: `requested:${name}` }])
+
+    const requiresApproval = ["propose_agent", "run_builder"].includes(name)
+
+    if (requiresApproval) {
+      await fetch("/api/approvals/request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ command: name }),
+      })
+
+      setEvents((e) => [
+        ...e,
+        { time: Date.now(), action: `approval:pending:${name}` },
+      ])
+    }
   }
 
   if (error) {
     return (
-      <div className="p-6 text-red-500 font-mono">
-        Gateway Error: {error}
-      </div>
+      <div className="p-6 text-red-500 font-mono">Gateway Error: {error}</div>
     )
   }
 
