@@ -1,11 +1,12 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { createClient } from "@supabase/supabase-js"
+
 import { SessionBadge } from "./SessionBadge"
 import { CommandPalette } from "./CommandPalette"
 import { ProofLog } from "./ProofLog"
 
-// Shape is loose on purpose for v1
 type GatewaySession = {
   session_id: string
   trust_class: string
@@ -22,20 +23,28 @@ export default function GatewayAgentPage() {
   useEffect(() => {
     async function initSession() {
       try {
-        // 🔑 Pull JWT from Supabase client session (browser-safe)
-        const resSession = await fetch("/api/auth/session")
-        const auth = await resSession.json()
+        // Create browser Supabase client
+        const supabase = createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+        )
 
-        if (!auth?.access_token) {
+        // Get authenticated session
+        const {
+          data: { session: authSession },
+          error: authError,
+        } = await supabase.auth.getSession()
+
+        if (authError || !authSession?.access_token) {
           setError("Not authenticated")
           return
         }
 
-        // 🔐 Create Gateway session with JWT
+        // Create Gateway session using JWT
         const res = await fetch("/api/gateway/session", {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${auth.access_token}`,
+            Authorization: `Bearer ${authSession.access_token}`,
             "Content-Type": "application/json",
           },
         })
