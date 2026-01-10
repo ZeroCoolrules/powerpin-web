@@ -1,3 +1,16 @@
+/**
+ * © 2026 Aaron Schenk
+ *
+ * This file is part of a capability-bound autonomous agent governance system.
+ * Use, reproduction, or distribution without authorization is prohibited.
+ *
+ * Associated with a provisional patent application covering:
+ * - Capability-bound agent schemas
+ * - Trust-tier enforcement
+ * - Approval-gated execution
+ * - Immutable artifact storage
+ */
+
 // /schemas/agent-blueprint.schema.ts
 
 export type TrustClass =
