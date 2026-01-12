@@ -26,16 +26,6 @@ export default function GatewayAgent({
   // ─────────────────────────────────────────────
   useEffect(() => {
     async function initSession() {
-		const { data: { session } } = await import("@/lib/supabase-browser")
-			.then(m => m.supabase.auth.getSession())
-
-			if (!session) {
-			setMessages([{ role: "system", text: "❌ Not authenticated" }])
-			return
-			}
-
-const accessToken = session.access_token
-
       try {
         setMessages([
           { role: "system", text: "🟡 Initializing session…" },
@@ -81,12 +71,12 @@ const accessToken = session.access_token
   }, [artifactId, accessToken])
 
   // ─────────────────────────────────────────────
-  // Send command to gateway agent
+  // Send command
   // ─────────────────────────────────────────────
   async function sendCommand() {
     if (!input.trim() || !gatewaySessionId) return
 
-    const userMessage = input
+    const userMessage = input.trim()
     setInput("")
 
     setMessages((m) => [
@@ -121,6 +111,11 @@ const accessToken = session.access_token
       ...m,
       { role: "agent", text: data.message },
     ])
+
+    // Optional UX: close input on exit
+    if (userMessage.toLowerCase() === "exit") {
+      setReady(false)
+    }
   }
 
   // ─────────────────────────────────────────────
