@@ -1,26 +1,27 @@
+import { createClient } from "@supabase/supabase-js"
 import { NextRequest } from "next/server"
-import { supabaseFromJWT } from "@/lib/supabase"
 
 export async function getUserFromRequest(req: NextRequest) {
   const authHeader = req.headers.get("authorization")
+  if (!authHeader) return null
 
-  if (!authHeader?.startsWith("Bearer ")) {
-    return null
-  }
+  const token = authHeader.replace("Bearer ", "")
+  if (!token) return null
 
-  const jwt = authHeader.replace("Bearer ", "")
-  const supabase = supabaseFromJWT(jwt)
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      global: {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    }
+  )
 
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser()
+  const { data, error } = await supabase.auth.getUser()
+  if (error || !data.user) return null
 
-  if (error || !user) return null
-
-  return {
-    id: user.id,
-    email: user.email,
-    trust_class: user.user_metadata?.trust_class ?? "observer",
-  }
+  return data.user
 }

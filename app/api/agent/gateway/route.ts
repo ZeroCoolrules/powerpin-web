@@ -14,7 +14,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 })
   }
 
-  const supabase = supabaseFromJWT(req)
+  const authHeader = req.headers.get("authorization")
+		if (!authHeader) {
+			return NextResponse.json({ error: "missing_auth" }, { status: 401 })
+		}
+
+  const jwt = authHeader.replace("Bearer ", "")
+  const supabase = supabaseFromJWT(jwt)
+
 
   // ─────────────────────────────────────────────
   // 2️⃣ Parse request body
@@ -78,7 +85,11 @@ export async function POST(req: NextRequest) {
   // ─────────────────────────────────────────────
   // 4️⃣ Enforce command policy
   // ─────────────────────────────────────────────
-  const command = input.trim().split(" ")[0]
+  const command = input
+  .trim()
+  .toLowerCase()
+  .split(/\s+/)[0]
+
   const trustClass = session.trust_class
 
   if (!isCommandAllowed(trustClass, command)) {

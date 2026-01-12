@@ -1,90 +1,157 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { createClient } from "@supabase/supabase-js"
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+type GatewayAgentProps = {
+  artifactId: string
+  accessToken: string
+}
+
+type AgentMessage = {
+  role: "system" | "user" | "agent"
+  text: string
+}
 
 export default function GatewayAgent({
-  artifactId
-}: {
-  artifactId: string
-}) {
-  const [sessionId, setSessionId] = useState<string | null>(null)
-  const [log, setLog] = useState<string[]>([])
+  artifactId,
+  accessToken,
+}: GatewayAgentProps) {
+  const [gatewaySessionId, setGatewaySessionId] = useState<string | null>(null)
+  const [ready, setReady] = useState(false)
+  const [messages, setMessages] = useState<AgentMessage[]>([])
   const [input, setInput] = useState("")
 
+  // ─────────────────────────────────────────────
+  // Initialize gateway session
+  // ─────────────────────────────────────────────
   useEffect(() => {
     async function initSession() {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) {
-        setLog(l => [...l, "❌ Not authenticated"])
-        return
-      }
+		const { data: { session } } = await import("@/lib/supabase-browser")
+			.then(m => m.supabase.auth.getSession())
 
-      const res = await fetch("/api/gateway/session", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.access_token}`
+			if (!session) {
+			setMessages([{ role: "system", text: "❌ Not authenticated" }])
+			return
+			}
+
+const accessToken = session.access_token
+
+      try {
+        setMessages([
+          { role: "system", text: "🟡 Initializing session…" },
+        ])
+
+        const res = await fetch("/api/gateway/session", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({
+            artifact_id: artifactId,
+          }),
+        })
+
+        if (!res.ok) {
+          const err = await res.text()
+          console.error("Session init failed:", err)
+          setMessages([
+            { role: "system", text: "❌ Failed to initialize session" },
+          ])
+          return
         }
-      })
 
-      const data = await res.json()
-      setSessionId(data.gateway_session_id)
-      setLog(l => [...l, "✅ Gateway session established"])
+        const data = await res.json()
+
+        setGatewaySessionId(data.gateway_session_id)
+        setReady(true)
+
+        setMessages([
+          { role: "system", text: "🟢 Gateway session established" },
+        ])
+      } catch (e) {
+        console.error(e)
+        setMessages([
+          { role: "system", text: "❌ Session error" },
+        ])
+      }
     }
 
     initSession()
-  }, [artifactId])
+  }, [artifactId, accessToken])
 
-  async function send() {
-    if (!sessionId || !input.trim()) return
+  // ─────────────────────────────────────────────
+  // Send command to gateway agent
+  // ─────────────────────────────────────────────
+  async function sendCommand() {
+    if (!input.trim() || !gatewaySessionId) return
 
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session) return
+    const userMessage = input
+    setInput("")
+
+    setMessages((m) => [
+      ...m,
+      { role: "user", text: userMessage },
+    ])
 
     const res = await fetch("/api/agent/gateway", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session.access_token}`
+        Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify({
-        input,
+        input: userMessage,
         artifact_id: artifactId,
-        gateway_session_id: sessionId
-      })
+        gateway_session_id: gatewaySessionId,
+      }),
     })
 
+    if (!res.ok) {
+      setMessages((m) => [
+        ...m,
+        { role: "agent", text: "❌ Command rejected" },
+      ])
+      return
+    }
+
     const data = await res.json()
-    setLog(l => [...l, JSON.stringify(data)])
-    setInput("")
+
+    setMessages((m) => [
+      ...m,
+      { role: "agent", text: data.message },
+    ])
   }
 
+  // ─────────────────────────────────────────────
+  // Render
+  // ─────────────────────────────────────────────
   return (
-    <div className="border border-green-700 p-4 font-mono">
-      <div className="mb-2 text-green-400">
-        {sessionId ? "🟢 Session active" : "🟡 Initializing session…"}
+    <div className="border border-green-700 rounded p-4 font-mono text-green-400 bg-black">
+      <div className="space-y-2 mb-3 min-h-[120px]">
+        {messages.map((m, i) => (
+          <div key={i}>
+            {m.role === "user" && <span className="text-green-300">› </span>}
+            {m.role === "agent" && <span className="text-green-500">◂ </span>}
+            {m.role === "system" && <span className="text-yellow-400">• </span>}
+            {m.text}
+          </div>
+        ))}
       </div>
 
-      <input
-        className="w-full bg-black text-green-400 p-2 outline-none"
-        placeholder="State your intent…"
-        disabled={!sessionId}
-        value={input}
-        onChange={e => setInput(e.target.value)}
-        onKeyDown={e => e.key === "Enter" && send()}
-      />
-
-      <ul className="mt-3 text-xs text-green-300 space-y-1">
-        {log.map((l, i) => (
-          <li key={i}>{l}</li>
-        ))}
-      </ul>
+      {ready && (
+        <input
+          className="w-full bg-black border-t border-green-700 pt-2 outline-none"
+          placeholder="State your intent…"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              sendCommand()
+            }
+          }}
+        />
+      )}
     </div>
   )
 }

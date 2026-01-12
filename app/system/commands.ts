@@ -1,3 +1,5 @@
+// app/system/commands.ts
+
 export type TrustClass = "observer" | "user" | "builder" | "admin"
 
 export type CommandSpec = {
@@ -25,7 +27,10 @@ const COMMANDS: Record<TrustClass, CommandSpec[]> = {
   ],
 
   admin: [
-    { name: "*", description: "All commands" }
+    { name: "help", description: "List available commands" },
+    { name: "status", description: "Check gateway status" },
+    { name: "inspect", description: "Inspect artifact metadata" },
+    { name: "deploy", description: "Deploy artifact build" }
   ]
 }
 
@@ -37,6 +42,11 @@ export function isCommandAllowed(
   trust: TrustClass,
   command: string
 ): boolean {
+  const normalized = command.trim().toLowerCase()
+
   if (trust === "admin") return true
-  return COMMANDS[trust]?.some(c => c.name === command) ?? false
+
+  return COMMANDS[trust]?.some(
+    c => c.name === normalized
+  ) ?? false
 }

@@ -1,35 +1,61 @@
 import { NextRequest, NextResponse } from "next/server"
-import { supabaseFromJWT } from "@/lib/supabase"
 import { getUserFromRequest } from "@/lib/auth"
-import { getCommandsForTrust } from "@/lib/commands"
+import { supabaseAdmin } from "@/lib/supabase"
+import { getCommandsForTrust } from "@/app/system/commands"
 
 export async function POST(req: NextRequest) {
+  console.log("🔥 GATEWAY SESSION ROUTE HIT 🔥")
+
+  // 1️⃣ Auth
   const user = await getUserFromRequest(req)
   if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 })
   }
 
-  const trustClass = user.trust_class
-  const allowedCommands = getCommandsForTrust(trustClass)
+  // 2️⃣ Parse body
+  const { artifact_id } = await req.json()
 
-  const sessionId = crypto.randomUUID()
+  if (!artifact_id) {
+    return NextResponse.json(
+      { error: "missing_fields" },
+      { status: 400 }
+    )
+  }
 
-  const { error } = await supabaseFromJWT(req)
+  // 3️⃣ Resolve trust + commands
+  const trustClass = user.trust_class ?? "observer"
+  const allowedCommands = getCommandsForTrust(trustClass).map(
+    (c) => c.name
+  )
+
+  const gateway_session_id = crypto.randomUUID()
+
+  // 4️⃣ Insert (NO issued_at)
+  const { error } = await supabaseAdmin
     .from("gateway_sessions")
     .insert({
-      id: sessionId,
+      id: gateway_session_id,
+      artifact_id,
       user_id: user.id,
       trust_class: trustClass,
-      allowed_commands: allowedCommands.map(c => c.name),
-      expires_at: new Date(Date.now() + 15 * 60 * 1000)
+      allowed_commands: allowedCommands,
+      expires_at: new Date(
+        Date.now() + 15 * 60 * 1000
+      ).toISOString(),
     })
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    console.error("❌ gateway_session insert failed:", error)
+    return NextResponse.json(
+      { error: "session_create_failed" },
+      { status: 500 }
+    )
   }
 
+  // 5️⃣ Return session
   return NextResponse.json({
-    gateway_session_id: sessionId,
-    expires_in: 900
+    gateway_session_id,
+    trust_class: trustClass,
+    allowed_commands: allowedCommands,
   })
 }
