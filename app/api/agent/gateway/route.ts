@@ -129,6 +129,15 @@ export async function POST(req: NextRequest) {
     case "deploy":
       message = "Deploy request recorded. Approval required."
       break
+	  
+	case "whoami":
+      message = `You are ${trustClass}. User ID: ${user.id}`
+      break
+
+	case "exit":
+      message = "Gateway session closed."
+      break
+
   }
 
   // ─────────────────────────────────────────────
