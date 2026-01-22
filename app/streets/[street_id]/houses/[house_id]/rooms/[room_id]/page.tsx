@@ -2,7 +2,7 @@ import SplashFrame from "@/components/splash/SplashFrame";
 import TitleBanner from "@/components/splash/TitleBanner";
 import PrimaryCTA from "@/components/splash/PrimaryCTA";
 
-export default function HouseRoomSplash() {
+/*export default function HouseRoomSplash() {
   return (
     <SplashFrame>
       <TitleBanner
@@ -17,4 +17,4 @@ export default function HouseRoomSplash() {
       <PrimaryCTA label="Enter Room" />
     </SplashFrame>
   );
-}
+}*/
