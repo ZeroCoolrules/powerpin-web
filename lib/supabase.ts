@@ -1,23 +1,42 @@
 // lib/supabase.ts
-import { createClient } from "@supabase/supabase-js"
+import { createClient, SupabaseClient } from "@supabase/supabase-js"
 
-// ─────────────────────────────────────────────
-// Server-side admin client (SERVICE ROLE)
-// Use ONLY in API routes / server code
-// ─────────────────────────────────────────────
-export const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+/**
+ * Read env vars lazily.
+ * IMPORTANT: Nothing in this file may execute at import time
+ * that depends on process.env being present.
+ */
+function requireEnv(name: string): string {
+  const value = process.env[name]
+  if (!value) {
+    throw new Error(`${name} is required`)
+  }
+  return value
+}
 
-// ─────────────────────────────────────────────
-// User-scoped client using JWT
-// Use when you need RLS + auth.uid()
-// ─────────────────────────────────────────────
-export function supabaseFromJWT(jwt: string) {
+/**
+ * ─────────────────────────────────────────────
+ * ADMIN CLIENT (SERVICE ROLE)
+ * Server-only. NEVER created at module scope.
+ * ─────────────────────────────────────────────
+ */
+export function getSupabaseAdmin(): SupabaseClient {
   return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    requireEnv("NEXT_PUBLIC_SUPABASE_URL"),
+    requireEnv("SUPABASE_SERVICE_ROLE_KEY")
+  )
+}
+
+/**
+ * ─────────────────────────────────────────────
+ * USER-SCOPED CLIENT (JWT / RLS)
+ * Created per-request.
+ * ─────────────────────────────────────────────
+ */
+export function supabaseFromJWT(jwt: string): SupabaseClient {
+  return createClient(
+    requireEnv("NEXT_PUBLIC_SUPABASE_URL"),
+    requireEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
     {
       global: {
         headers: {
