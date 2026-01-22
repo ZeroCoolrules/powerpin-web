@@ -3,14 +3,9 @@
 import { useState } from "react"
 import { createClient } from "@supabase/supabase-js"
 import { useRouter } from "next/navigation"
-export const dynamic = "force-dynamic"
 
 export default function LoginPage() {
   const router = useRouter()
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -21,6 +16,12 @@ export default function LoginPage() {
     e.preventDefault()
     setLoading(true)
     setError(null)
+
+    // ✅ CREATE SUPABASE CLIENT AT RUNTIME (NOT AT BUILD)
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
 
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -34,7 +35,6 @@ export default function LoginPage() {
       return
     }
 
-    // ✅ Redirect after successful login
     router.push("/dashboard")
   }
 
