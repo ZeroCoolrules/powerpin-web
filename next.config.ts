@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
 
   experimental: {
+    appDir: true,          // 👈 REQUIRED
     optimizeCss: false,
   },
 
