@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { supabaseFromJWT, supabaseAdmin } from "@/lib/supabase"
+import { supabaseFromJWT, getSupabaseAdmin } from "@/lib/supabase"
 import { getUserFromRequest } from "@/lib/auth"
 import { isCommandAllowed, getCommandsForTrust } from "@/app/system/commands"
 import type { TrustClass } from "@/app/system/commands"
@@ -10,7 +10,8 @@ export async function POST(req: NextRequest) {
   // 🛑 BUILD-SAFE + RUNTIME-SAFE GUARD
   if (
     !process.env.NEXT_PUBLIC_SUPABASE_URL ||
-    !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    !process.env.SUPABASE_SERVICE_ROLE_KEY
   ) {
     console.warn("Supabase not configured — agent gateway disabled")
     return NextResponse.json(
@@ -19,10 +20,12 @@ export async function POST(req: NextRequest) {
     )
   }
 
+  // ✅ Lazy admin client (SAFE)
+  const supabaseAdmin = getSupabaseAdmin()
+
   // ─────────────────────────────────────────────
   // 1️⃣ Authenticate user (JWT → user)
   // ─────────────────────────────────────────────
-
   const user = await getUserFromRequest(req)
   if (!user) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 })
@@ -102,7 +105,6 @@ export async function POST(req: NextRequest) {
     trustClass !== "admin" &&
     !session.allowed_commands.includes(command)
   ) {
-    // 🔒 audit rejection
     await supabaseAdmin.from("gateway_commands").insert({
       gateway_session_id,
       user_id: user.id,
