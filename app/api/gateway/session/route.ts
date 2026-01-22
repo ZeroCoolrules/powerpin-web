@@ -6,6 +6,15 @@ import { getCommandsForTrust } from "@/app/system/commands"
 export async function POST(req: NextRequest) {
   console.log("🔥 GATEWAY SESSION ROUTE HIT 🔥")
 
+  // 🛑 BUILD-SAFE + RUNTIME-SAFE GUARD
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+    console.warn("Supabase not configured — gateway disabled")
+    return NextResponse.json(
+      { error: "service_unavailable" },
+      { status: 503 }
+    )
+  }
+
   // 1️⃣ Auth
   const user = await getUserFromRequest(req)
   if (!user) {
@@ -14,7 +23,6 @@ export async function POST(req: NextRequest) {
 
   // 2️⃣ Parse body
   const { artifact_id } = await req.json()
-
   if (!artifact_id) {
     return NextResponse.json(
       { error: "missing_fields" },
@@ -30,7 +38,7 @@ export async function POST(req: NextRequest) {
 
   const gateway_session_id = crypto.randomUUID()
 
-  // 4️⃣ Insert (NO issued_at)
+  // 4️⃣ Insert
   const { error } = await supabaseAdmin
     .from("gateway_sessions")
     .insert({
