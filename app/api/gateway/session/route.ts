@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getUserFromRequest } from "@/lib/auth"
-import { supabaseAdmin } from "@/lib/supabase"
+import { getSupabaseAdmin } from "@/lib/supabase"
 import { getCommandsForTrust } from "@/app/system/commands"
 
 export async function POST(req: NextRequest) {
@@ -14,6 +14,7 @@ export async function POST(req: NextRequest) {
       { status: 503 }
     )
   }
+  const supabaseAdmin = getSupabaseAdmin()
 
   // 1️⃣ Auth
   const user = await getUserFromRequest(req)

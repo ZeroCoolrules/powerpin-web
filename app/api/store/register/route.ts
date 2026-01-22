@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseFromJWT, supabaseAdmin } from "@/lib/supabase";
+import { supabaseFromJWT, getSupabaseAdmin } from "@/lib/supabase"
 
 export async function POST(req: NextRequest) {
   const jwt = req.headers
@@ -12,6 +12,7 @@ export async function POST(req: NextRequest) {
       { status: 401 }
     );
   }
+  const supabaseAdmin = getSupabaseAdmin()
 
   const supabase = supabaseFromJWT(jwt);
 

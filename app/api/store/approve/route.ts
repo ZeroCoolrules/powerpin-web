@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseFromJWT, supabaseAdmin } from "@/lib/supabase";
+import { supabaseFromJWT, getSupabaseAdmin } from "@/lib/supabase"
 import { canApprove } from "@/lib/permissions";
 
 export async function POST(req: NextRequest) {
@@ -7,6 +7,7 @@ export async function POST(req: NextRequest) {
   if (!jwt) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const supabaseAdmin = getSupabaseAdmin()
 
   const supabase = supabaseFromJWT(jwt);
   const {
