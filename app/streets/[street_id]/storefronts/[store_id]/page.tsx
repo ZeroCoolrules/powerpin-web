@@ -3,7 +3,7 @@ import TitleBanner from "@/components/splash/TitleBanner";
 import StatusBadge from "@/components/splash/StatusBadge";
 import PrimaryCTA from "@/components/splash/PrimaryCTA";
 
-export default function StorefrontSplash() {
+/*export default function StorefrontSplash() {
   return (
     <SplashFrame>
       <TitleBanner
@@ -20,4 +20,4 @@ export default function StorefrontSplash() {
       <PrimaryCTA label="Enter Room" />
     </SplashFrame>
   );
-}
+}*/

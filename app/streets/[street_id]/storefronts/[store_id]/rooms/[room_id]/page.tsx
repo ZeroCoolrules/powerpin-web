@@ -3,7 +3,7 @@ import SplashFrame from "@/components/splash/SplashFrame";
 import TitleBanner from "@/components/splash/TitleBanner";
 import PrimaryCTA from "@/components/splash/PrimaryCTA";
 
-export default function StoreRoomSplash() {
+/*export default function StoreRoomSplash() {
   return (
     <SplashFrame>
       <TitleBanner
@@ -22,4 +22,4 @@ export default function StoreRoomSplash() {
       <PrimaryCTA label="Enter Session" />
     </SplashFrame>
   );
-}
+}*/

@@ -2,7 +2,7 @@ import SplashFrame from "@/components/splash/SplashFrame";
 import TitleBanner from "@/components/splash/TitleBanner";
 import PrimaryCTA from "@/components/splash/PrimaryCTA";
 
-export default function StreetSplash() {
+/*export default function StreetSplash() {
   return (
     <SplashFrame>
       <TitleBanner
@@ -20,4 +20,4 @@ export default function StreetSplash() {
       </div>
     </SplashFrame>
   );
-}
+}*/
