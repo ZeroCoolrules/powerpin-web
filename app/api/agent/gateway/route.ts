@@ -7,9 +7,22 @@ import type { TrustClass } from "@/app/system/commands"
 export async function POST(req: NextRequest) {
   console.log("🔥 GATEWAY AGENT ROUTE HIT 🔥")
 
+  // 🛑 BUILD-SAFE + RUNTIME-SAFE GUARD
+  if (
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  ) {
+    console.warn("Supabase not configured — agent gateway disabled")
+    return NextResponse.json(
+      { error: "service_unavailable" },
+      { status: 503 }
+    )
+  }
+
   // ─────────────────────────────────────────────
   // 1️⃣ Authenticate user (JWT → user)
   // ─────────────────────────────────────────────
+
   const user = await getUserFromRequest(req)
   if (!user) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 })
