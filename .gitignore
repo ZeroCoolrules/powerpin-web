@@ -60,4 +60,12 @@ node_modules/
 .supabase/
 app/openai
 builder/
-app/api/stripe/
+
+# Ignore secrets, NOT code
+.env
+.env.local
+.env.production
+
+# Allow Stripe API routes
+!app/api/stripe/**
+
