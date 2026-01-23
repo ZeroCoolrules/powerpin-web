@@ -60,3 +60,4 @@ node_modules/
 .supabase/
 app/openai
 builder/
+app/api/stripe/
