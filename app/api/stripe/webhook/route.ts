@@ -4,11 +4,11 @@ import { NextRequest, NextResponse } from "next/server"
 import Stripe from "stripe"
 import { supabaseAdmin } from "@/lib/supabase"
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2024-06-20",
-})
-
 export async function POST(req: NextRequest) {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+    apiVersion: "2024-06-20",
+  })
+
   const body = await req.text()
   const sig = req.headers.get("stripe-signature")
 
@@ -34,16 +34,13 @@ export async function POST(req: NextRequest) {
       const session = event.data.object as Stripe.Checkout.Session
 
       const userId = session.metadata?.user_id
-      const customerId = session.customer as string
-      const subscriptionId = session.subscription as string
-
       if (!userId) break
 
       await supabaseAdmin
         .from("subscriptions")
         .update({
-          stripe_customer_id: customerId,
-          stripe_subscription_id: subscriptionId,
+          stripe_customer_id: session.customer as string,
+          stripe_subscription_id: session.subscription as string,
           status: "active",
         })
         .eq("user_id", userId)
