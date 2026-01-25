@@ -14,6 +14,7 @@ export default async function AEinboxPage() {
   try {
     if (accessToken) {
       const supabase = supabaseFromJWT(accessToken)
+
       const { data, error } = await supabase
         .from("subscriptions")
         .select("id")
@@ -22,8 +23,8 @@ export default async function AEinboxPage() {
 
       if (!error && data) isSubscribed = true
     }
-  } catch (err) {
-    console.error("ÆInbox subscription check failed", err)
+  } catch {
+    // fail silently
   }
 
   return (
@@ -35,85 +36,112 @@ export default async function AEinboxPage() {
         textAlign: "center",
       }}
     >
-      {/* 🧠 HERO */}
-      <section style={{ marginBottom: 90 }}>
-        <Image
-          src="/aeinbox-wordmark.png"
-          alt="ÆInbox"
-          width={360}
-          height={84}
-          priority
-        />
+      {/* BRAND */}
+      <Image
+        src="/aeinbox-wordmark.png"
+        alt="ÆInbox"
+        width={360}
+        height={90}
+        priority
+        style={{ margin: "0 auto" }}
+      />
 
-        <p style={{ marginTop: 24, fontSize: "1.25rem", fontWeight: 600 }}>
-          Secure Email. Intelligent Assistant. Human-First.
-        </p>
+      {/* HERO */}
+      <h1
+        style={{
+          marginTop: 30,
+          fontSize: "1.4rem",
+          fontWeight: 600,
+          letterSpacing: 0.3,
+        }}
+      >
+        Secure Email. Intelligent Assistant. Human-First.
+      </h1>
 
-        <p
+      <p
+        style={{
+          marginTop: 14,
+          maxWidth: 620,
+          marginInline: "auto",
+          opacity: 0.85,
+          lineHeight: 1.6,
+        }}
+      >
+        ÆInbox is a private inbox with a built-in AI assistant called{" "}
+        <strong>Æi</strong>. No ads. No tracking. No data selling.
+      </p>
+
+      {/* CTA */}
+      {!accessToken && (
+        <a
+          href="/login"
           style={{
-            maxWidth: 640,
-            margin: "16px auto 0",
-            opacity: 0.85,
-            fontSize: "1.05rem",
+            display: "inline-block",
+            marginTop: 36,
+            padding: "16px 44px",
+            background: "#00ffa3",
+            color: "#000",
+            fontWeight: 700,
+            borderRadius: 999,
+            textDecoration: "none",
+            boxShadow: "0 0 30px rgba(0,255,163,0.35)",
           }}
         >
-          ÆInbox is a private inbox with a built-in AI assistant called{" "}
-          <strong>Æi</strong>. No ads. No tracking. No data selling.
-        </p>
+          Log in to get started
+        </a>
+      )}
 
-        {!accessToken && (
-          <a
-            href="/login"
-            style={{
-              display: "inline-block",
-              marginTop: 36,
-              padding: "16px 38px",
-              background: "#00ffa3",
-              color: "#000",
-              fontWeight: "bold",
-              borderRadius: 999,
-              textDecoration: "none",
-              boxShadow: "0 0 30px rgba(0,255,163,0.35)",
-            }}
-          >
-            Log in to get started
-          </a>
-        )}
+      {accessToken && !isSubscribed && (
+        <a
+          href={process.env.NEXT_PUBLIC_STRIPE_CHECKOUT_URL}
+          style={{
+            display: "inline-block",
+            marginTop: 36,
+            padding: "16px 44px",
+            background: "#00ffa3",
+            color: "#000",
+            fontWeight: 700,
+            borderRadius: 999,
+            textDecoration: "none",
+            boxShadow: "0 0 30px rgba(0,255,163,0.35)",
+          }}
+        >
+          Unlock Æi — $10 / month
+        </a>
+      )}
 
-        {accessToken && !isSubscribed && (
-          <a
-            href={process.env.NEXT_PUBLIC_STRIPE_CHECKOUT_URL}
-            style={{
-              display: "inline-block",
-              marginTop: 36,
-              padding: "16px 38px",
-              background: "#00ffa3",
-              color: "#000",
-              fontWeight: "bold",
-              borderRadius: 999,
-              textDecoration: "none",
-              boxShadow: "0 0 30px rgba(0,255,163,0.35)",
-            }}
-          >
-            Start with Æi — $10/month
-          </a>
-        )}
-      </section>
+      {isSubscribed && (
+        <div
+          style={{
+            marginTop: 40,
+            padding: 24,
+            border: "1px solid #00ffa3",
+            borderRadius: 16,
+            display: "inline-block",
+          }}
+        >
+          <strong>Subscription active ✅</strong>
+          <div style={{ marginTop: 8 }}>
+            <a
+              href="https://billing.stripe.com/p/login/fZufZhdrd5yD0BTfzRaEE00"
+              style={{ color: "#00ffa3" }}
+            >
+              Manage billing
+            </a>
+          </div>
+        </div>
+      )}
 
-      {/* ✨ FEATURES */}
-      <section style={{ marginBottom: 90 }}>
-        <h2>What ÆInbox Gives You</h2>
+      {/* FEATURES */}
+      <section style={{ marginTop: 90 }}>
+        <h2 style={{ marginBottom: 24 }}>What ÆInbox Gives You</h2>
 
         <ul
           style={{
             listStyle: "none",
             padding: 0,
-            marginTop: 28,
-            display: "grid",
-            gap: 14,
-            maxWidth: 420,
-            marginInline: "auto",
-            textAlign: "left",
+            lineHeight: 2,
+            opacity: 0.9,
           }}
         >
           <li>🔐 Privacy-first email</li>
@@ -123,53 +151,59 @@ export default async function AEinboxPage() {
         </ul>
       </section>
 
-      {/* 🤖 Æi FEATURE */}
+      {/* Æi CARD */}
       <section
         style={{
-          marginBottom: 90,
-          padding: "44px 32px",
+          marginTop: 100,
+          padding: "48px 24px",
           borderRadius: 28,
-          background: "rgba(255,255,255,0.03)",
-          boxShadow: "0 0 60px rgba(0,255,163,0.12)",
-          maxWidth: 720,
-          marginInline: "auto",
+          background:
+            "radial-gradient(circle at top, rgba(0,255,163,0.08), transparent 60%)",
         }}
       >
-        {/* ROUNDED MASK — hides black square */}
         <div
           style={{
             width: 96,
             height: 96,
+            margin: "0 auto",
             borderRadius: 28,
-            background: "#0b0f14",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            margin: "0 auto 18px",
-            boxShadow: "0 0 28px rgba(0,255,163,0.6)",
-            overflow: "hidden", // 👈 THIS CUTS OFF THE CORNERS
+            background: "#05080c",
+            animation: "breath 4s ease-in-out infinite",
+            boxShadow: "0 0 0 rgba(0,255,163,0.0)",
           }}
         >
-          <Image
-            src="/aei.png"
-            alt="Æi Assistant"
-            width={56}
-            height={56}
-          />
+          <Image src="/aei.png" alt="Æi" width={52_attach} height={52} />
         </div>
 
-        <h2 style={{ marginBottom: 12 }}>Meet Æi</h2>
+        <h2 style={{ marginTop: 22 }}>Meet Æi</h2>
 
-        <p style={{ maxWidth: 520, margin: "0 auto", opacity: 0.85 }}>
-          Æi drafts replies, summarizes long threads, and helps you spot
-          suspicious emails — so you stay focused, not flooded.
+        <p
+          style={{
+            maxWidth: 600,
+            margin: "12px auto 0",
+            opacity: 0.85,
+          }}
+        >
+          Æi drafts replies, summarizes long threads, and helps you spot suspicious
+          emails — so you stay focused, not flooded.
         </p>
       </section>
 
-      {/* FOOTER */}
-      <p style={{ opacity: 0.6, fontSize: "0.9rem" }}>
+      <p style={{ marginTop: 80, opacity: 0.5 }}>
         Powered by Archway Power
       </p>
+
+      {/* BREATHING ANIMATION */}
+      <style>{`
+        @keyframes breath {
+          0% { box-shadow: 0 0 12px rgba(0,255,163,0.25); }
+          50% { box-shadow: 0 0 36px rgba(0,255,163,0.55); }
+          100% { box-shadow: 0 0 12px rgba(0,255,163,0.25); }
+        }
+      `}</style>
     </main>
   )
 }
