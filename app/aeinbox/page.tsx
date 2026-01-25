@@ -109,12 +109,12 @@ export default async function AEinboxPage() {
           </a>
         </div>
       )}
-
+	  <img src="/aei.png" alt="AEi" width={72} />
       <h2 style={{ marginTop: 60 }}>What ÆInbox Gives You</h2>
 
       <ul>
         <li>🔐 Privacy-first email</li>
-        <li>🤖 Built-in AI assistant (<img src="/aei.png" alt="AEi" width={72} />)</li>
+        <li>🤖 Built-in AI assistant (Æi)</li>
         <li>🛡️ Phishing & threat awareness</li>
         <li>🌑 Clean dark-mode interface</li>
       </ul>
