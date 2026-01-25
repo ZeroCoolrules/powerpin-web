@@ -32,7 +32,7 @@ export default async function AEinboxPage() {
 		alt="ÆInbox"
 		style={{ height: 56, marginBottom: 20 }}
 	 />
-	 <img src="/aei.png" alt="Æi" width={32} />
+	 <img src="/aei.png" alt="AEi" width={72} />
 
       <p>
         <strong>Secure Email. Intelligent Assistant. Human-First.</strong>

@@ -36,7 +36,7 @@ export default function InboxPage() {
       {/* LEFT SIDEBAR */}
       <aside className="w-64 border-r border-green-800 p-4">
         <div className="flex items-center gap-2 mb-6">
-          <img src="/aei.png" alt="Æi" width={28} />
+          <img src="/aei.png" alt="AEi" width={64} />
           <span className="text-sm opacity-80">Æi Assistant</span>
         </div>
 
@@ -58,7 +58,7 @@ export default function InboxPage() {
       {/* Æi PANEL */}
       <aside className="w-80 border-l border-green-800 p-4">
         <div className="flex items-center gap-3 mb-4">
-          <img src="/aei.png" alt="Æi" width={32} />
+          <img src="/aei.png" alt="AEi" width={72} />
           <strong>Æi</strong>
         </div>
 
