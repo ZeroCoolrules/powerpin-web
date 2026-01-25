@@ -79,8 +79,7 @@ export default function RegisterPage() {
           <p style={{ marginTop: 10, opacity: 0.8 }}>
             Create your ÆInbox account
           </p>
-        </div>
-
+        
         <input
           type="email"
           placeholder="email"
