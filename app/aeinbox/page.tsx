@@ -23,7 +23,7 @@ export default async function AEinboxPage() {
       if (!error && data) isSubscribed = true
     }
   } catch {
-    // fail silently — landing pages should NEVER crash
+    // Landing pages should never crash
   }
 
   return (
@@ -35,22 +35,23 @@ export default async function AEinboxPage() {
         textAlign: "center",
       }}
     >
+      {/* BRAND */}
       <div
-	style={{
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 48,
-		}}
-	>
-	<Image
-		src="/aeinbox-wordmark.png"
-		alt="ÆInbox"
-		width={340}
-		height={80}
-		priority
-	/>
-	</div>
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          marginBottom: 48,
+        }}
+      >
+        <Image
+          src="/aeinbox-wordmark.png"
+          alt="ÆInbox"
+          width={340}
+          height={80}
+          priority
+        />
+      </div>
 
       {/* HERO */}
       <h1
@@ -76,26 +77,35 @@ export default async function AEinboxPage() {
         <strong>Æi</strong>. No ads. No tracking. No data selling.
       </p>
 
-      {/* PRIMARY ACTION */}
+      {/* 🔒 LOGIN / REGISTER GATE */}
       {!accessToken && (
-        <a
-          href="/login"
-          style={{
-            display: "inline-block",
-            marginTop: 40,
-            padding: "16px 42px",
-            background: "#00ffa3",
-            color: "#000",
-            fontWeight: "bold",
-            borderRadius: 999,
-            textDecoration: "none",
-            boxShadow: "0 0 40px rgba(0,255,163,0.35)",
-          }}
-        >
-          Log in to get started
-        </a>
+        <div style={{ marginTop: 40 }}>
+          <a
+            href="/login"
+            style={{
+              display: "inline-block",
+              padding: "16px 42px",
+              background: "#00ffa3",
+              color: "#000",
+              fontWeight: "bold",
+              borderRadius: 999,
+              textDecoration: "none",
+              boxShadow: "0 0 40px rgba(0,255,163,0.45)",
+            }}
+          >
+            Log in to get started
+          </a>
+
+          <div style={{ marginTop: 16, fontSize: 14, opacity: 0.85 }}>
+            New here?{" "}
+            <a href="/register" style={{ color: "#00ffa3", fontWeight: 600 }}>
+              Create an account
+            </a>
+          </div>
+        </div>
       )}
 
+      {/* 💳 SUBSCRIPTION CTA */}
       {accessToken && !isSubscribed && (
         <a
           href={process.env.NEXT_PUBLIC_STRIPE_CHECKOUT_URL}
@@ -162,12 +172,7 @@ export default async function AEinboxPage() {
             animation: "pulse 3s ease-in-out infinite",
           }}
         >
-          <Image
-            src="/aei.png"
-            alt="Æi Assistant"
-            width={96}
-            height={96}
-          />
+          <Image src="/aei.png" alt="Æi Assistant" width={96} height={96} />
         </div>
 
         <h1 style={{ marginTop: 22 }}>Meet Æi</h1>
@@ -190,7 +195,7 @@ export default async function AEinboxPage() {
         Powered by Archway Power
       </p>
 
-      {/* BREATHING ANIMATION */}
+      {/* ANIMATION */}
       <style>{`
         @keyframes pulse {
           0% { box-shadow: 0 0 25px rgba(0,255,163,0.4); }
