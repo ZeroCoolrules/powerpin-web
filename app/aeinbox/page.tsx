@@ -162,7 +162,7 @@ export default async function AEinboxPage() {
           />
         </div>
 
-        <h2 style={{ marginTop: 22 }}>Meet Æi</h2>
+        <h1 style={{ marginTop: 22 }}>Meet Æi</h1>
 
         <p
           style={{
