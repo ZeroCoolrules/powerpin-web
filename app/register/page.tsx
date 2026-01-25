@@ -2,17 +2,18 @@
 
 import { useState } from "react"
 import { createClient } from "@supabase/supabase-js"
-import { useRouter } from "next/navigation"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 
 export default function RegisterPage() {
   const router = useRouter()
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
+  // ✅ PASSWORD RULES
   const passwordValid =
     password.length >= 8 &&
     /[A-Z]/.test(password) &&
@@ -20,8 +21,10 @@ export default function RegisterPage() {
     /\d/.test(password) &&
     /[^A-Za-z0-9]/.test(password)
 
-  async function signUp(e: React.FormEvent) {
+  async function handleRegister(e: React.FormEvent) {
     e.preventDefault()
+    if (!passwordValid) return
+
     setLoading(true)
     setError(null)
 
@@ -45,33 +48,12 @@ export default function RegisterPage() {
       return
     }
 
-    // Do NOT auto-login
     router.push("/register/check-email")
   }
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "#000",
-        color: "#e6eaf0",
-      }}
-    >
-      <form
-        onSubmit={signUp}
-        style={{
-          width: 420,
-          padding: 32,
-          borderRadius: 20,
-          background: "rgba(15,23,32,0.9)",
-          border: "1px solid #1f2937",
-          boxShadow: "0 0 60px rgba(0,255,163,0.15)",
-        }}
-      >
-        {/* BRAND */}
+    <div style={container}>
+      <form onSubmit={handleRegister} style={card}>
         <div style={{ textAlign: "center", marginBottom: 32 }}>
           <Image
             src="/aeinbox-wordmark.png"
@@ -85,59 +67,49 @@ export default function RegisterPage() {
           </p>
         </div>
 
+        {/* EMAIL */}
         <input
           type="email"
-          placeholder="email"
+          placeholder="Email"
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          style={inputStyle}
+          style={input}
         />
 
+        {/* PASSWORD */}
         <input
           type="password"
-          placeholder="password"
+          placeholder="Password"
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          style={{ ...inputStyle, marginTop: 14 }}
+          style={{ ...input, marginTop: 14 }}
         />
 
-        {/* PASSWORD RULES */}
-        <p style={{ fontSize: 12, opacity: 0.7, marginTop: 8 }}>
+        {/* HELP TEXT */}
+        <p style={{ fontSize: 12, marginTop: 8, opacity: 0.7 }}>
           Password must be at least 8 characters, include uppercase, lowercase,
           a number, and a special character.
         </p>
 
-        <ul style={{ fontSize: 12, marginTop: 6, opacity: 0.85 }}>
-          <li style={{ color: password.length >= 8 ? "#00ffa3" : "#6b7280" }}>
-            • At least 8 characters
-          </li>
-          <li style={{ color: /[A-Z]/.test(password) ? "#00ffa3" : "#6b7280" }}>
-            • Uppercase letter
-          </li>
-          <li style={{ color: /[a-z]/.test(password) ? "#00ffa3" : "#6b7280" }}>
-            • Lowercase letter
-          </li>
-          <li style={{ color: /\d/.test(password) ? "#00ffa3" : "#6b7280" }}>
-            • Number
-          </li>
-          <li
-            style={{
-              color: /[^A-Za-z0-9]/.test(password) ? "#00ffa3" : "#6b7280",
-            }}
-          >
-            • Special character
-          </li>
+        {/* CHECKLIST */}
+        <ul style={{ fontSize: 12, marginTop: 6 }}>
+          <Rule ok={password.length >= 8} label="At least 8 characters" />
+          <Rule ok={/[A-Z]/.test(password)} label="Uppercase letter" />
+          <Rule ok={/[a-z]/.test(password)} label="Lowercase letter" />
+          <Rule ok={/\d/.test(password)} label="Number" />
+          <Rule ok={/[^A-Za-z0-9]/.test(password)} label="Special character" />
         </ul>
 
         {error && (
-          <div style={{ marginTop: 12, color: "#f87171", fontSize: 14 }}>
+          <div style={{ marginTop: 10, color: "#f87171", fontSize: 14 }}>
             {error}
           </div>
         )}
 
         <button
+          type="submit"
           disabled={loading || !passwordValid}
           style={{
             marginTop: 22,
@@ -147,23 +119,13 @@ export default function RegisterPage() {
             background: passwordValid ? "#00ffa3" : "#064e3b",
             color: "#000",
             fontWeight: 700,
-            cursor: loading || !passwordValid ? "not-allowed" : "pointer",
-            boxShadow: passwordValid
-              ? "0 0 40px rgba(0,255,163,0.45)"
-              : "none",
+            cursor: passwordValid ? "pointer" : "not-allowed",
           }}
         >
           {loading ? "Creating account…" : "Create account"}
         </button>
 
-        <div
-          style={{
-            marginTop: 22,
-            textAlign: "center",
-            fontSize: 14,
-            opacity: 0.8,
-          }}
-        >
+        <div style={{ marginTop: 22, textAlign: "center", fontSize: 14 }}>
           Already have an account?{" "}
           <a href="/login" style={{ color: "#00ffa3" }}>
             Log in
@@ -174,7 +136,33 @@ export default function RegisterPage() {
   )
 }
 
-const inputStyle: React.CSSProperties = {
+function Rule({ ok, label }: { ok: boolean; label: string }) {
+  return (
+    <li style={{ color: ok ? "#00ffa3" : "#6b7280" }}>
+      • {label}
+    </li>
+  )
+}
+
+const container: React.CSSProperties = {
+  minHeight: "100vh",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  background: "#000",
+  color: "#e6eaf0",
+}
+
+const card: React.CSSProperties = {
+  width: 420,
+  padding: 32,
+  borderRadius: 20,
+  background: "rgba(15,23,32,0.9)",
+  border: "1px solid #1f2937",
+  boxShadow: "0 0 60px rgba(0,255,163,0.15)",
+}
+
+const input: React.CSSProperties = {
   width: "100%",
   padding: "14px 16px",
   borderRadius: 12,
