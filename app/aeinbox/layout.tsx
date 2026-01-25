@@ -29,7 +29,7 @@ export default function AEinboxLayout({
     ·
 	<a href="/security" style={{ margin: "0 10px", color: "#9ca3af" }}>Security</a></div>
 
-		<div>© {new Date().getFullYear()} ÆInbox · A PoWERPiN / Archway Power product</div>
+		<div>© {new Date().getFullYear()} ÆInbox / Archway Power product</div>
 	</footer>
 
     </div>

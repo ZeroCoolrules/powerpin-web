@@ -41,7 +41,7 @@ export default async function AEinboxPage() {
       {/* 🔒 LOGIN GATE */}
       {!accessToken && (
         <a
-          href="/login"
+          href="/aeinbox/login"
           style={{
             display: "inline-block",
             marginTop: 25,
