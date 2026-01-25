@@ -12,12 +12,32 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
+  // 🌐 DOMAIN-AWARE BRANDING (CLIENT SAFE)
+  const isInbox =
+    typeof window !== "undefined" &&
+    window.location.hostname.includes("inboxae.com")
+
+  const brand = isInbox
+    ? {
+        name: "ÆInbox",
+        tagline: "Secure Email. Human-First.",
+        accent: "text-emerald-400",
+        border: "border-emerald-600",
+        hover: "hover:bg-emerald-900",
+      }
+    : {
+        name: "PoWERPiN",
+        tagline: "Connected Intelligence",
+        accent: "text-green-400",
+        border: "border-green-700",
+        hover: "hover:bg-green-900",
+      }
+
   async function signIn(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
     setError(null)
 
-    // ✅ CREATE SUPABASE CLIENT AT RUNTIME (NOT AT BUILD)
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -35,19 +55,21 @@ export default function LoginPage() {
       return
     }
 
-    router.push("/dashboard")
+    // ✅ CORRECT POST-LOGIN ROUTE
+    router.push("/inbox")
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black text-green-400 font-mono">
+    <div className="min-h-screen flex items-center justify-center bg-black font-mono">
       <form
         onSubmit={signIn}
-        className="border border-green-700 p-6 w-96 space-y-4"
+        className={`border ${brand.border} p-6 w-96 space-y-4`}
       >
-        <h1 className="text-lg">PoWERPiN Login</h1>
+        <h1 className={`text-lg ${brand.accent}`}>{brand.name}</h1>
+        <p className="text-xs opacity-70">{brand.tagline}</p>
 
         <input
-          className="w-full bg-black border border-green-700 p-2"
+          className={`w-full bg-black border ${brand.border} p-2`}
           placeholder="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -55,17 +77,17 @@ export default function LoginPage() {
 
         <input
           type="password"
-          className="w-full bg-black border border-green-700 p-2"
+          className={`w-full bg-black border ${brand.border} p-2`}
           placeholder="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        {error && <div className="text-red-400">{error}</div>}
+        {error && <div className="text-red-400 text-sm">{error}</div>}
 
         <button
           disabled={loading}
-          className="w-full border border-green-700 py-2 hover:bg-green-900"
+          className={`w-full border ${brand.border} py-2 ${brand.hover}`}
         >
           {loading ? "Signing in…" : "Sign in"}
         </button>

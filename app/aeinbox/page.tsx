@@ -27,7 +27,12 @@ export default async function AEinboxPage() {
 
   return (
     <main style={{ maxWidth: 1100, margin: "auto", padding: "60px 20px" }}>
-      <h1 style={{ fontSize: "3rem" }}>ÆInbox</h1>
+      <img
+		src="/aeinbox-wordmark.png"
+		alt="ÆInbox"
+		style={{ height: 56, marginBottom: 20 }}
+	 />
+	 <img src="/aei.png" alt="Æi" width={32} />
 
       <p>
         <strong>Secure Email. Intelligent Assistant. Human-First.</strong>
