@@ -35,7 +35,8 @@ export default async function AEinboxPage() {
 		priority
 	  />
 
-	 
+	 <img src="/aei.png" alt="AEi" width={72} />
+
       <p>
         <strong>Secure Email. Intelligent Assistant. Human-First.</strong>
       </p>
@@ -109,7 +110,7 @@ export default async function AEinboxPage() {
           </a>
         </div>
       )}
-	  <img src="/aei.png" alt="AEi" width={72} />
+
       <h2 style={{ marginTop: 60 }}>What ÆInbox Gives You</h2>
 
       <ul>
