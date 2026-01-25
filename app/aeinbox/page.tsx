@@ -35,14 +35,22 @@ export default async function AEinboxPage() {
         textAlign: "center",
       }}
     >
-      {/* WORDMARK */}
-      <Image
-        src="/aeinbox-wordmark.png"
-        alt="ÆInbox"
-        width={360}
-        height={90}
-        priority
-      />
+      <div
+	style={{
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 48,
+		}}
+	>
+	<Image
+		src="/aeinbox-wordmark.png"
+		alt="ÆInbox"
+		width={340}
+		height={80}
+		priority
+	/>
+	</div>
 
       {/* HERO */}
       <h1
