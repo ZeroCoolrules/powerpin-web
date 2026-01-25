@@ -120,7 +120,7 @@ export default async function AEinboxPage() {
       </p>
 
       <p style={{ marginTop: 60, opacity: 0.7 }}>
-        Powered by PoWERPiN
+        Powered by Archway Power
       </p>
     </main>
   )

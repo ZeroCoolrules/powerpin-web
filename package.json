@@ -9,10 +9,12 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@ai-sdk/luma": "^2.0.11",
     "@heroicons/react": "^2.2.0",
     "@supabase/auth-helpers-nextjs": "^0.8.7",
     "@supabase/supabase-js": "^2.89.0",
     "framer-motion": "^12.23.26",
+    "fund": "^1.0.0",
     "next": "^15.4.8",
     "openai": "^6.15.0",
     "pip": "^0.0.1",
