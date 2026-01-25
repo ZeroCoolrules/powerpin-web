@@ -24,23 +24,22 @@ export default function RegisterPage() {
     )
 
     const { error } = await supabase.auth.signUp({
-	  email,
-	  password,
-	  options: {
-			emailRedirectTo: "https://inboxae.com/login",
-		},
-	})
+      email,
+      password,
+      options: {
+        emailRedirectTo: "https://inboxae.com/login",
+      },
+    })
 
-		setLoading(false)
+    setLoading(false)
 
-		if (error) {
-			setError(error.message)
-			return
-		}
+    if (error) {
+      setError(error.message)
+      return
+    }
 
-		// ✅ DO NOT auto-login
-		router.push("/register/check-email")
-
+    // ✅ DO NOT auto-login
+    router.push("/register/check-email")
   }
 
   return (
@@ -66,20 +65,19 @@ export default function RegisterPage() {
         }}
       >
         {/* 🧠 BRAND WORDMARK */}
-		<div style={{ textAlign: "center", marginBottom: 40 }}>
-		  <Image
-			src="/aeinbox-wordmark.png"
-			alt="ÆInbox"
-			width={340}
-			height={80}
-			priority
-		  />
-		</div>
-
+        <div style={{ textAlign: "center", marginBottom: 28 }}>
+          <Image
+            src="/aeinbox-wordmark.png"
+            alt="ÆInbox"
+            width={340}
+            height={80}
+            priority
+          />
           <p style={{ marginTop: 10, opacity: 0.8 }}>
             Create your ÆInbox account
           </p>
-        
+        </div>
+
         <input
           type="email"
           placeholder="email"
