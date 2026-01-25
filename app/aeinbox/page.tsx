@@ -172,7 +172,12 @@ export default async function AEinboxPage() {
             animation: "pulse 3s ease-in-out infinite",
           }}
         >
-          <Image src="/aei.png" alt="Æi Assistant" width={96} height={96} />
+          <Image
+            src="/aei.png"
+            alt="Æi Assistant"
+            width={96}
+            height={96}
+          />
         </div>
 
         <h1 style={{ marginTop: 22 }}>Meet Æi</h1>
@@ -191,6 +196,7 @@ export default async function AEinboxPage() {
         </p>
       </div>
 
+      {/* FOOTER */}
       <p style={{ marginTop: 90, opacity: 0.6 }}>
         Powered by Archway Power
       </p>
