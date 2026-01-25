@@ -1,4 +1,5 @@
 import { cookies } from "next/headers"
+import Image from "next/image"
 import { supabaseFromJWT } from "@/lib/supabase"
 
 export default async function AEinboxPage() {
@@ -11,33 +12,37 @@ export default async function AEinboxPage() {
 
   let isSubscribed = false
 
-  if (accessToken) {
-    const supabase = supabaseFromJWT(accessToken)
+  // ✅ NEVER allow server render to throw
+  try {
+    if (accessToken) {
+      const supabase = supabaseFromJWT(accessToken)
 
-    const { data } = await supabase
-      .from("subscriptions")
-      .select("id")
-      .eq("status", "active")
-      .single()
+      const { data, error } = await supabase
+        .from("subscriptions")
+        .select("id")
+        .eq("status", "active")
+        .single()
 
-    if (data) {
-      isSubscribed = true
+      if (!error && data) {
+        isSubscribed = true
+      }
     }
+  } catch (err) {
+    console.error("ÆInbox subscription check failed", err)
   }
 
   return (
     <main style={{ maxWidth: 1100, margin: "auto", padding: "60px 20px" }}>
+      {/* 🧠 BRAND WORDMARK */}
       <Image
-		src="/aeinbox-wordmark.png"
-		alt="ÆInbox"
-		width={340}
-		height={80}
-		priority
-	  />
+        src="/aeinbox-wordmark.png"
+        alt="ÆInbox"
+        width={340}
+        height={80}
+        priority
+      />
 
-	 <img src="/aei.png" alt="AEi" width={72} />
-
-      <p>
+      <p style={{ marginTop: 20 }}>
         <strong>Secure Email. Intelligent Assistant. Human-First.</strong>
       </p>
 
@@ -49,7 +54,7 @@ export default async function AEinboxPage() {
       {/* 🔒 LOGIN GATE */}
       {!accessToken && (
         <a
-          href="/aeinbox/login"
+          href="/login"
           style={{
             display: "inline-block",
             marginTop: 25,
@@ -98,9 +103,7 @@ export default async function AEinboxPage() {
 
           <p>Your subscription is active.</p>
 
-          <p>
-            ÆInbox features will appear here as they come online.
-          </p>
+          <p>ÆInbox features will appear here as they come online.</p>
 
           <a
             href="https://billing.stripe.com/p/login/fZufZhdrd5yD0BTfzRaEE00"
@@ -120,9 +123,29 @@ export default async function AEinboxPage() {
         <li>🌑 Clean dark-mode interface</li>
       </ul>
 
-      <h2 style={{ marginTop: 60 }}>Meet Æi</h2>
+      {/* 🤖 Æi SECTION — ICON BELONGS HERE */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 16,
+          marginTop: 60,
+        }}
+      >
+        <Image
+          src="/aei.png"
+          alt="Æi Assistant"
+          width={72}
+          height={72}
+          style={{
+            filter: "drop-shadow(0 0 14px rgba(0,255,163,0.6))",
+          }}
+        />
 
-      <p>
+        <h2 style={{ margin: 0 }}>Meet Æi</h2>
+      </div>
+
+      <p style={{ marginTop: 12 }}>
         Æi drafts replies, summarizes long threads, and helps you spot suspicious
         emails — so you stay focused, not flooded.
       </p>
