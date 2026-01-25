@@ -27,13 +27,15 @@ export default async function AEinboxPage() {
 
   return (
     <main style={{ maxWidth: 1100, margin: "auto", padding: "60px 20px" }}>
-      <img
+      <Image
 		src="/aeinbox-wordmark.png"
 		alt="ÆInbox"
-		style={{ height: 56, marginBottom: 20 }}
-	 />
-	 <img src="/aei.png" alt="AEi" width={72} />
+		width={340}
+		height={80}
+		priority
+	  />
 
+	 
       <p>
         <strong>Secure Email. Intelligent Assistant. Human-First.</strong>
       </p>
@@ -112,7 +114,7 @@ export default async function AEinboxPage() {
 
       <ul>
         <li>🔐 Privacy-first email</li>
-        <li>🤖 Built-in AI assistant (Æi)</li>
+        <li>🤖 Built-in AI assistant (<img src="/aei.png" alt="AEi" width={72} />)</li>
         <li>🛡️ Phishing & threat awareness</li>
         <li>🌑 Clean dark-mode interface</li>
       </ul>
