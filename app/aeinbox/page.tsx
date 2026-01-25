@@ -175,7 +175,7 @@ export default async function AEinboxPage() {
             boxShadow: "0 0 0 rgba(0,255,163,0.0)",
           }}
         >
-          <Image src="/aei.png" alt="Æi" width={52_attach} height={52} />
+          <Image src="/aei.png" alt="Æi" width={52} height={52} />
         </div>
 
         <h2 style={{ marginTop: 22 }}>Meet Æi</h2>
