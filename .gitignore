@@ -69,3 +69,5 @@ builder/
 # Allow Stripe API routes
 !app/api/stripe/**
 
+stripe
+stripe.exe
