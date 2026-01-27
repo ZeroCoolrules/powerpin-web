@@ -4,20 +4,16 @@ import { NextRequest, NextResponse } from "next/server"
 import Stripe from "stripe"
 import { createClient } from "@supabase/supabase-js"
 
-/* ===============================
-   STRIPE
-================================ */
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2024-06-20",
-})
-
-/* ===============================
-   WEBHOOK HANDLER
-================================ */
 export async function POST(req: NextRequest) {
   /* ===============================
+     STRIPE (RUNTIME ONLY)
+  =============================== */
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+    apiVersion: "2024-06-20",
+  })
+
+  /* ===============================
      SUPABASE ADMIN (RUNTIME ONLY)
-     ⚠️ MUST BE INSIDE HANDLER
   =============================== */
   const supabaseAdmin = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
