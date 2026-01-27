@@ -2,41 +2,35 @@
 
 import { useState } from "react"
 
-export default function PasswordInput({
-  value,
-  onChange,
-  placeholder = "Password",
-}: {
+type Props = {
   value: string
-  onChange: (v: string) => void
-  placeholder?: string
-}) {
+  onChange: (value: string) => void
+}
+
+export default function PasswordInput({ value, onChange }: Props) {
   const [show, setShow] = useState(false)
 
   return (
-    <div style={{ position: "relative", width: "100%" }}>
+    <div style={{ position: "relative" }}>
       <input
         type={show ? "text" : "password"}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        autoComplete="current-password"
+        placeholder="Password"
         style={{
           width: "100%",
           padding: "14px 44px 14px 14px",
+          background: "transparent",
+          border: "1px solid #00ffa3",
           borderRadius: 10,
-          border: "1px solid #1f2937",
-          background: "#0b0f14",
-          color: "#ffffff",
+          color: "#fff",
           fontSize: 16,
-          outline: "none",
         }}
       />
 
       <button
         type="button"
         onClick={() => setShow(!show)}
-        aria-label={show ? "Hide password" : "Show password"}
         style={{
           position: "absolute",
           right: 12,
@@ -44,12 +38,13 @@ export default function PasswordInput({
           transform: "translateY(-50%)",
           background: "none",
           border: "none",
-          cursor: "pointer",
-          fontSize: 18,
           color: "#00ffa3",
+          cursor: "pointer",
+          fontSize: 14,
         }}
+        aria-label={show ? "Hide password" : "Show password"}
       >
-        {show ? "🙈" : "👁️"}
+        {show ? "🙈" : "👁"}
       </button>
     </div>
   )
