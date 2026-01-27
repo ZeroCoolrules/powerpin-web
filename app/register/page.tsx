@@ -1,5 +1,5 @@
 "use client"
-
+import PasswordInput from "@/components/PasswordInput"
 import { useState } from "react"
 import { createClient } from "@supabase/supabase-js"
 import Image from "next/image"
@@ -78,14 +78,12 @@ export default function RegisterPage() {
         />
 
         {/* PASSWORD */}
-        <input
-          type="password"
-          placeholder="Password"
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          style={{ ...input, marginTop: 14 }}
-        />
+        <PasswordInput
+		  value={password} 
+		  onChange={setPassword}
+		  placeholder="Password"		  
+		/>
+
 
         {/* HELP TEXT */}
         <p style={{ fontSize: 12, marginTop: 8, opacity: 0.7 }}>
