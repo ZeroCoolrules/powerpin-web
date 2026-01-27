@@ -1,198 +1,221 @@
 import Image from "next/image"
-import { cookies } from "next/headers"
-import { supabaseFromJWT } from "@/lib/supabase"
 
-export default async function AEinboxPage() {
-  const cookieStore = cookies()
-
-  const accessToken =
-    cookieStore.get("sb-access-token")?.value ??
-    cookieStore.get("supabase-auth-token")?.value
-
-  let isSubscribed = false
-
-  try {
-    if (accessToken) {
-      const supabase = supabaseFromJWT(accessToken)
-      const { data, error } = await supabase
-        .from("subscriptions")
-        .select("id")
-        .eq("status", "active")
-        .single()
-
-      if (!error && data) isSubscribed = true
-    }
-  } catch {
-    // never crash landing page
-  }
-
+export default function AEinboxLanding() {
   return (
     <main
       style={{
         minHeight: "100vh",
-        background: "#0b0f14",
-        color: "#e6eaf0",
-        padding: "80px 20px",
+        background:
+          "radial-gradient(circle at top, #0f172a 0%, #020617 60%)",
+        color: "#e5e7eb",
+        padding: "120px 20px 80px",
+        textAlign: "center",
+        position: "relative",
+        overflow: "hidden",
       }}
     >
-      <div style={{ maxWidth: 1100, margin: "auto", textAlign: "center" }}>
-        {/* LOGO */}
-        <div style={{ marginBottom: 40 }}>
-          <Image
-            src="/aeinbox-wordmark.png"
-            alt="ÆInbox"
-            width={320}
-            height={80}
-            priority
-          />
-        </div>
+      {/* BEAT PULSE */}
+      <div className="beatPulse" />
 
-        {/* HERO */}
-        <h1 style={{ fontSize: "3rem", marginBottom: 12 }}>
-          Secure Email. Intelligent Assistant. Human-First.
-        </h1>
+      {/* LOGO */}
+      <div style={{ marginBottom: 40, position: "relative", zIndex: 2 }}>
+        <Image
+          src="/aeinbox-wordmark.png"
+          alt="ÆInbox"
+          width={300}
+          height={72}
+          priority
+        />
+      </div>
+
+      {/* HERO */}
+      <h1 style={{ fontSize: "2.6rem", fontWeight: 600 }}>
+        Secure Email. Intelligent Assistant. Human-First.
+      </h1>
+
+      <p
+        style={{
+          marginTop: 14,
+          fontSize: "1.05rem",
+          opacity: 0.85,
+          maxWidth: 680,
+          marginInline: "auto",
+        }}
+      >
+        ÆInbox is a private inbox with a built-in AI assistant called Æi.
+        No ads. No tracking. No data selling.
+      </p>
+
+      {/* CTA */}
+      <div style={{ marginTop: 36 }}>
+        <a
+          href="/login"
+          style={{
+            display: "inline-block",
+            padding: "14px 36px",
+            borderRadius: 999,
+            background: "#22f3b1",
+            color: "#020617",
+            fontWeight: 700,
+            textDecoration: "none",
+            boxShadow: "0 0 40px rgba(34,243,177,.45)",
+          }}
+        >
+          Log in to get started
+        </a>
+
+        <div style={{ marginTop: 12, fontSize: 13 }}>
+          New here?{" "}
+          <a
+            href="/register"
+            style={{ color: "#22f3b1", fontWeight: 600 }}
+          >
+            Create an account
+          </a>
+        </div>
+      </div>
+
+      {/* DIFFERENT */}
+      <section style={{ marginTop: 90 }}>
+        <h2 style={{ fontSize: "1.7rem", fontWeight: 600 }}>
+          What Makes ÆInbox Different
+        </h2>
+
+        <ul
+          style={{
+            listStyle: "none",
+            padding: 0,
+            marginTop: 28,
+            lineHeight: "2.1rem",
+            fontSize: "1rem",
+            opacity: 0.9,
+          }}
+        >
+          <li>🔐 Privacy-first email</li>
+          <li>🤖 Built-in AI assistant (Æi)</li>
+          <li>🛡️ Phishing & threat awareness</li>
+          <li>🌑 Clean dark-mode interface</li>
+        </ul>
+      </section>
+
+      {/* AI */}
+      <section style={{ marginTop: 90 }}>
+        <h2 style={{ fontSize: "1.7rem", fontWeight: 600 }}>
+          Meet Æi — Your AI Assistant
+        </h2>
 
         <p
           style={{
-            maxWidth: 720,
-            margin: "0 auto",
-            fontSize: "1.15rem",
-            opacity: 0.85,
+            marginTop: 16,
+            maxWidth: 620,
+            marginInline: "auto",
+            opacity: 0.8,
           }}
         >
-          ÆInbox is a private inbox with a built-in AI assistant called{" "}
-          <strong>Æi</strong>. No ads. No tracking. No data selling.
+          Æi drafts replies, summarizes long threads, flags suspicious
+          messages, and helps you stay focused — not flooded.
         </p>
+      </section>
 
-        {/* CTA */}
-        {!accessToken && (
-          <div style={{ marginTop: 40 }}>
-            <a
-              href="/login"
-              style={ctaStyle}
-            >
-              Log in to get started
-            </a>
+      {/* PRICING */}
+      <section style={{ marginTop: 100 }}>
+        <h2 style={{ fontSize: "1.7rem", fontWeight: 600 }}>
+          Pricing
+        </h2>
 
-            <div style={{ marginTop: 12, fontSize: 14 }}>
-              New here?{" "}
-              <a href="/register" style={{ color: "#00ffa3" }}>
-                Create an account
-              </a>
-            </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            gap: 18,
+            marginTop: 32,
+            flexWrap: "wrap",
+          }}
+        >
+          <div className="priceCard">
+            <strong>$5</strong>
+            <div>Secure Email</div>
           </div>
-        )}
 
-        {accessToken && !isSubscribed && (
-          <div style={{ marginTop: 40 }}>
-            <a
-              href={process.env.NEXT_PUBLIC_STRIPE_CHECKOUT_URL}
-              style={ctaStyle}
-            >
-              Start with Æi — $10/month
-            </a>
+          <div className="priceCard featured">
+            <strong>$10</strong>
+            <div>Secure Email + AI</div>
+            <small>Most Popular</small>
           </div>
-        )}
 
-        {accessToken && isSubscribed && (
-          <div style={{ marginTop: 40 }}>
-            <a
-              href="/api/stripe/portal"
-              style={{
-                ...ctaStyle,
-                background: "transparent",
-                color: "#00ffa3",
-                border: "2px solid #00ffa3",
-              }}
-            >
-              Manage billing
-            </a>
+          <div className="priceCard">
+            <strong>$15</strong>
+            <div>Pro Tier</div>
+            <small>Coming Soon</small>
           </div>
-        )}
+        </div>
 
-        {/* FEATURES */}
-        <section style={{ marginTop: 90 }}>
-          <h2 style={{ fontSize: "2rem", marginBottom: 24 }}>
-            What Makes ÆInbox Different
-          </h2>
+        <p style={{ marginTop: 28, fontSize: 13, opacity: 0.6 }}>
+          No ads · No tracking · Cancel anytime
+        </p>
+      </section>
 
-          <ul style={featureListStyle}>
-            <li>🔐 Privacy-first email (no data selling)</li>
-            <li>🤖 AI that writes, summarizes, and protects</li>
-            <li>🛡️ Built-in phishing & threat detection</li>
-            <li>🌑 Clean dark-mode interface</li>
-          </ul>
-        </section>
+      {/* FOOTER */}
+      <footer style={{ marginTop: 120, fontSize: 12, opacity: 0.45 }}>
+        Powered by Archway Power · © 2026 ÆInbox
+      </footer>
 
-        {/* AI SECTION */}
-        <section style={{ marginTop: 90 }}>
-          <h2 style={{ fontSize: "2rem", marginBottom: 20 }}>
-            Meet Æi — Your AI Assistant
-          </h2>
+      {/* STYLES */}
+      <style>{`
+        .beatPulse {
+          position: absolute;
+          top: 140px;
+          left: 50%;
+          width: 280px;
+          height: 280px;
+          transform: translateX(-50%);
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(34,243,177,.25) 0%, transparent 70%);
+          animation: beat 3.2s ease-in-out infinite;
+          z-index: 1;
+          pointer-events: none;
+        }
 
-          <p style={{ maxWidth: 680, margin: "0 auto", opacity: 0.8 }}>
-            Æi drafts replies, summarizes long threads, flags suspicious emails,
-            and helps you stay focused — not flooded.
-          </p>
-        </section>
+        @keyframes beat {
+          0% {
+            transform: translateX(-50%) scale(0.92);
+            opacity: 0.25;
+          }
+          40% {
+            transform: translateX(-50%) scale(1);
+            opacity: 0.45;
+          }
+          100% {
+            transform: translateX(-50%) scale(0.92);
+            opacity: 0.25;
+          }
+        }
 
-        {/* PRICING */}
-        <section style={{ marginTop: 90 }}>
-          <h2 style={{ fontSize: "2rem", marginBottom: 30 }}>Pricing</h2>
+        .priceCard {
+          width: 190px;
+          padding: 18px 14px;
+          border-radius: 14px;
+          background: rgba(255,255,255,0.04);
+          box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
+        }
 
-          <div style={pricingGridStyle}>
-            <div style={priceCardStyle}>$5 — Secure Email</div>
-            <div style={{ ...priceCardStyle, borderColor: "#00ffa3" }}>
-              <strong>$10 — Secure Email + AI</strong>
-            </div>
-            <div style={priceCardStyle}>$15 — Pro (Coming Soon)</div>
-          </div>
-        </section>
+        .priceCard strong {
+          font-size: 1.4rem;
+        }
 
-        {/* TRUST */}
-        <section style={{ marginTop: 90 }}>
-          <p style={{ opacity: 0.7 }}>
-            No ads · No tracking · Cancel anytime · Human-first technology
-          </p>
-        </section>
+        .priceCard.featured {
+          box-shadow:
+            0 0 40px rgba(34,243,177,.35),
+            inset 0 0 0 1px #22f3b1;
+        }
 
-        {/* FOOTER */}
-        <footer style={{ marginTop: 120, fontSize: 13, opacity: 0.6 }}>
-          Powered by Archway Power · © 2026 ÆInbox
-        </footer>
-      </div>
+        .priceCard small {
+          display: block;
+          margin-top: 4px;
+          font-size: 11px;
+          opacity: .65;
+        }
+      `}</style>
     </main>
   )
-}
-
-/* styles */
-const ctaStyle: React.CSSProperties = {
-  display: "inline-block",
-  padding: "16px 42px",
-  background: "#00ffa3",
-  color: "#000",
-  fontWeight: "bold",
-  borderRadius: 999,
-  textDecoration: "none",
-  boxShadow: "0 0 40px rgba(0,255,163,0.45)",
-}
-
-const featureListStyle: React.CSSProperties = {
-  listStyle: "none",
-  padding: 0,
-  fontSize: "1.05rem",
-  lineHeight: "2.2rem",
-}
-
-const pricingGridStyle: React.CSSProperties = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-  gap: 20,
-}
-
-const priceCardStyle: React.CSSProperties = {
-  border: "1px solid rgba(255,255,255,0.15)",
-  padding: 24,
-  borderRadius: 16,
-  background: "rgba(255,255,255,0.03)",
 }
