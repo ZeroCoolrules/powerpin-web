@@ -105,53 +105,53 @@ export default function AEinboxLanding() {
 
       {/* Æi + BEAT */}
       <section
-        style={{
-          marginTop: 110,
-          position: "relative",
-        }}
-      >
-        <div
-		  style={{
-		   position: "relative",
-		   width: 160,
-		   height: 160,
-		   margin: "0 auto 24px",
-		   display: "flex",
-           alignItems: "center",
-           justifyContent: "center",
-		}}
-	   >
-	{/* BEAT PULSE */}
-		<div className="beatPulse" />
+		style={{
+			marginTop: 110,
+			position: "relative",
+			}}
+		>
+			<div
+				style={{
+					position: "relative",
+				width: 160,
+				height: 160,
+				margin: "0 auto 24px",
+				display: "flex",
+				alignItems: "center",
+				justifyContent: "center",
+				}}
+			>
+			{/* BEAT PULSE */}
+			<div className="beatPulse" />
 
-		{/* Æi ICON */}
+			{/* Æi ICON */}
 			<Image
-			  src="/apple-touch-icon.png"
-			  alt="Æi"
-			  width={120}
-			  height={120}
-			  priority
-			  style={{ zIndex: 2 }}
-		    />
-		</div>
+				src="/apple-touch-icon.png"
+				alt="Æi"
+				width={120}
+				height={120}
+				priority
+				style={{ zIndex: 2 }}
+			/>
+			</div>
 
+		<h2 style={{ fontSize: "1.7rem", fontWeight: 600 }}>
+			Meet Æi — Your AI Assistant
+		</h2>
 
-        <h2 style={{ fontSize: "1.7rem", fontWeight: 600 }}>
-          Meet Æi — Your AI Assistant
-        </h2>
+		<p
+			style={{
+				marginTop: 16,
+				maxWidth: 620,
+				marginInline: "auto",
+				opacity: 0.8,
+			}}
+		>
+			Æi drafts replies, summarizes long threads, flags suspicious
+			messages, and helps you stay focused — not flooded.
+		</p>
+	</section>
 
-        <p
-          style={{
-            marginTop: 16,
-            maxWidth: 620,
-            marginInline: "auto",
-            opacity: 0.8,
-          }}
-        >
-          Æi drafts replies, summarizes long threads, flags suspicious
-          messages, and helps you stay focused — not flooded.
-        </p>
-      </section>
 
       {/* PRICING */}
       <section style={{ marginTop: 110 }}>
@@ -192,6 +192,7 @@ export default function AEinboxLanding() {
             opacity: 0.6,
             letterSpacing: "0.02em",
             textAlign: "center",
+			justifyContent: "center"
             width: "100%",
           }}
         >
