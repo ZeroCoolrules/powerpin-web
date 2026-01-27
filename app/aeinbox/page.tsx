@@ -33,12 +33,12 @@ export default function AEinboxLanding() {
       <div className="beatPulse" />
 
       {/* LOGO */}
-      <div style={{ marginBottom: 40, position: "relative", zIndex: 2 }}>
+      <div style={{ marginBottom: 40, position: "center", zIndex: 2 }}>
         <Image
           src="/aeinbox-wordmark.png"
           alt="ÆInbox"
-          width={300}
-          height={72}
+          width={343}
+          height={80}
           priority
         />
       </div>
@@ -160,9 +160,19 @@ export default function AEinboxLanding() {
           </div>
         </div>
 
-        <p style={{ marginTop: 28, fontSize: 13, opacity: 0.6 }}>
-          No ads · No tracking · Cancel anytime
-        </p>
+        <p
+		 style={{
+		  marginTop: 28,
+		  fontSize: 13,
+		  opacity: 0.6,
+		  letterSpacing: "0.02em",
+		  textAlign: "center",
+		  width: "100%",
+		}}
+	  >
+		No ads · No tracking · Cancel anytime
+	  </p>
+
       </section>
 
       {/* FOOTER */}
