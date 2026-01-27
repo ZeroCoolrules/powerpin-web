@@ -2,13 +2,32 @@ export const runtime = "nodejs"
 
 import { NextRequest, NextResponse } from "next/server"
 import Stripe from "stripe"
-import { supabaseAdmin } from "@/lib/supabase"
+import { createClient } from "@supabase/supabase-js"
 
+/* ===============================
+   STRIPE
+================================ */
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: "2024-06-20",
+})
+
+/* ===============================
+   SUPABASE ADMIN (INLINE – FIX)
+================================ */
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  {
+    auth: {
+      persistSession: false,
+    },
+  }
+)
+
+/* ===============================
+   WEBHOOK HANDLER
+================================ */
 export async function POST(req: NextRequest) {
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    apiVersion: "2024-06-20",
-  })
-
   const body = await req.text()
   const sig = req.headers.get("stripe-signature")
 
@@ -29,42 +48,64 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "invalid_signature" }, { status: 400 })
   }
 
-  switch (event.type) {
-    case "checkout.session.completed": {
-      const session = event.data.object as Stripe.Checkout.Session
+  try {
+    switch (event.type) {
+      /* ===============================
+         CHECKOUT COMPLETE
+      =============================== */
+      case "checkout.session.completed": {
+        const session = event.data.object as Stripe.Checkout.Session
+        const userId = session.metadata?.user_id
 
-      const userId = session.metadata?.user_id
-      if (!userId) break
+        if (!userId) break
 
-      await supabaseAdmin
-        .from("subscriptions")
-        .update({
-          stripe_customer_id: session.customer as string,
-          stripe_subscription_id: session.subscription as string,
-          status: "active",
-        })
-        .eq("user_id", userId)
+        await supabaseAdmin
+          .from("subscriptions")
+          .update({
+            stripe_customer_id: session.customer as string,
+            stripe_subscription_id: session.subscription as string,
+            status: "active",
+          })
+          .eq("user_id", userId)
 
-      break
+        break
+      }
+
+      /* ===============================
+         SUBSCRIPTION CHANGES
+      =============================== */
+      case "customer.subscription.updated":
+      case "customer.subscription.deleted": {
+        const sub = event.data.object as Stripe.Subscription
+
+        const status =
+          sub.status === "active" || sub.status === "trialing"
+            ? "active"
+            : "canceled"
+
+        const current_period_end = sub.current_period_end
+          ? new Date(sub.current_period_end * 1000).toISOString()
+          : null
+
+        await supabaseAdmin
+          .from("subscriptions")
+          .update({
+            status,
+            current_period_end,
+          })
+          .eq("stripe_subscription_id", sub.id)
+
+        break
+      }
+
+      default:
+        // ignore everything else
+        break
     }
 
-    case "customer.subscription.updated":
-    case "customer.subscription.deleted": {
-      const sub = event.data.object as Stripe.Subscription
-
-      await supabaseAdmin
-        .from("subscriptions")
-        .update({
-          status: sub.status === "active" ? "active" : "canceled",
-          current_period_end: new Date(
-            sub.current_period_end * 1000
-          ).toISOString(),
-        })
-        .eq("stripe_subscription_id", sub.id)
-
-      break
-    }
+    return NextResponse.json({ received: true })
+  } catch (err) {
+    console.error("Webhook handler crashed:", err)
+    return NextResponse.json({ error: "webhook_failed" }, { status: 500 })
   }
-
-  return NextResponse.json({ received: true })
 }
