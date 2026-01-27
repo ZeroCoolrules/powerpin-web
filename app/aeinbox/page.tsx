@@ -2,9 +2,6 @@ import { cookies } from "next/headers"
 import Image from "next/image"
 import { supabaseFromJWT } from "@/lib/supabase"
 
-/* ===============================
-   SERVER PAGE
-================================ */
 export default async function AEinboxPage() {
   const cookieStore = cookies()
 
@@ -26,7 +23,7 @@ export default async function AEinboxPage() {
       if (!error && data) isSubscribed = true
     }
   } catch {
-    // never crash landing page
+    // Never crash landing page
   }
 
   return (
@@ -74,7 +71,7 @@ export default async function AEinboxPage() {
         <strong>Æi</strong>. No ads. No tracking. No data selling.
       </p>
 
-      {/* LOGIN / REGISTER */}
+      {/* 🔒 LOGIN / REGISTER */}
       {!accessToken && (
         <div style={{ marginTop: 40 }}>
           <a
@@ -102,117 +99,68 @@ export default async function AEinboxPage() {
         </div>
       )}
 
-      {/* SUBSCRIBE */}
+      {/* 💳 NOT SUBSCRIBED */}
       {accessToken && !isSubscribed && (
-        <form action="/api/checkout" method="POST" style={{ marginTop: 40 }}>
-          <button
-            type="submit"
+        <a
+          href={process.env.NEXT_PUBLIC_STRIPE_CHECKOUT_URL}
+          style={{
+            display: "inline-block",
+            marginTop: 40,
+            padding: "16px 42px",
+            background: "#00ffa3",
+            color: "#000",
+            fontWeight: "bold",
+            borderRadius: 999,
+            textDecoration: "none",
+            boxShadow: "0 0 40px rgba(0,255,163,0.45)",
+          }}
+        >
+          Start with Æi — $10/month
+        </a>
+      )}
+
+      {/* ✅ SUBSCRIBED */}
+      {accessToken && isSubscribed && (
+        <div style={{ marginTop: 40 }}>
+          <a
+            href="/aeinbox/app"
             style={{
+              display: "inline-block",
               padding: "16px 42px",
               background: "#00ffa3",
               color: "#000",
               fontWeight: "bold",
               borderRadius: 999,
-              border: "none",
-              cursor: "pointer",
-              boxShadow: "0 0 40px rgba(0,255,163,0.45)",
+              textDecoration: "none",
+              marginRight: 16,
             }}
           >
-            Start with Æi — $10/month
-          </button>
-        </form>
-      )}
+            Open ÆInbox
+          </a>
 
-      {/* MANAGE SUBSCRIPTION */}
-      {accessToken && isSubscribed && (
-        <form action="/api/portal" method="POST" style={{ marginTop: 40 }}>
-          <button
-            type="submit"
-            style={{
-              padding: "14px 36px",
-              background: "#0a0a0a",
-              color: "#00ffa3",
-              border: "1px solid #00ffa3",
-              borderRadius: 999,
-              cursor: "pointer",
-            }}
-          >
-            Manage subscription
-          </button>
-        </form>
-      )}
-
-      {/* FEATURES */}
-      <h2 style={{ marginTop: 90, fontSize: "1.9rem", fontWeight: 600 }}>
-        What ÆInbox Gives You
-      </h2>
-
-      <ul
-        style={{
-          listStyle: "none",
-          padding: 0,
-          marginTop: 24,
-          fontSize: "1.05rem",
-          lineHeight: "2.2rem",
-        }}
-      >
-        <li>🔐 Privacy-first email</li>
-        <li>🤖 Built-in AI assistant (Æi)</li>
-        <li>🛡️ Phishing & threat awareness</li>
-        <li>🌑 Clean dark-mode interface</li>
-      </ul>
-
-      {/* Æi CARD */}
-      <div
-        style={{
-          marginTop: 90,
-          padding: "50px 30px",
-          borderRadius: 28,
-          background: "rgba(255,255,255,0.03)",
-          boxShadow: "0 0 120px rgba(0,255,163,0.18)",
-        }}
-      >
-        <div
-          style={{
-            width: 96,
-            height: 96,
-            margin: "0 auto",
-            borderRadius: 26,
-            overflow: "hidden",
-            boxShadow: "0 0 35px rgba(0,255,163,0.6)",
-            animation: "pulse 3s ease-in-out infinite",
-          }}
-        >
-          <Image src="/aei.png" alt="Æi Assistant" width={96} height={96} />
+          <form action="/api/portal" method="POST" style={{ display: "inline" }}>
+            <button
+              type="submit"
+              style={{
+                padding: "16px 42px",
+                background: "transparent",
+                color: "#00ffa3",
+                fontWeight: "bold",
+                borderRadius: 999,
+                border: "2px solid #00ffa3",
+                cursor: "pointer",
+              }}
+            >
+              Manage billing
+            </button>
+          </form>
         </div>
+      )}
 
-        <h1 style={{ marginTop: 22 }}>Meet Æi</h1>
-
-        <p
-          style={{
-            marginTop: 12,
-            fontSize: "1.05rem",
-            opacity: 0.8,
-            maxWidth: 600,
-            marginInline: "auto",
-          }}
-        >
-          Æi drafts replies, summarizes long threads, and helps you spot
-          suspicious emails — so you stay focused, not flooded.
-        </p>
-      </div>
-
+      {/* FOOTER */}
       <p style={{ marginTop: 90, opacity: 0.6 }}>
         Powered by Archway Power
       </p>
-
-      <style>{`
-        @keyframes pulse {
-          0% { box-shadow: 0 0 25px rgba(0,255,163,0.4); }
-          50% { box-shadow: 0 0 55px rgba(0,255,163,0.8); }
-          100% { box-shadow: 0 0 25px rgba(0,255,163,0.4); }
-        }
-      `}</style>
     </main>
   )
 }
