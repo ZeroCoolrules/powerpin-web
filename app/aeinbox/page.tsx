@@ -29,11 +29,16 @@ export default function AEinboxLanding() {
         overflow: "hidden",
       }}
     >
-      {/* BEAT PULSE */}
-      <div className="beatPulse" />
-
       {/* LOGO */}
-      <div style={{ marginBottom: 40, position: "center", zIndex: 2 }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          marginBottom: 40,
+          position: "relative",
+          zIndex: 2,
+        }}
+      >
         <Image
           src="/aeinbox-wordmark.png"
           alt="ÆInbox"
@@ -63,19 +68,13 @@ export default function AEinboxLanding() {
 
       {/* CTA */}
       <div style={{ marginTop: 36 }}>
-        <button
-          onClick={() => router.push("/login")}
-          style={ctaBtn}
-        >
+        <button onClick={() => router.push("/login")} style={ctaBtn}>
           Log in to get started
         </button>
 
         <div style={{ marginTop: 12, fontSize: 13 }}>
           New here?{" "}
-          <button
-            onClick={() => router.push("/register")}
-            style={linkBtn}
-          >
+          <button onClick={() => router.push("/register")} style={linkBtn}>
             Create an account
           </button>
         </div>
@@ -104,8 +103,39 @@ export default function AEinboxLanding() {
         </ul>
       </section>
 
-      {/* AI */}
-      <section style={{ marginTop: 90 }}>
+      {/* Æi + BEAT */}
+      <section
+        style={{
+          marginTop: 110,
+          position: "relative",
+        }}
+      >
+        <div
+		  style={{
+		   position: "relative",
+		   width: 160,
+		   height: 160,
+		   margin: "0 auto 24px",
+		   display: "flex",
+           alignItems: "center",
+           justifyContent: "center",
+		}}
+	
+	{/* BEAT PULSE */}
+		<div className="beatPulse" />
+
+		{/* Æi ICON */}
+			<Image
+			  src="/apple-touch-icon.png"
+			  alt="Æi"
+			  width={120}
+			  height={120}
+			  priority
+			  style={{ zIndex: 2 }}
+		    />
+		</div>
+
+
         <h2 style={{ fontSize: "1.7rem", fontWeight: 600 }}>
           Meet Æi — Your AI Assistant
         </h2>
@@ -124,7 +154,7 @@ export default function AEinboxLanding() {
       </section>
 
       {/* PRICING */}
-      <section style={{ marginTop: 100 }}>
+      <section style={{ marginTop: 110 }}>
         <h2 style={{ fontSize: "1.7rem", fontWeight: 600 }}>
           Pricing
         </h2>
@@ -138,11 +168,6 @@ export default function AEinboxLanding() {
             flexWrap: "wrap",
           }}
         >
-          <div className="priceCard">
-            <strong>$5</strong>
-            <div>Secure Email</div>
-          </div>
-
           <button
             onClick={startCheckout}
             className="priceCard featured"
@@ -161,55 +186,64 @@ export default function AEinboxLanding() {
         </div>
 
         <p
-		 style={{
-		  marginTop: 28,
-		  fontSize: 13,
-		  opacity: 0.6,
-		  letterSpacing: "0.02em",
-		  textAlign: "center",
-		  width: "100%",
-		}}
-	  >
-		No ads · No tracking · Cancel anytime
-	  </p>
-
+          style={{
+            marginTop: 28,
+            fontSize: 13,
+            opacity: 0.6,
+            letterSpacing: "0.02em",
+            textAlign: "center",
+            width: "100%",
+          }}
+        >
+          No ads · No tracking · Cancel anytime
+        </p>
       </section>
 
       {/* FOOTER */}
-      <footer style={{ marginTop: 120, fontSize: 12, opacity: 0.45 }}>
+      <footer
+        style={{
+          marginTop: 120,
+          fontSize: 12,
+          opacity: 0.45,
+          textAlign: "center",
+        }}
+      >
         Powered by Archway Power · © 2026 ÆInbox
       </footer>
 
-      {/* STYLES */}
-      <style>{`
-        .beatPulse {
-          position: absolute;
-          top: 140px;
-          left: 50%;
-          width: 280px;
-          height: 280px;
-          transform: translateX(-50%);
-          border-radius: 50%;
-          background: radial-gradient(circle, rgba(34,243,177,.25) 0%, transparent 70%);
-          animation: beat 3.2s ease-in-out infinite;
-          z-index: 1;
-          pointer-events: none;
-        }
+		{/* STYLES */}
+		<style>{`
+			.beatPulse {
+			  position: absolute;
+			width: 160px;
+			height: 160px;
+			border-radius: 50%;
+			background: radial-gradient(
+			circle,
+			rgba(34,243,177,0.28) 0%,
+			transparent 70%
+			);
+			animation: beat 3.2s ease-in-out infinite;
+			z-index: 1;
+			pointer-events: none;
+		  }
 
-        @keyframes beat {
-          0% {
-            transform: translateX(-50%) scale(0.92);
-            opacity: 0.25;
-          }
-          40% {
-            transform: translateX(-50%) scale(1);
-            opacity: 0.45;
-          }
-          100% {
-            transform: translateX(-50%) scale(0.92);
-            opacity: 0.25;
-          }
-        }
+
+			@keyframes beat {
+			  0% {
+				transform: scale(0.9);
+				opacity: 0.25;
+			  }
+			  40% {
+			  transform: scale(1);
+			  opacity: 0.45;
+			  }
+			  100% {
+			  transform: scale(0.9);
+			  opacity: 0.25;
+		    }
+		  }
+
 
         .priceCard {
           width: 190px;
