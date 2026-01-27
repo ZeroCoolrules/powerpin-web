@@ -120,7 +120,7 @@ export default function AEinboxLanding() {
            alignItems: "center",
            justifyContent: "center",
 		}}
-	
+	   >
 	{/* BEAT PULSE */}
 		<div className="beatPulse" />
 
