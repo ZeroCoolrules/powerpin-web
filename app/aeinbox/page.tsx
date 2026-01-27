@@ -192,7 +192,7 @@ export default function AEinboxLanding() {
             opacity: 0.6,
             letterSpacing: "0.02em",
             textAlign: "center",
-			justifyContent: "center"
+			justifyContent: "center",
             width: "100%",
           }}
         >
