@@ -1,6 +1,21 @@
+"use client"
+
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 
 export default function AEinboxLanding() {
+  const router = useRouter()
+
+  async function startCheckout() {
+    const res = await fetch("/api/checkout", { method: "POST" })
+    if (!res.ok) {
+      alert("Checkout failed")
+      return
+    }
+    const { url } = await res.json()
+    window.location.href = url
+  }
+
   return (
     <main
       style={{
@@ -48,30 +63,21 @@ export default function AEinboxLanding() {
 
       {/* CTA */}
       <div style={{ marginTop: 36 }}>
-        <a
-          href="/login"
-          style={{
-            display: "inline-block",
-            padding: "14px 36px",
-            borderRadius: 999,
-            background: "#22f3b1",
-            color: "#020617",
-            fontWeight: 700,
-            textDecoration: "none",
-            boxShadow: "0 0 40px rgba(34,243,177,.45)",
-          }}
+        <button
+          onClick={() => router.push("/login")}
+          style={ctaBtn}
         >
           Log in to get started
-        </a>
+        </button>
 
         <div style={{ marginTop: 12, fontSize: 13 }}>
           New here?{" "}
-          <a
-            href="/register"
-            style={{ color: "#22f3b1", fontWeight: 600 }}
+          <button
+            onClick={() => router.push("/register")}
+            style={linkBtn}
           >
             Create an account
-          </a>
+          </button>
         </div>
       </div>
 
@@ -137,11 +143,15 @@ export default function AEinboxLanding() {
             <div>Secure Email</div>
           </div>
 
-          <div className="priceCard featured">
+          <button
+            onClick={startCheckout}
+            className="priceCard featured"
+            style={{ cursor: "pointer" }}
+          >
             <strong>$10</strong>
             <div>Secure Email + AI</div>
             <small>Most Popular</small>
-          </div>
+          </button>
 
           <div className="priceCard">
             <strong>$15</strong>
@@ -197,6 +207,8 @@ export default function AEinboxLanding() {
           border-radius: 14px;
           background: rgba(255,255,255,0.04);
           box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
+          border: none;
+          color: inherit;
         }
 
         .priceCard strong {
@@ -218,4 +230,24 @@ export default function AEinboxLanding() {
       `}</style>
     </main>
   )
+}
+
+/* BUTTON STYLES */
+const ctaBtn: React.CSSProperties = {
+  padding: "14px 36px",
+  borderRadius: 999,
+  background: "#22f3b1",
+  color: "#020617",
+  fontWeight: 700,
+  border: "none",
+  cursor: "pointer",
+  boxShadow: "0 0 40px rgba(34,243,177,.45)",
+}
+
+const linkBtn: React.CSSProperties = {
+  background: "none",
+  border: "none",
+  color: "#22f3b1",
+  fontWeight: 600,
+  cursor: "pointer",
 }
