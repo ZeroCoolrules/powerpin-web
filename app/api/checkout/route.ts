@@ -3,7 +3,10 @@ export const runtime = "nodejs"
 import Stripe from "stripe"
 import { NextResponse } from "next/server"
 
-export async function POST(req: Request) {
+
+export async function POST() {
+  try {
+	  export async function POST(req: Request) {
   if (!process.env.STRIPE_SECRET_KEY) {
     throw new Error("STRIPE_SECRET_KEY is not set")
   }
@@ -12,11 +15,7 @@ export async function POST(req: Request) {
     apiVersion: "2023-10-16",
   })
 
-}
-
-
-export async function POST() {
-  try {
+	}
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
       payment_method_types: ["card"],
