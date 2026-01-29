@@ -1,4 +1,4 @@
-export const runtime = "nodejs"
+exporexport const runtime = "nodejs"
 
 import Stripe from "stripe"
 import { NextResponse } from "next/server"
@@ -7,14 +7,14 @@ import { createClient } from "@supabase/supabase-js"
 export async function POST(req: Request) {
   try {
     /* ===============================
-       STRIPE (runtime only)
+       STRIPE (server runtime only)
     =============================== */
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
       apiVersion: "2023-10-16",
     })
 
     /* ===============================
-       SUPABASE ADMIN (runtime only)
+       SUPABASE ADMIN (service role)
     =============================== */
     const supabaseAdmin = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -27,7 +27,8 @@ export async function POST(req: Request) {
     /* ===============================
        INPUT
     =============================== */
-    const { user_id } = await req.json()
+    const body = await req.json()
+    const { user_id } = body
 
     if (!user_id) {
       return NextResponse.json(
@@ -37,15 +38,29 @@ export async function POST(req: Request) {
     }
 
     /* ===============================
+       VALIDATE USER EXISTS
+       (prevents ID spoofing)
+    =============================== */
+    const { data: userData, error: userError } =
+      await supabaseAdmin.auth.admin.getUserById(user_id)
+
+    if (userError || !userData?.user) {
+      return NextResponse.json(
+        { error: "invalid_user" },
+        { status: 401 }
+      )
+    }
+
+    /* ===============================
        LOOK UP STRIPE CUSTOMER
     =============================== */
-    const { data, error } = await supabaseAdmin
+    const { data: subscription, error: subError } = await supabaseAdmin
       .from("subscriptions")
       .select("stripe_customer_id")
       .eq("user_id", user_id)
       .single()
 
-    if (error || !data?.stripe_customer_id) {
+    if (subError || !subscription?.stripe_customer_id) {
       return NextResponse.json(
         { error: "customer_not_found" },
         { status: 404 }
@@ -56,13 +71,19 @@ export async function POST(req: Request) {
        CREATE STRIPE PORTAL SESSION
     =============================== */
     const portalSession = await stripe.billingPortal.sessions.create({
-      customer: data.stripe_customer_id,
+      customer: subscription.stripe_customer_id,
       return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/aeinbox`,
     })
 
-    return NextResponse.json({ url: portalSession.url })
+    /* ===============================
+       SUCCESS
+    =============================== */
+    return NextResponse.json({
+      url: portalSession.url,
+    })
   } catch (err) {
     console.error("Stripe portal error:", err)
+
     return NextResponse.json(
       { error: "portal_failed" },
       { status: 500 }

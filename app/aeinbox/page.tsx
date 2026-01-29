@@ -2,6 +2,8 @@
 
 import Image from "next/image"
 import { useRouter } from "next/navigation"
+import StartButton from "@/components/StartButton"
+
 
 export default function AEinboxLanding() {
   const router = useRouter()
@@ -156,55 +158,70 @@ export default function AEinboxLanding() {
       </section>
 
       {/* PRICING */}
-      <section style={{ marginTop: 110, position: "relative" }}>
-        <div className="sectionPulse" />
-        <div style={{ position: "relative", zIndex: 2 }}>
-          <h2 style={{ fontSize: "1.7rem", fontWeight: 600 }}>
-            Pricing
-          </h2>
-
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              gap: 18,
-              marginTop: 32,
-              flexWrap: "wrap",
-            }}
-          >
-            <button
-              onClick={startCheckout}
-              className="priceCard featured"
-              style={{ cursor: "pointer" }}
-            >
-              <strong>$10</strong>
-              <div>Secure Email + AI</div>
-              <small>Most Popular</small>
-            </button>
-
-            <div className="priceCard">
-              <strong>$15</strong>
-              <div>Pro Tier</div>
-              <small>Coming Soon</small>
-            </div>
-          </div>
-
-          <p
-		     style={{
-			marginTop: 28,
-			fontSize: 13,
-			opacity: 0.6,
-			letterSpacing: "0.02em",
-			textAlign: "center",
-			maxWidth: 360,
-			marginInline: "auto",
+		  <section
+			style={{
+				marginTop: 110,
+				position: "relative",
+				overflow: "hidden",
 			}}
-		  >
-			No ads · No tracking · Cancel anytime
-		  </p>
+		>
+  
+	  {/* SECTION PULSE */}
+		<div className="sectionPulse" />
 
-        </div>
-      </section>
+		{/* CONTENT */}
+		<div
+			style={{
+		position: "relative",
+		zIndex: 2,
+		textAlign: "center",
+		}}
+	  >
+    <h2 style={{ fontSize: "1.7rem", fontWeight: 600 }}>
+      Pricing
+    </h2>
+
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        gap: 18,
+        marginTop: 32,
+        flexWrap: "wrap",
+      }}
+    >
+      <button
+        onClick={startCheckout}
+        className="priceCard featured"
+        style={{ cursor: "pointer" }}
+      >
+        <strong>$10</strong>
+        <div>Secure Email + AI</div>
+        <small>Most Popular</small>
+      </button>
+
+      <div className="priceCard">
+        <strong>$15</strong>
+        <div>Pro Tier</div>
+        <small>Coming Soon</small>
+      </div>
+    </div>
+
+    <p
+      style={{
+        marginTop: 28,
+        fontSize: 13,
+        opacity: 0.6,
+        letterSpacing: "0.02em",
+        textAlign: "center",
+        maxWidth: 360,
+        marginInline: "auto",
+      }}
+    >
+       No ads · No tracking · Cancel anytime
+    </p>
+  </div>
+</section>
 
       {/* FOOTER */}
       <footer
