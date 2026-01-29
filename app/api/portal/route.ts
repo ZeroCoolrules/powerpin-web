@@ -1,4 +1,4 @@
-exporexport const runtime = "nodejs"
+export const runtime = "nodejs"
 
 import Stripe from "stripe"
 import { NextResponse } from "next/server"
