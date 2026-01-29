@@ -3,42 +3,33 @@ export const runtime = "nodejs"
 import Stripe from "stripe"
 import { NextResponse } from "next/server"
 
-export async function POST(req: Request) {
+export async function POST() {
   try {
     if (!process.env.STRIPE_SECRET_KEY) {
-      throw new Error("STRIPE_SECRET_KEY is not set")
+      throw new Error("STRIPE_SECRET_KEY not set")
     }
 
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
       apiVersion: "2023-10-16",
     })
 
-    const body = await req.json()
-    const { price_id, success_url, cancel_url } = body
-
-    if (!price_id || !success_url || !cancel_url) {
-      return NextResponse.json(
-        { error: "missing_parameters" },
-        { status: 400 }
-      )
-    }
-
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
       payment_method_types: ["card"],
       line_items: [
         {
-          price: price_id,
+          // 🔴 PUT YOUR REAL PRICE ID HERE
+          price: "price_1SsMPTGotGAw4Xyoct48mgPc",
           quantity: 1,
         },
       ],
-      success_url,
-      cancel_url,
+      success_url: "https://inboxae.com/aeinbox",
+      cancel_url: "https://inboxae.com/aeinbox",
     })
 
     return NextResponse.json({ url: session.url })
   } catch (err) {
-    console.error("Stripe checkout error:", err)
+    console.error("Checkout error:", err)
     return NextResponse.json(
       { error: "checkout_failed" },
       { status: 500 }
