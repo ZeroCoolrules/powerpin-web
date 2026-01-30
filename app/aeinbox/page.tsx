@@ -164,13 +164,7 @@ export default function AEinboxLanding() {
       >
         <div className="sectionPulse" />
 
-        <div
-          style={{
-            position: "relative",
-            zIndex: 2,
-            textAlign: "center",
-          }}
-        >
+        <div style={{ position: "relative", zIndex: 2 }}>
           <h2 style={{ fontSize: "1.7rem", fontWeight: 600 }}>
             Pricing
           </h2>
@@ -321,3 +315,14 @@ export default function AEinboxLanding() {
           opacity: .65;
         }
       `}</style>
+    </main>
+  )
+}
+
+const linkBtn: React.CSSProperties = {
+  background: "none",
+  border: "none",
+  color: "#22f3b1",
+  fontWeight: 600,
+  cursor: "pointer",
+}
