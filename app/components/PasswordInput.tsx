@@ -8,7 +8,7 @@ export default function PasswordInput({
   placeholder,
 }: {
   value: string
-  onChange: (v: string) => void
+  onChange: (value: string) => void
   placeholder?: string
 }) {
   const [show, setShow] = useState(false)
@@ -19,7 +19,7 @@ export default function PasswordInput({
         type={show ? "text" : "password"}
         placeholder={placeholder}
         value={value}
-        onChange={(e) => onChange(e.target.value)} // 🔴 THIS LINE
+        onChange={(e) => onChange(e.target.value)}  // 🔥 THIS WAS MISSING
         style={{
           width: "100%",
           padding: "14px 44px 14px 14px",
@@ -28,6 +28,7 @@ export default function PasswordInput({
           borderRadius: 10,
           color: "#fff",
           fontSize: 16,
+          outline: "none",
         }}
       />
       <button
