@@ -4,7 +4,6 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import StartButton from "@/components/StartButton"
 
-
 export default function AEinboxLanding() {
   const router = useRouter()
 
@@ -76,9 +75,7 @@ export default function AEinboxLanding() {
 
           {/* CTA */}
           <div style={{ marginTop: 36 }}>
-            <button onClick={() => router.push("/login")} style={ctaBtn}>
-              Log in to get started
-            </button>
+            <StartButton />
 
             <div style={{ marginTop: 12, fontSize: 13 }}>
               New here?{" "}
@@ -158,70 +155,66 @@ export default function AEinboxLanding() {
       </section>
 
       {/* PRICING */}
-		  <section
-			style={{
-				marginTop: 110,
-				position: "relative",
-				overflow: "hidden",
-			}}
-		>
-  
-	  {/* SECTION PULSE */}
-		<div className="sectionPulse" />
-
-		{/* CONTENT */}
-		<div
-			style={{
-		position: "relative",
-		zIndex: 2,
-		textAlign: "center",
-		}}
-	  >
-    <h2 style={{ fontSize: "1.7rem", fontWeight: 600 }}>
-      Pricing
-    </h2>
-
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        gap: 18,
-        marginTop: 32,
-        flexWrap: "wrap",
-      }}
-    >
-      <button
-        onClick={startCheckout}
-        className="priceCard featured"
-        style={{ cursor: "pointer" }}
+      <section
+        style={{
+          marginTop: 110,
+          position: "relative",
+          overflow: "hidden",
+        }}
       >
-        <strong>$10</strong>
-        <div>Secure Email + AI</div>
-        <small>Most Popular</small>
-      </button>
+        <div className="sectionPulse" />
 
-      <div className="priceCard">
-        <strong>$15</strong>
-        <div>Pro Tier</div>
-        <small>Coming Soon</small>
-      </div>
-    </div>
+        <div
+          style={{
+            position: "relative",
+            zIndex: 2,
+            textAlign: "center",
+          }}
+        >
+          <h2 style={{ fontSize: "1.7rem", fontWeight: 600 }}>
+            Pricing
+          </h2>
 
-    <p
-      style={{
-        marginTop: 28,
-        fontSize: 13,
-        opacity: 0.6,
-        letterSpacing: "0.02em",
-        textAlign: "center",
-        maxWidth: 360,
-        marginInline: "auto",
-      }}
-    >
-       No ads · No tracking · Cancel anytime
-    </p>
-  </div>
-</section>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              gap: 18,
+              marginTop: 32,
+              flexWrap: "wrap",
+            }}
+          >
+            <button
+              onClick={startCheckout}
+              className="priceCard featured"
+              style={{ cursor: "pointer" }}
+            >
+              <strong>$10</strong>
+              <div>Secure Email + AI</div>
+              <small>Most Popular</small>
+            </button>
+
+            <div className="priceCard">
+              <strong>$15</strong>
+              <div>Pro Tier</div>
+              <small>Coming Soon</small>
+            </div>
+          </div>
+
+          <p
+            style={{
+              marginTop: 28,
+              fontSize: 13,
+              opacity: 0.6,
+              letterSpacing: "0.02em",
+              maxWidth: 360,
+              marginInline: "auto",
+            }}
+          >
+            No ads · No tracking · Cancel anytime
+          </p>
+        </div>
+      </section>
 
       {/* FOOTER */}
       <footer
@@ -327,26 +320,4 @@ export default function AEinboxLanding() {
           font-size: 11px;
           opacity: .65;
         }
-      `}</style>
-    </main>
-  )
-}
-
-const ctaBtn: React.CSSProperties = {
-  padding: "14px 36px",
-  borderRadius: 999,
-  background: "#22f3b1",
-  color: "#020617",
-  fontWeight: 700,
-  border: "none",
-  cursor: "pointer",
-  boxShadow: "0 0 40px rgba(34,243,177,.45)",
-}
-
-const linkBtn: React.CSSProperties = {
-  background: "none",
-  border: "none",
-  color: "#22f3b1",
-  fontWeight: 600,
-  cursor: "pointer",
-}
+      `}
