@@ -1,4 +1,5 @@
 "use client"
+
 import PasswordInput from "app/components/PasswordInput"
 import { useState } from "react"
 import { createClient } from "@supabase/supabase-js"
@@ -13,7 +14,7 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // ✅ PASSWORD RULES
+  // PASSWORD RULES
   const passwordValid =
     password.length >= 8 &&
     /[A-Z]/.test(password) &&
@@ -33,7 +34,7 @@ export default function RegisterPage() {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     )
 
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -41,13 +42,13 @@ export default function RegisterPage() {
       },
     })
 
-    setLoading(false)
-
     if (error) {
       setError(error.message)
+      setLoading(false)
       return
     }
 
+    setLoading(false)
     router.push("/register/check-email")
   }
 
@@ -79,11 +80,10 @@ export default function RegisterPage() {
 
         {/* PASSWORD */}
         <PasswordInput
-		  value={password} 
-		  onChange={setPassword}
-		  placeholder="Password"		  
-		/>
-
+          value={password}
+          onChange={setPassword}
+          placeholder="Password"
+        />
 
         {/* HELP TEXT */}
         <p style={{ fontSize: 12, marginTop: 8, opacity: 0.7 }}>
@@ -97,7 +97,10 @@ export default function RegisterPage() {
           <Rule ok={/[A-Z]/.test(password)} label="Uppercase letter" />
           <Rule ok={/[a-z]/.test(password)} label="Lowercase letter" />
           <Rule ok={/\d/.test(password)} label="Number" />
-          <Rule ok={/[^A-Za-z0-9]/.test(password)} label="Special character" />
+          <Rule
+            ok={/[^A-Za-z0-9]/.test(password)}
+            label="Special character"
+          />
         </ul>
 
         {error && (
