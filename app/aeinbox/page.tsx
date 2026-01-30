@@ -2,7 +2,8 @@
 
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import StartButton from "@/components/StartButton"
+import StartButton from "@/app/components/StartButton"
+
 
 export default function AEinboxLanding() {
   const router = useRouter()
