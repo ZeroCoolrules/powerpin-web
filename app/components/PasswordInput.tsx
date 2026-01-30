@@ -2,21 +2,24 @@
 
 import { useState } from "react"
 
-type Props = {
+export default function PasswordInput({
+  value,
+  onChange,
+  placeholder,
+}: {
   value: string
-  onChange: (value: string) => void
-}
-
-export default function PasswordInput({ value, onChange }: Props) {
+  onChange: (v: string) => void
+  placeholder?: string
+}) {
   const [show, setShow] = useState(false)
 
   return (
     <div style={{ position: "relative" }}>
       <input
         type={show ? "text" : "password"}
+        placeholder={placeholder}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder="Password"
+        onChange={(e) => onChange(e.target.value)} // 🔴 THIS LINE
         style={{
           width: "100%",
           padding: "14px 44px 14px 14px",
@@ -27,7 +30,6 @@ export default function PasswordInput({ value, onChange }: Props) {
           fontSize: 16,
         }}
       />
-
       <button
         type="button"
         onClick={() => setShow(!show)}
@@ -42,9 +44,9 @@ export default function PasswordInput({ value, onChange }: Props) {
           cursor: "pointer",
           fontSize: 14,
         }}
-        aria-label={show ? "Hide password" : "Show password"}
+        aria-label="Show password"
       >
-        {show ? "🙈" : "👁"}
+        👁
       </button>
     </div>
   )
