@@ -1,18 +1,54 @@
 "use client"
 
-import { useState } from "react"
-import { createClient } from "@supabase/supabase-js"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import { getSupabaseBrowser } from "@/lib/supabase-browser"
 
 export default function LoginPage() {
   const router = useRouter()
+  const supabase = getSupabaseBrowser()
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  // 🌐 DOMAIN-AWARE BRANDING (CLIENT SAFE)
+  /**
+   * 🔑 HARD FIX
+   * Explicitly exchange email-confirmation token
+   * Overrides cached / wrong sessions
+   */
+  useEffect(() => {
+    const syncSessionFromUrl = async () => {
+      const url = new URL(window.location.href)
+
+      // Supabase may send ?code= after email confirm
+      const code = url.searchParams.get("code")
+
+      if (code) {
+        const { error } = await supabase.auth.exchangeCodeForSession(code)
+
+        if (error) {
+          console.error("Auth exchange failed:", error.message)
+          setError("Login verification failed. Please try again.")
+          return
+        }
+
+        router.replace("/inbox")
+        return
+      }
+
+      // Fallback — already logged in
+      const { data } = await supabase.auth.getSession()
+      if (data.session) {
+        router.replace("/inbox")
+      }
+    }
+
+    syncSessionFromUrl()
+  }, [router, supabase])
+
+  // 🌐 DOMAIN-AWARE BRANDING
   const isInbox =
     typeof window !== "undefined" &&
     window.location.hostname.includes("inboxae.com")
@@ -38,11 +74,6 @@ export default function LoginPage() {
     setLoading(true)
     setError(null)
 
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    )
-
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -55,7 +86,6 @@ export default function LoginPage() {
       return
     }
 
-    // ✅ CORRECT POST-LOGIN ROUTE
     router.push("/inbox")
   }
 
@@ -73,6 +103,7 @@ export default function LoginPage() {
           placeholder="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          autoComplete="email"
         />
 
         <input
@@ -81,6 +112,7 @@ export default function LoginPage() {
           placeholder="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          autoComplete="current-password"
         />
 
         {error && <div className="text-red-400 text-sm">{error}</div>}

@@ -125,6 +125,7 @@ export default function RegisterPage() {
         >
           {loading ? "Creating account…" : "Create account"}
         </button>
+		
 
         <div style={{ marginTop: 22, textAlign: "center", fontSize: 14 }}>
           Already have an account?{" "}

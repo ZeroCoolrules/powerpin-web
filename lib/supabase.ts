@@ -1,42 +1,53 @@
-// lib/supabase.ts
 import { createClient, SupabaseClient } from "@supabase/supabase-js"
 
 /**
- * Read env vars lazily.
- * IMPORTANT: Nothing in this file may execute at import time
- * that depends on process.env being present.
+ * Safe env reader.
+ * Only called inside functions (never at module scope).
  */
-function requireEnv(name: string): string {
+function env(name: string): string {
   const value = process.env[name]
   if (!value) {
-    throw new Error(`${name} is required`)
+    throw new Error(`Missing environment variable: ${name}`)
   }
   return value
 }
 
 /**
  * ─────────────────────────────────────────────
- * ADMIN CLIENT (SERVICE ROLE)
- * Server-only. NEVER created at module scope.
+ * BROWSER CLIENT
+ * Used in client components (login, inbox UI)
  * ─────────────────────────────────────────────
  */
-export function getSupabaseAdmin(): SupabaseClient {
+export function getSupabaseBrowser(): SupabaseClient {
   return createClient(
-    requireEnv("NEXT_PUBLIC_SUPABASE_URL"),
-    requireEnv("SUPABASE_SERVICE_ROLE_KEY")
+    env("NEXT_PUBLIC_SUPABASE_URL"),
+    env("NEXT_PUBLIC_SUPABASE_ANON_KEY")
   )
 }
 
 /**
  * ─────────────────────────────────────────────
- * USER-SCOPED CLIENT (JWT / RLS)
- * Created per-request.
+ * SERVER ADMIN CLIENT (SERVICE ROLE)
+ * Server-only. NEVER import into client files.
  * ─────────────────────────────────────────────
  */
-export function supabaseFromJWT(jwt: string): SupabaseClient {
+export function getSupabaseAdmin(): SupabaseClient {
   return createClient(
-    requireEnv("NEXT_PUBLIC_SUPABASE_URL"),
-    requireEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
+    env("NEXT_PUBLIC_SUPABASE_URL"),
+    env("SUPABASE_SERVICE_ROLE_KEY")
+  )
+}
+
+/**
+ * ─────────────────────────────────────────────
+ * SERVER USER CLIENT (JWT / RLS)
+ * Used in server components / route handlers
+ * ─────────────────────────────────────────────
+ */
+export function getSupabaseFromJWT(jwt: string): SupabaseClient {
+  return createClient(
+    env("NEXT_PUBLIC_SUPABASE_URL"),
+    env("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
     {
       global: {
         headers: {
