@@ -19,7 +19,7 @@ export default function PasswordInput({
         type={show ? "text" : "password"}
         placeholder={placeholder}
         value={value}
-        onChange={(e) => onChange(e.target.value)}  // 🔥 THIS WAS MISSING
+        onChange={(e) => onChange(e.target.value)}
         style={{
           width: "100%",
           padding: "14px 44px 14px 14px",

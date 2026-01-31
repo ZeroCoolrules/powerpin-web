@@ -1,6 +1,6 @@
 "use client"
 
-import PasswordInput from "app/components/PasswordInput"
+import PasswordInput from "../components/PasswordInput"
 import { useState } from "react"
 import { createClient } from "@supabase/supabase-js"
 import Image from "next/image"
