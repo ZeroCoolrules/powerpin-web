@@ -1,10 +1,12 @@
 "use client"
 
+export const dynamic = "force-dynamic"
+
 import PasswordInput from "../components/PasswordInput"
 import { useState } from "react"
+import { getSupabaseBrowser } from "@/lib/supabase-browser"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { getSupabaseBrowser } from "@/lib/supabase-browser"
 
 export default function RegisterPage() {
   const router = useRouter()
