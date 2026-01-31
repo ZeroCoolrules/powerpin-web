@@ -14,7 +14,7 @@ type Email = {
 
 export default function InboxClient() {
   const router = useRouter()
-  const supabase = getSupabaseBrowser() // ✅ CORRECT LOCATION
+  const supabase = getSupabaseBrowser() // ✅ browser-only client
 
   const [loading, setLoading] = useState(true)
   const [emails, setEmails] = useState<Email[]>([])
@@ -22,31 +22,35 @@ export default function InboxClient() {
 
   useEffect(() => {
     const loadInbox = async () => {
-      const { data } = await supabase.auth.getSession()
+      const { data, error } = await supabase.auth.getSession()
 
-      if (!data.session) {
+      if (error || !data.session) {
         router.push("/login")
         return
       }
 
-      // MOCK inbox for now
-      const demoEmails: Email[] = [
-        {
-          id: "1",
-          sender: "Blackstone Recruiting",
-          subject: "2026 HR-SIG Summer Analyst",
-          body: "Thank you for your interest in Blackstone..."
-        },
-        {
-          id: "2",
-          sender: "Æi System",
-          subject: "Inbox Initialized",
-          body: "Your inbox engine is coming online."
-        }
-      ]
+      const { data: emailRows, error: emailError } = await supabase
+        .from("emails")
+        .select("id, from_name, subject, summary")
+        .order("received_at", { ascending: false })
+        .limit(50)
 
-      setEmails(demoEmails)
-      setSelectedEmail(demoEmails[0])
+      if (emailError) {
+        console.error("Failed to load inbox:", emailError)
+        setLoading(false)
+        return
+      }
+
+      const mappedEmails: Email[] =
+        emailRows?.map((e) => ({
+          id: e.id,
+          sender: e.from_name ?? "Unknown",
+          subject: e.subject ?? "(no subject)",
+          body: e.summary ?? "",
+        })) ?? []
+
+      setEmails(mappedEmails)
+      setSelectedEmail(mappedEmails[0] ?? null)
       setLoading(false)
     }
 
@@ -63,13 +67,12 @@ export default function InboxClient() {
 
   return (
     <div className="min-h-screen bg-black text-green-400 flex font-mono">
-
       {/* LEFT: EMAIL LIST */}
       <aside className="w-96 border-r border-green-800 p-4">
         <h2 className="text-sm mb-4 opacity-80">Inbox</h2>
 
         <div className="space-y-2">
-          {emails.map(email => (
+          {emails.map((email) => (
             <button
               key={email.id}
               onClick={() => setSelectedEmail(email)}
@@ -135,7 +138,7 @@ export default function InboxClient() {
       {/* RIGHT: Æi PANEL */}
       <aside className="w-80 border-l border-green-800 p-4">
         <div className="flex items-center gap-3 mb-4">
-          <img src="/aei.png" alt="AEi" width={64} />
+          <img src="/aei.png" alt="Æi" width={64} />
           <strong>Æi</strong>
         </div>
 

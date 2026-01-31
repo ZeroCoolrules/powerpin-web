@@ -2,12 +2,13 @@
 
 import PasswordInput from "../components/PasswordInput"
 import { useState } from "react"
-import { createClient } from "@supabase/supabase-js"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
+import { getSupabaseBrowser } from "@/lib/supabase-browser"
 
 export default function RegisterPage() {
   const router = useRouter()
+  const supabase = getSupabaseBrowser()
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -29,12 +30,7 @@ export default function RegisterPage() {
     setLoading(true)
     setError(null)
 
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    )
-
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -47,6 +43,15 @@ export default function RegisterPage() {
       setLoading(false)
       return
     }
+
+    // 🔔 Fire welcome email (non-blocking)
+    fetch("/api/email/welcome", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    }).catch(() => {
+      // intentionally ignored
+    })
 
     setLoading(false)
     router.push("/register/check-email")
@@ -97,10 +102,7 @@ export default function RegisterPage() {
           <Rule ok={/[A-Z]/.test(password)} label="Uppercase letter" />
           <Rule ok={/[a-z]/.test(password)} label="Lowercase letter" />
           <Rule ok={/\d/.test(password)} label="Number" />
-          <Rule
-            ok={/[^A-Za-z0-9]/.test(password)}
-            label="Special character"
-          />
+          <Rule ok={/[^A-Za-z0-9]/.test(password)} label="Special character" />
         </ul>
 
         {error && (
@@ -125,7 +127,6 @@ export default function RegisterPage() {
         >
           {loading ? "Creating account…" : "Create account"}
         </button>
-		
 
         <div style={{ marginTop: 22, textAlign: "center", fontSize: 14 }}>
           Already have an account?{" "}
@@ -139,11 +140,7 @@ export default function RegisterPage() {
 }
 
 function Rule({ ok, label }: { ok: boolean; label: string }) {
-  return (
-    <li style={{ color: ok ? "#00ffa3" : "#6b7280" }}>
-      • {label}
-    </li>
-  )
+  return <li style={{ color: ok ? "#00ffa3" : "#6b7280" }}>• {label}</li>
 }
 
 const container: React.CSSProperties = {

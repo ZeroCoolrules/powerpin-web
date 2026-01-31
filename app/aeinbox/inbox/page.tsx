@@ -5,21 +5,52 @@ import { supabaseFromJWT } from "@/lib/supabase-server"
 
 export default async function InboxPage() {
   const cookieStore = cookies()
-  const token =
+
+  const accessToken =
     cookieStore.get("sb-access-token")?.value ??
     cookieStore.get("supabase-auth-token")?.value
 
-  if (!token) redirect("/login")
+  if (!accessToken) {
+    redirect("/login")
+  }
 
-  const supabase = supabaseFromJWT(token)
+  const supabase = supabaseFromJWT(accessToken)
 
-  const { data } = await supabase
+  // 1️⃣ Verify session
+  const { data: userData, error: userError } =
+    await supabase.auth.getUser()
+
+  if (userError || !userData.user) {
+    redirect("/login")
+  }
+
+  // 2️⃣ Subscription check
+  const { data: subscription } = await supabase
     .from("subscriptions")
-    .select("status")
+    .select("id")
     .eq("status", "active")
     .single()
 
-  if (!data) redirect("/pricing")
+  // 3️⃣ Gate
+  if (!subscription) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black text-green-400 font-mono">
+        <div className="border border-green-700 p-8 text-center">
+          <h1 className="text-lg mb-2">ÆInbox</h1>
+          <p className="opacity-70 mb-6">
+            Unlock secure, AI-powered email.
+          </p>
+          <a
+            href="/pricing"
+            className="border border-green-600 px-6 py-2 hover:bg-green-900"
+          >
+            Upgrade
+          </a>
+        </div>
+      </div>
+    )
+  }
 
+  // 4️⃣ Allowed in
   return <InboxClient />
 }
