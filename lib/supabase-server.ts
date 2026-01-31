@@ -1,16 +1,26 @@
-import { cookies } from "next/headers"
-import { createServerClient } from "@supabase/auth-helpers-nextjs"
+// lib/supabase-server.ts
+import { createClient } from "@supabase/supabase-js"
 
-export function getSupabaseServer() {
-  const cookieStore = cookies()
+function requireEnv(name: string): string {
+  const value = process.env[name]
+  if (!value) {
+    throw new Error(`${name} is required`)
+  }
+  return value
+}
 
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+/**
+ * USER-SCOPED SERVER CLIENT (JWT / RLS)
+ * Used ONLY in route handlers & server code
+ */
+export function supabaseFromJWT(jwt: string) {
+  return createClient(
+    requireEnv("NEXT_PUBLIC_SUPABASE_URL"),
+    requireEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
     {
-      cookies: {
-        get(name) {
-          return cookieStore.get(name)?.value
+      global: {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
         },
       },
     }

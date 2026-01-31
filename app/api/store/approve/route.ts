@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseFromJWT, getSupabaseAdmin } from "@/lib/supabase"
+import { supabaseFromJWT } from "@/lib/supabase-server"
 import { canApprove } from "@/lib/permissions";
 
 export async function POST(req: NextRequest) {

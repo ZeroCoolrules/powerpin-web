@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { supabaseFromJWT, getSupabaseAdmin } from "@/lib/supabase"
+import { supabaseFromJWT } from "@/lib/supabase-server"
 import { getUserFromRequest } from "@/lib/auth"
 import { isCommandAllowed, getCommandsForTrust } from "@/app/system/commands"
 import type { TrustClass } from "@/app/system/commands"

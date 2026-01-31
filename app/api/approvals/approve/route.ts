@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
-import { supabaseFromJWT } from "@/lib/supabase"
+import { supabaseFromJWT } from "@/lib/supabase-server"
+
 
 export async function POST(req: NextRequest) {
   const auth = req.headers.get("authorization")
