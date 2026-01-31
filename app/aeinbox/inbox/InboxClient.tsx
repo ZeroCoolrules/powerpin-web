@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { createClient } from "@supabase/supabase-js"
+import { getSupabaseBrowser } from "@/lib/supabase-browser"
 
 // TEMP types (replace later)
 type Email = {
@@ -12,44 +12,46 @@ type Email = {
   body: string
 }
 
-export default function InboxPage() {
+export default function InboxClient() {
   const router = useRouter()
+  const supabase = getSupabaseBrowser() // ✅ CORRECT LOCATION
+
   const [loading, setLoading] = useState(true)
   const [emails, setEmails] = useState<Email[]>([])
   const [selectedEmail, setSelectedEmail] = useState<Email | null>(null)
 
   useEffect(() => {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    )
+    const loadInbox = async () => {
+      const { data } = await supabase.auth.getSession()
 
-    supabase.auth.getSession().then(({ data }) => {
       if (!data.session) {
         router.push("/login")
-      } else {
-        // MOCK inbox for now
-        const demoEmails: Email[] = [
-          {
-            id: "1",
-            sender: "Blackstone Recruiting",
-            subject: "2026 HR-SIG Summer Analyst",
-            body: "Thank you for your interest in Blackstone..."
-          },
-          {
-            id: "2",
-            sender: "Æi System",
-            subject: "Inbox Initialized",
-            body: "Your inbox engine is coming online."
-          }
-        ]
-
-        setEmails(demoEmails)
-        setSelectedEmail(demoEmails[0])
-        setLoading(false)
+        return
       }
-    })
-  }, [router])
+
+      // MOCK inbox for now
+      const demoEmails: Email[] = [
+        {
+          id: "1",
+          sender: "Blackstone Recruiting",
+          subject: "2026 HR-SIG Summer Analyst",
+          body: "Thank you for your interest in Blackstone..."
+        },
+        {
+          id: "2",
+          sender: "Æi System",
+          subject: "Inbox Initialized",
+          body: "Your inbox engine is coming online."
+        }
+      ]
+
+      setEmails(demoEmails)
+      setSelectedEmail(demoEmails[0])
+      setLoading(false)
+    }
+
+    loadInbox()
+  }, [router, supabase])
 
   if (loading) {
     return (
