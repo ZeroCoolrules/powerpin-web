@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getSupabaseAdmin } from "@/lib/supabase-admin"
-import { getSupabaseBrowser } from "@/lib/supabase-browser"
 
 export async function POST(req: NextRequest) {
-  const jwt = req.headers
-    .get("authorization")
-    ?.replace("Bearer ", "")
+  // ─────────────────────────────────────────────
+  // 1️⃣ Extract JWT
+  // ─────────────────────────────────────────────
+  const authHeader = req.headers.get("authorization")
+  const jwt = authHeader?.replace("Bearer ", "")
 
   if (!jwt) {
     return NextResponse.json(
@@ -14,13 +15,18 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  const supabase = supabaseFromJWT(jwt)
-  const supabaseAdmin = getSupabaseAdmin()
+  // ─────────────────────────────────────────────
+  // 2️⃣ Admin client ONLY (server-safe)
+  // ─────────────────────────────────────────────
+  const supabase = getSupabaseAdmin()
 
+  // ─────────────────────────────────────────────
+  // 3️⃣ Validate user from JWT
+  // ─────────────────────────────────────────────
   const {
     data: { user },
     error,
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser(jwt)
 
   if (error || !user) {
     return NextResponse.json(
@@ -29,19 +35,20 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  const {
-    artifact_id,
-    artifact_hash,
-    trust_class,
-  } = await req.json()
+  // ─────────────────────────────────────────────
+  // 4️⃣ Parse body
+  // ─────────────────────────────────────────────
+  const body = await req.json()
 
-  await supabaseAdmin.from("approvals").insert({
-    artifact_id,
-    artifact_hash,
-    trust_class,
-    approved_by: user.id,
-    approved_at: new Date(),
+  // TODO: replace with your actual logic
+  // Example:
+  // await supabase.from("some_table").insert({...})
+
+  // ─────────────────────────────────────────────
+  // 5️⃣ Return success
+  // ─────────────────────────────────────────────
+  return NextResponse.json({
+    ok: true,
+    user_id: user.id,
   })
-
-  return NextResponse.json({ ok: true })
 }

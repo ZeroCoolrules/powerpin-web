@@ -6,42 +6,62 @@ import { getSupabaseBrowser } from "@/lib/supabase-browser"
 
 export default function RegisterPage() {
   const router = useRouter()
+
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
 
-  async function handleRegister(e: React.FormEvent) {
+  const passwordValid =
+    password.length >= 8 &&
+    /[A-Z]/.test(password) &&
+    /[a-z]/.test(password) &&
+    /\d/.test(password) &&
+    /[^A-Za-z0-9]/.test(password)
+
+  async function register(e: React.FormEvent) {
     e.preventDefault()
+    if (!passwordValid || loading) return
+
+    setLoading(true)
     setError(null)
 
-    try {
-      const supabase = getSupabaseBrowser()
+    const supabase = getSupabaseBrowser()
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: "https://inboxae.com/login",
+      },
+    })
 
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: "https://inboxae.com/login",
-        },
-      })
+    setLoading(false)
 
-      if (error) {
-        setError(error.message)
-        return
-      }
-
-      router.push("/register/check-email")
-    } catch (err) {
-      setError("Registration failed")
+    if (error) {
+      setError(error.message)
+      return
     }
+
+    router.push("/register/check-email")
   }
 
   return (
-    <form onSubmit={handleRegister}>
-      <input value={email} onChange={e => setEmail(e.target.value)} />
-      <input type="password" value={password} onChange={e => setPassword(e.target.value)} />
-      <button type="submit">Create account</button>
+    <form onSubmit={register}>
+      <input
+        value={email}
+        onChange={e => setEmail(e.target.value)}
+        placeholder="email"
+      />
+      <input
+        type="password"
+        value={password}
+        onChange={e => setPassword(e.target.value)}
+        placeholder="password"
+      />
       {error && <p>{error}</p>}
+      <button disabled={!passwordValid || loading}>
+        Create account
+      </button>
     </form>
   )
 }

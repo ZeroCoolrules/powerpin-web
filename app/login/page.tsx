@@ -6,24 +6,26 @@ import { getSupabaseBrowser } from "@/lib/supabase-browser"
 
 export default function LoginPage() {
   const router = useRouter()
-  const supabase = getSupabaseBrowser()
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
+  // redirect if already logged in
   useEffect(() => {
+    const supabase = getSupabaseBrowser()
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) router.replace("/aeinbox")
     })
-  }, [router, supabase])
+  }, [router])
 
   async function signIn(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
     setError(null)
 
+    const supabase = getSupabaseBrowser()
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -41,11 +43,16 @@ export default function LoginPage() {
 
   return (
     <form onSubmit={signIn}>
-      <input value={email} onChange={e => setEmail(e.target.value)} />
+      <input
+        value={email}
+        onChange={e => setEmail(e.target.value)}
+        placeholder="email"
+      />
       <input
         type="password"
         value={password}
         onChange={e => setPassword(e.target.value)}
+        placeholder="password"
       />
       {error && <p>{error}</p>}
       <button disabled={loading}>Sign in</button>

@@ -1,16 +1,22 @@
 import { createClient } from "@supabase/supabase-js"
 
-function requireEnv(name: string): string {
-  const value = process.env[name]
-  if (!value) {
-    throw new Error(`${name} is required`)
-  }
-  return value
-}
+let admin: ReturnType<typeof createClient> | null = null
 
 export function getSupabaseAdmin() {
-  return createClient(
-    requireEnv("NEXT_PUBLIC_SUPABASE_URL"),
-    requireEnv("SUPABASE_SERVICE_ROLE_KEY")
+  if (admin) return admin
+
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+    throw new Error("NEXT_PUBLIC_SUPABASE_URL missing")
+  }
+
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    throw new Error("SUPABASE_SERVICE_ROLE_KEY missing")
+  }
+
+  admin = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
   )
+
+  return admin
 }
