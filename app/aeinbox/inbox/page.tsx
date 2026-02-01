@@ -1,7 +1,7 @@
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import InboxClient from "./InboxClient"
-import { supabaseFromJWT } from "@/lib/supabase-server"
+import { getSupabaseAdmin } from "@/lib/supabase-admin"
 
 export default async function InboxPage() {
   const cookieStore = cookies()
@@ -14,7 +14,7 @@ export default async function InboxPage() {
     redirect("/login")
   }
 
-  const supabase = supabaseFromJWT(accessToken)
+  const supabase = getSupabaseAdmin()
 
   // 1️⃣ Verify session
   const { data: userData, error: userError } =

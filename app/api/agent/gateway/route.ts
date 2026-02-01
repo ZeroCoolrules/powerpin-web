@@ -1,33 +1,22 @@
 import { NextRequest, NextResponse } from "next/server"
-import { supabaseFromJWT } from "@/lib/supabase-server"
+import { getSupabaseAdmin } from "@/lib/supabase-admin"
 import { getUserFromRequest } from "@/lib/auth"
-import { isCommandAllowed, getCommandsForTrust } from "@/app/system/commands"
+import { isCommandAllowed } from "@/app/system/commands"
 import type { TrustClass } from "@/app/system/commands"
 
 export async function POST(req: NextRequest) {
   console.log("🔥 GATEWAY AGENT ROUTE HIT 🔥")
 
-  // 🛑 BUILD-SAFE + RUNTIME-SAFE GUARD
-
-
-  // ✅ Lazy admin client (SAFE)
-  const supabaseAdmin = getSupabaseAdmin()
+  // ✅ ADMIN CLIENT ONLY
+  const supabase = getSupabaseAdmin()
 
   // ─────────────────────────────────────────────
-  // 1️⃣ Authenticate user (JWT → user)
+  // 1️⃣ Authenticate user (cookie/session based)
   // ─────────────────────────────────────────────
   const user = await getUserFromRequest(req)
   if (!user) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 })
   }
-
-  const authHeader = req.headers.get("authorization")
-  if (!authHeader) {
-    return NextResponse.json({ error: "missing_auth" }, { status: 401 })
-  }
-
-  const jwt = authHeader.replace("Bearer ", "")
-  const supabase = supabaseFromJWT(jwt)
 
   // ─────────────────────────────────────────────
   // 2️⃣ Parse request body
@@ -38,27 +27,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "missing_fields" }, { status: 400 })
   }
 
-  const command = input
-    .trim()
-    .toLowerCase()
-    .split(/\s+/)[0]
-
-  console.log("📦 Payload:", {
-    command,
-    artifact_id,
-    gateway_session_id,
-  })
+  const command = input.trim().toLowerCase().split(/\s+/)[0]
 
   // ─────────────────────────────────────────────
-  // 3️⃣ Validate gateway session (RLS enforced)
+  // 3️⃣ Load gateway session (ADMIN = no RLS)
   // ─────────────────────────────────────────────
-  const { data: session, error: sessionError } = await supabase
+  const { data: session, error } = await supabase
     .from("gateway_sessions")
     .select("*")
     .eq("id", gateway_session_id)
     .single()
 
-  if (sessionError || !session) {
+  if (error || !session) {
     return NextResponse.json(
       { error: "invalid_gateway_session" },
       { status: 403 }
@@ -89,13 +69,13 @@ export async function POST(req: NextRequest) {
   const trustClass = session.trust_class as TrustClass
 
   // ─────────────────────────────────────────────
-  // 4️⃣ DB-AUTHORITATIVE COMMAND ENFORCEMENT
+  // 4️⃣ DB-level enforcement
   // ─────────────────────────────────────────────
   if (
     trustClass !== "admin" &&
     !session.allowed_commands.includes(command)
   ) {
-    await supabaseAdmin.from("gateway_commands").insert({
+    await supabase.from("gateway_commands").insert({
       gateway_session_id,
       user_id: user.id,
       artifact_id,
@@ -105,21 +85,16 @@ export async function POST(req: NextRequest) {
     })
 
     return NextResponse.json(
-      {
-        error: "command_not_allowed",
-        command,
-        trust_class: trustClass,
-        allowed_commands: session.allowed_commands,
-      },
+      { error: "command_not_allowed" },
       { status: 403 }
     )
   }
 
   // ─────────────────────────────────────────────
-  // 5️⃣ Code-level safety net (defense in depth)
+  // 5️⃣ Code-level safety
   // ─────────────────────────────────────────────
   if (!isCommandAllowed(trustClass, command)) {
-    await supabaseAdmin.from("gateway_commands").insert({
+    await supabase.from("gateway_commands").insert({
       gateway_session_id,
       user_id: user.id,
       artifact_id,
@@ -135,33 +110,26 @@ export async function POST(req: NextRequest) {
   }
 
   // ─────────────────────────────────────────────
-  // 6️⃣ Execute command (controlled switch)
+  // 6️⃣ Execute command
   // ─────────────────────────────────────────────
   let message = "Command acknowledged."
 
   switch (command) {
     case "help":
-      message =
-        "Available commands: " +
-        session.allowed_commands.join(", ")
+      message = "Available commands: " + session.allowed_commands.join(", ")
       break
-
     case "status":
       message = "Gateway online. Session active."
       break
-
     case "inspect":
-      message = `Artifact ${artifact_id} is approved and gateway-enabled.`
+      message = `Artifact ${artifact_id} is approved.`
       break
-
     case "deploy":
-      message = "Deploy request recorded. Approval required."
+      message = "Deploy request recorded."
       break
-
     case "whoami":
       message = `You are ${trustClass}. User ID: ${user.id}`
       break
-
     case "exit":
       message = "Gateway session closed."
       break
@@ -170,7 +138,7 @@ export async function POST(req: NextRequest) {
   // ─────────────────────────────────────────────
   // 7️⃣ Audit ACCEPTED command
   // ─────────────────────────────────────────────
-  await supabaseAdmin.from("gateway_commands").insert({
+  await supabase.from("gateway_commands").insert({
     gateway_session_id,
     user_id: user.id,
     artifact_id,

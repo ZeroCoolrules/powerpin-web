@@ -1,6 +1,7 @@
 import { Resend } from "resend"
 import { getSupabaseAdmin } from "@/lib/supabase-admin"
 
+
 export async function POST(req: Request) {
   const apiKey = process.env.RESEND_API_KEY
 

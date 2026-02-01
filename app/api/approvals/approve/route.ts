@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { supabaseFromJWT } from "@/lib/supabase-server"
+import { getSupabaseAdmin } from "@/lib/supabase-admin"
 
 export async function POST(req: NextRequest) {
   const authHeader = req.headers.get("authorization")
@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
   // ✅ STRIP "Bearer "
   const jwt = authHeader.replace("Bearer ", "").trim()
 
-  const supabase = supabaseFromJWT(jwt)
+  const supabase = getSupabaseAdmin()
 
   const { artifact_id, decision } = await req.json()
 

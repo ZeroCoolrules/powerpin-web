@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseFromJWT } from "@/lib/supabase-server"
+import { getSupabaseAdmin } from "@/lib/supabase-admin"
+
+const supabase = getSupabaseAdmin()
+
 
 
 export async function POST(req: NextRequest) {
@@ -15,7 +18,7 @@ export async function POST(req: NextRequest) {
   }
   const supabaseAdmin = getSupabaseAdmin()
 
-  const supabase = supabaseFromJWT(jwt);
+  const supabase = getSupabaseAdmin()
 
   const {
     data: { user }
