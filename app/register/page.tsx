@@ -55,6 +55,7 @@ export default function RegisterPage() {
         body: JSON.stringify({ email }),
       }).catch(() => {})
 
+      setLoading(false)
       router.push("/register/check-email")
     } catch (err) {
       console.error(err)
