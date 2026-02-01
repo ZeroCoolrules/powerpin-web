@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getUserFromRequest } from "@/lib/auth"
-import { getSupabaseAdmin } from "@/lib/supabase"
+import { getSupabaseAdmin } from "@/lib/supabase-admin"
 import { getCommandsForTrust } from "@/app/system/commands"
 
 export async function POST(req: NextRequest) {

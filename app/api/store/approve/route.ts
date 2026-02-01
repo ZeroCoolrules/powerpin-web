@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
-import {
-  supabaseFromJWT,
-  getSupabaseAdmin,
-} from "@/lib/supabase-server"
+import { getSupabaseAdmin } from "@/lib/supabase-admin"
+import { getSupabaseBrowser } from "@/lib/supabase-browser"
 
 export async function POST(req: NextRequest) {
   const jwt = req.headers
