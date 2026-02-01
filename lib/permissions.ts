@@ -1,4 +1,3 @@
-// lib/permissions.ts
 export type Role =
   | "builder"
   | "store_governor"

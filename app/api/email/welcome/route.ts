@@ -1,5 +1,3 @@
-export const dynamic = "force-dynamic"
-
 import { Resend } from "resend"
 import { getSupabaseAdmin } from "@/lib/supabase"
 

@@ -1,12 +1,10 @@
+"use client"
+
 import { createClient } from "@supabase/supabase-js"
 
 export function getSupabaseBrowser() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-  if (!url || !anon) {
-    throw new Error("Supabase browser env missing")
-  }
-
-  return createClient(url, anon)
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
 }

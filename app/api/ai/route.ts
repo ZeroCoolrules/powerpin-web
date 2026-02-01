@@ -3,12 +3,7 @@ import OpenAI from "openai"
 
 export async function POST(req: Request) {
   // 🔐 Guard: prevent build/runtime crashes
-  if (!process.env.OPENAI_API_KEY) {
-    return NextResponse.json(
-      { error: "OpenAI API key not configured" },
-      { status: 500 }
-    )
-  }
+ 
 
   const { mode, content } = await req.json()
 

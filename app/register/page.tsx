@@ -1,59 +1,49 @@
 "use client"
+export const dynamic = "force-dynamic"
+
 
 import { useState } from "react"
-import { createClient } from "@supabase/supabase-js"
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+import { useRouter } from "next/navigation"
+import { getSupabaseBrowser } from "@/lib/supabase-browser"
 
 export default function RegisterPage() {
+  const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [msg, setMsg] = useState("")
+  const [error, setError] = useState<string | null>(null)
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleRegister(e: React.FormEvent) {
     e.preventDefault()
-    setMsg("Submitting…")
+    setError(null)
 
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-    })
+    try {
+      const supabase = getSupabaseBrowser()
 
-    if (error) {
-      console.error(error)
-      setMsg("ERROR: " + error.message)
-      return
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: "https://inboxae.com/login",
+        },
+      })
+
+      if (error) {
+        setError(error.message)
+        return
+      }
+
+      router.push("/register/check-email")
+    } catch (err) {
+      setError("Registration failed")
     }
-
-    console.log("SIGNED UP:", data)
-    setMsg("SUCCESS — check Supabase users table")
   }
 
   return (
-    <div style={{ padding: 40 }}>
-      <h1>RAW REGISTER TEST</h1>
-
-      <form onSubmit={handleSubmit}>
-        <input
-          placeholder="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <br />
-        <input
-          placeholder="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <br />
-        <button type="submit">REGISTER</button>
-      </form>
-
-      <pre>{msg}</pre>
-    </div>
+    <form onSubmit={handleRegister}>
+      <input value={email} onChange={e => setEmail(e.target.value)} />
+      <input type="password" value={password} onChange={e => setPassword(e.target.value)} />
+      <button type="submit">Create account</button>
+      {error && <p>{error}</p>}
+    </form>
   )
 }

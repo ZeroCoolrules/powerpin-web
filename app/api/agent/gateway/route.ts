@@ -8,17 +8,7 @@ export async function POST(req: NextRequest) {
   console.log("🔥 GATEWAY AGENT ROUTE HIT 🔥")
 
   // 🛑 BUILD-SAFE + RUNTIME-SAFE GUARD
-  if (
-    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
-    !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-    !process.env.SUPABASE_SERVICE_ROLE_KEY
-  ) {
-    console.warn("Supabase not configured — agent gateway disabled")
-    return NextResponse.json(
-      { error: "service_unavailable" },
-      { status: 503 }
-    )
-  }
+
 
   // ✅ Lazy admin client (SAFE)
   const supabaseAdmin = getSupabaseAdmin()
