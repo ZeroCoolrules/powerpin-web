@@ -1,22 +1,19 @@
 "use client"
-export const dynamic = "force-dynamic"
 
-import PasswordInput from "../components/PasswordInput"
 import { useState } from "react"
-import { getSupabaseBrowser } from "@/lib/supabase-browser"
-import Image from "next/image"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
+import PasswordInput from "../components/PasswordInput"
+import { getSupabaseBrowser } from "@/lib/supabase-browser"
 
 export default function RegisterPage() {
   const router = useRouter()
-  const supabase = getSupabaseBrowser()
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // PASSWORD RULES
   const passwordValid =
     password.length >= 8 &&
     /[A-Z]/.test(password) &&
@@ -30,6 +27,8 @@ export default function RegisterPage() {
 
     setLoading(true)
     setError(null)
+
+    const supabase = getSupabaseBrowser()
 
     const { error } = await supabase.auth.signUp({
       email,
@@ -45,14 +44,12 @@ export default function RegisterPage() {
       return
     }
 
-    // 🔔 Fire welcome email (non-blocking)
+    // fire welcome email (non-blocking)
     fetch("/api/email/welcome", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
-    }).catch(() => {
-      // intentionally ignored
-    })
+    }).catch(() => {})
 
     setLoading(false)
     router.push("/register/check-email")
@@ -74,7 +71,6 @@ export default function RegisterPage() {
           </p>
         </div>
 
-        {/* EMAIL */}
         <input
           type="email"
           placeholder="Email"
@@ -84,20 +80,17 @@ export default function RegisterPage() {
           style={input}
         />
 
-        {/* PASSWORD */}
         <PasswordInput
           value={password}
           onChange={setPassword}
           placeholder="Password"
         />
 
-        {/* HELP TEXT */}
         <p style={{ fontSize: 12, marginTop: 8, opacity: 0.7 }}>
-          Password must be at least 8 characters, include uppercase, lowercase,
-          a number, and a special character.
+          Password must be at least 8 characters and include uppercase,
+          lowercase, a number, and a special character.
         </p>
 
-        {/* CHECKLIST */}
         <ul style={{ fontSize: 12, marginTop: 6 }}>
           <Rule ok={password.length >= 8} label="At least 8 characters" />
           <Rule ok={/[A-Z]/.test(password)} label="Uppercase letter" />

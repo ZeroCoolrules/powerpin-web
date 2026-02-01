@@ -1,5 +1,4 @@
 "use client"
-export const dynamic = "force-dynamic"
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
@@ -7,7 +6,6 @@ import { getSupabaseBrowser } from "@/lib/supabase-browser"
 
 export default function LoginPage() {
   const router = useRouter()
-  const supabase = getSupabaseBrowser()
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -15,17 +13,14 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
 
   /**
-   * 🔑 HARD FIX
-   * Explicitly exchange email-confirmation token
-   * Overrides cached / wrong sessions
+   * Handle email-confirm redirect + existing session
    */
   useEffect(() => {
-    const syncSessionFromUrl = async () => {
+    async function syncSessionFromUrl() {
+      const supabase = getSupabaseBrowser()
       const url = new URL(window.location.href)
 
-      // Supabase may send ?code= after email confirm
       const code = url.searchParams.get("code")
-
       if (code) {
         const { error } = await supabase.auth.exchangeCodeForSession(code)
 
@@ -35,21 +30,41 @@ export default function LoginPage() {
           return
         }
 
-        router.replace("/inbox")
+        router.replace("/aeinbox/inbox")
         return
       }
 
-      // Fallback — already logged in
       const { data } = await supabase.auth.getSession()
       if (data.session) {
-        router.replace("/inbox")
+        router.replace("/aeinbox/inbox")
       }
     }
 
     syncSessionFromUrl()
-  }, [router, supabase])
+  }, [router])
 
-  // 🌐 DOMAIN-AWARE BRANDING
+  async function signIn(e: React.FormEvent) {
+    e.preventDefault()
+    setLoading(true)
+    setError(null)
+
+    const supabase = getSupabaseBrowser()
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+
+    setLoading(false)
+
+    if (error) {
+      setError(error.message)
+      return
+    }
+
+    router.push("/aeinbox/inbox")
+  }
+
   const isInbox =
     typeof window !== "undefined" &&
     window.location.hostname.includes("inboxae.com")
@@ -70,26 +85,6 @@ export default function LoginPage() {
         hover: "hover:bg-green-900",
       }
 
-  async function signIn(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
-
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
-
-    setLoading(false)
-
-    if (error) {
-      setError(error.message)
-      return
-    }
-
-    router.push("/inbox")
-  }
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-black font-mono">
       <form
@@ -105,6 +100,7 @@ export default function LoginPage() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           autoComplete="email"
+          required
         />
 
         <input
@@ -114,6 +110,7 @@ export default function LoginPage() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           autoComplete="current-password"
+          required
         />
 
         {error && <div className="text-red-400 text-sm">{error}</div>}
