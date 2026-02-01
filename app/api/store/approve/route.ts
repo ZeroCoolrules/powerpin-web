@@ -1,52 +1,55 @@
-import { NextRequest, NextResponse } from "next/server";
-import { supabaseFromJWT } from "@/lib/supabase-server"
-import { canApprove } from "@/lib/permissions";
+import { NextRequest, NextResponse } from "next/server"
+import { supabaseFromJWT, getSupabaseAdmin } from "@/lib/supabase-server"
+import { canApprove } from "@/lib/permissions"
 
 export async function POST(req: NextRequest) {
-  const jwt = req.headers.get("authorization")?.replace("Bearer ", "");
-  if (!jwt) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const authHeader = req.headers.get("authorization")
+
+  if (!authHeader) {
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { status: 401 }
+    )
   }
+
+  const jwt = authHeader.replace("Bearer ", "")
+
+  const supabase = supabaseFromJWT(jwt)
   const supabaseAdmin = getSupabaseAdmin()
 
-  const supabase = supabaseFromJWT(jwt);
   const {
-    data: { user }
-  } = await supabase.auth.getUser();
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser()
 
-  if (!user) {
-    return NextResponse.json({ error: "Invalid user" }, { status: 401 });
+  if (userError || !user) {
+    return NextResponse.json(
+      { error: "Invalid user" },
+      { status: 401 }
+    )
   }
 
-  const { data: roleRow } = await supabase
-    .from("approval_roles")
-    .select("role")
-    .eq("user_id", user.id)
-    .single();
-
-  if (!canApprove(roleRow?.role)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  if (!(await canApprove(user.id))) {
+    return NextResponse.json(
+      { error: "Forbidden" },
+      { status: 403 }
+    )
   }
 
-  const { artifact_id, artifact_hash, status, notes } = await req.json();
+  const { artifact_id, decision } = await req.json()
 
-  const { error } = await supabaseAdmin
-    .from("store_approvals")
-    .insert({
-      artifact_id,
-      artifact_hash,
-      approved_by: user.id,
-      approver_role: roleRow.role,
-      status,
-      notes
-    });
+  await supabaseAdmin.from("approvals").insert({
+    artifact_id,
+    requested_by: user.id,
+    approved_by: user.id,
+    decision,
+    decided_at: new Date(),
+  })
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
+  await supabaseAdmin
+    .from("artifacts")
+    .update({ status: decision })
+    .eq("id", artifact_id)
 
-  return NextResponse.json({
-    status: "recorded",
-    artifact_id
-  });
+  return NextResponse.json({ ok: true })
 }
