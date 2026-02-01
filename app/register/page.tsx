@@ -1,5 +1,8 @@
 "use client"
 
+export const dynamic = "force-dynamic"
+export const revalidate = 0
+
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
@@ -14,6 +17,7 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  // 🔐 Password validation
   const passwordValid =
     password.length >= 8 &&
     /[A-Z]/.test(password) &&
@@ -23,36 +27,41 @@ export default function RegisterPage() {
 
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault()
-    if (!passwordValid) return
+    if (!passwordValid || loading) return
 
     setLoading(true)
     setError(null)
 
-    const supabase = getSupabaseBrowser()
+    try {
+      const supabase = getSupabaseBrowser()
 
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: "https://inboxae.com/login",
-      },
-    })
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: "https://inboxae.com/login",
+        },
+      })
 
-    if (error) {
-      setError(error.message)
+      if (error) {
+        setError(error.message)
+        setLoading(false)
+        return
+      }
+
+      // 📧 Fire welcome email (non-blocking)
+      fetch("/api/email/welcome", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      }).catch(() => {})
+
+      router.push("/register/check-email")
+    } catch (err) {
+      console.error(err)
+      setError("Registration failed. Please try again.")
       setLoading(false)
-      return
     }
-
-    // fire welcome email (non-blocking)
-    fetch("/api/email/welcome", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    }).catch(() => {})
-
-    setLoading(false)
-    router.push("/register/check-email")
   }
 
   return (
@@ -71,6 +80,7 @@ export default function RegisterPage() {
           </p>
         </div>
 
+        {/* EMAIL */}
         <input
           type="email"
           placeholder="Email"
@@ -80,6 +90,7 @@ export default function RegisterPage() {
           style={input}
         />
 
+        {/* PASSWORD */}
         <PasswordInput
           value={password}
           onChange={setPassword}
