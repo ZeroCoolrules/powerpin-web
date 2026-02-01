@@ -1,54 +1,55 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server"
 import { getSupabaseAdmin } from "@/lib/supabase-admin"
 
 export async function POST(req: NextRequest) {
   const jwt = req.headers
     .get("authorization")
-    ?.replace("Bearer ", "");
+    ?.replace("Bearer ", "")
 
   if (!jwt) {
     return NextResponse.json(
       { error: "Unauthorized" },
       { status: 401 }
-    );
+    )
   }
+
+  // ✅ SINGLE admin client
   const supabase = getSupabaseAdmin()
   if (!supabase) {
-  return NextResponse.json(
-    { error: "Service unavailable" },
-    { status: 503 }
-  )
-}
+    return NextResponse.json(
+      { error: "Service unavailable" },
+      { status: 503 }
+    )
+  }
 
-  const supabase = getSupabaseAdmin()
-
+  // ✅ Validate user (admin context)
   const {
-    data: { user }
-  } = await supabase.auth.getUser();
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser()
 
-  if (!user) {
+  if (userError || !user) {
     return NextResponse.json(
       { error: "Invalid user" },
       { status: 401 }
-    );
+    )
   }
 
-  const body = await req.json();
   const {
     artifact_id,
     artifact_hash,
     trust_class,
-    manifest_summary
-  } = body;
+    manifest_summary,
+  } = await req.json()
 
   if (!artifact_id || !artifact_hash || !trust_class) {
     return NextResponse.json(
       { error: "Missing required fields" },
       { status: 400 }
-    );
+    )
   }
 
-  const { error } = await supabaseAdmin
+  const { error } = await supabase
     .from("store_artifacts")
     .insert({
       artifact_id,
@@ -56,18 +57,18 @@ export async function POST(req: NextRequest) {
       trust_class,
       builder_id: user.id,
       status: "pending",
-      manifest_summary
-    });
+      manifest_summary,
+    })
 
   if (error) {
     return NextResponse.json(
       { error: error.message },
       { status: 500 }
-    );
+    )
   }
 
   return NextResponse.json({
     status: "registered",
-    artifact_id
-  });
+    artifact_id,
+  })
 }
