@@ -1,24 +1,39 @@
 import { NextRequest, NextResponse } from "next/server"
 import { supabaseFromJWT } from "@/lib/supabase-server"
 
-
 export async function POST(req: NextRequest) {
-  const auth = req.headers.get("authorization")
-  const supabase = supabaseFromJWT(auth!)
+  const authHeader = req.headers.get("authorization")
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
+  // ✅ STRIP "Bearer "
+  const jwt = authHeader.replace("Bearer ", "").trim()
+
+  const supabase = supabaseFromJWT(jwt)
 
   const { artifact_id, decision } = await req.json()
 
-  const user = (await supabase.auth.getUser()).data.user
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser()
+
+  if (userError || !user) {
+    return NextResponse.json({ error: "Invalid user" }, { status: 401 })
+  }
 
   await supabase.from("approvals").insert({
     artifact_id,
-    requested_by: user?.id,
-    approved_by: user?.id,
+    requested_by: user.id,
+    approved_by: user.id,
     decision,
-    decided_at: new Date()
+    decided_at: new Date(),
   })
 
-  await supabase.from("artifacts")
+  await supabase
+    .from("artifacts")
     .update({ status: decision })
     .eq("id", artifact_id)
 

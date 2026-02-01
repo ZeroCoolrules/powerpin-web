@@ -1,22 +1,29 @@
-// lib/supabase-server.ts
+// lib/supabase.server.ts
+import "server-only"
 import { createClient } from "@supabase/supabase-js"
 
-function requireEnv(name: string): string {
+function getEnv(name: string): string {
   const value = process.env[name]
-  if (!value) throw new Error(`${name} is required`)
+  if (!value) {
+    console.error(`❌ Missing env var: ${name}`)
+    return ""
+  }
   return value
 }
 
 export function supabaseFromJWT(jwt: string) {
-  return createClient(
-    requireEnv("NEXT_PUBLIC_SUPABASE_URL"),
-    requireEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
-    {
-      global: {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
+  const url = getEnv("NEXT_PUBLIC_SUPABASE_URL")
+  const anon = getEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY")
+
+  if (!url || !anon) {
+    throw new Error("Supabase env vars missing on server")
+  }
+
+  return createClient(url, anon, {
+    global: {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
       },
-    }
-  )
+    },
+  })
 }

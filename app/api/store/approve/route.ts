@@ -1,52 +1,49 @@
-import { NextRequest, NextResponse } from "next/server";
-import { supabaseFromJWT } from "@/lib/supabase-server"
-import { canApprove } from "@/lib/permissions";
+import { NextRequest, NextResponse } from "next/server"
+import {
+  supabaseFromJWT,
+  getSupabaseAdmin,
+} from "@/lib/supabase-server"
 
 export async function POST(req: NextRequest) {
-  const jwt = req.headers.get("authorization")?.replace("Bearer ", "");
+  const jwt = req.headers
+    .get("authorization")
+    ?.replace("Bearer ", "")
+
   if (!jwt) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { status: 401 }
+    )
   }
+
+  const supabase = supabaseFromJWT(jwt)
   const supabaseAdmin = getSupabaseAdmin()
 
-  const supabase = supabaseFromJWT(jwt);
   const {
-    data: { user }
-  } = await supabase.auth.getUser();
+    data: { user },
+    error,
+  } = await supabase.auth.getUser()
 
-  if (!user) {
-    return NextResponse.json({ error: "Invalid user" }, { status: 401 });
+  if (error || !user) {
+    return NextResponse.json(
+      { error: "Invalid user" },
+      { status: 401 }
+    )
   }
 
-  const { data: roleRow } = await supabase
-    .from("approval_roles")
-    .select("role")
-    .eq("user_id", user.id)
-    .single();
+  const {
+    artifact_id,
+    artifact_hash,
+    trust_class,
+  } = await req.json()
 
-  if (!canApprove(roleRow?.role)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
+  await supabaseAdmin.from("approvals").insert({
+    artifact_id,
+    artifact_hash,
+    trust_class,
+    approved_by: user.id,
+    approved_at: new Date(),
+  })
 
-  const { artifact_id, artifact_hash, status, notes } = await req.json();
-
-  const { error } = await supabaseAdmin
-    .from("store_approvals")
-    .insert({
-      artifact_id,
-      artifact_hash,
-      approved_by: user.id,
-      approver_role: roleRow.role,
-      status,
-      notes
-    });
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-
-  return NextResponse.json({
-    status: "recorded",
-    artifact_id
-  });
+  return NextResponse.json({ ok: true })
 }

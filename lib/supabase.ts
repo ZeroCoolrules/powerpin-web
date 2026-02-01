@@ -1,59 +1,36 @@
+// lib/supabase.ts
 import { createClient, SupabaseClient } from "@supabase/supabase-js"
 
 /**
- * Safe env reader.
- * Only called inside functions (never at module scope).
+ * Browser-safe env reader
+ * Never throws — prevents silent prod failures
  */
 function env(name: string): string {
-  const value = process.env[name]
+  const value =
+    typeof process !== "undefined"
+      ? process.env[name]
+      : (globalThis as any)?.[name]
+
   if (!value) {
-    throw new Error(`Missing environment variable: ${name}`)
+    console.error(`❌ Missing env var in browser: ${name}`)
+    return ""
   }
+
   return value
 }
 
 /**
- * ─────────────────────────────────────────────
- * BROWSER CLIENT
- * Used in client components (login, inbox UI)
- * ─────────────────────────────────────────────
+ * ✅ BROWSER CLIENT
+ * Used in login, register, inbox UI
  */
 export function getSupabaseBrowser(): SupabaseClient {
-  return createClient(
-    env("NEXT_PUBLIC_SUPABASE_URL"),
-    env("NEXT_PUBLIC_SUPABASE_ANON_KEY")
-  )
-}
+  const url = env("NEXT_PUBLIC_SUPABASE_URL")
+  const anon = env("NEXT_PUBLIC_SUPABASE_ANON_KEY")
 
-/**
- * ─────────────────────────────────────────────
- * SERVER ADMIN CLIENT (SERVICE ROLE)
- * Server-only. NEVER import into client files.
- * ─────────────────────────────────────────────
- */
-export function getSupabaseAdmin(): SupabaseClient {
-  return createClient(
-    env("NEXT_PUBLIC_SUPABASE_URL"),
-    env("SUPABASE_SERVICE_ROLE_KEY")
-  )
-}
+  if (!url || !anon) {
+    // DO NOT throw — allow UI to surface error
+    console.error("❌ Supabase browser client not configured")
+  }
 
-/**
- * ─────────────────────────────────────────────
- * SERVER USER CLIENT (JWT / RLS)
- * Used in server components / route handlers
- * ─────────────────────────────────────────────
- */
-export function getSupabaseFromJWT(jwt: string): SupabaseClient {
-  return createClient(
-    env("NEXT_PUBLIC_SUPABASE_URL"),
-    env("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
-    {
-      global: {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      },
-    }
-  )
+  return createClient(url, anon)
 }
