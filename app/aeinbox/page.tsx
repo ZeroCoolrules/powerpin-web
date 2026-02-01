@@ -232,12 +232,12 @@ export default function AEinboxLanding() {
           width: 100%;
           height: 460px;
           background:
-            radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,.8), transparent),
-            radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,.6), transparent),
-            radial-gradient(1px 1px at 40% 15%, rgba(255,255,255,.7), transparent),
-            radial-gradient(1px 1px at 60% 30%, rgba(255,255,255,.6), transparent),
-            radial-gradient(1px 1px at 75% 10%, rgba(255,255,255,.8), transparent),
-            radial-gradient(1px 1px at 90% 35%, rgba(255,255,255,.6), transparent);
+            radial-gradient(2px 2px at 10% 20%, rgba(255,255,255,.8), transparent),
+            radial-gradient(2px 2px at 25% 40%, rgba(255,255,255,.6), transparent),
+            radial-gradient(2px 2px at 40% 15%, rgba(255,255,255,.7), transparent),
+            radial-gradient(2px 2px at 60% 30%, rgba(255,255,255,.6), transparent),
+            radial-gradient(2px 2px at 75% 10%, rgba(255,255,255,.8), transparent),
+            radial-gradient(2px 2px at 90% 35%, rgba(255,255,255,.6), transparent);
           animation: starDrift 28s linear infinite;
           opacity: 0.6;
           pointer-events: none;
