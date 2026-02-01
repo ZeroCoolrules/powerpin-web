@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin"
 
-const supabase = getSupabaseAdmin()
-
-
-
 export async function POST(req: NextRequest) {
   const jwt = req.headers
     .get("authorization")
@@ -16,7 +12,13 @@ export async function POST(req: NextRequest) {
       { status: 401 }
     );
   }
-  const supabaseAdmin = getSupabaseAdmin()
+  const supabase = getSupabaseAdmin()
+  if (!supabase) {
+  return NextResponse.json(
+    { error: "Service unavailable" },
+    { status: 503 }
+  )
+}
 
   const supabase = getSupabaseAdmin()
 

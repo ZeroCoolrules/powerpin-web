@@ -5,7 +5,15 @@ import { isCommandAllowed } from "@/app/system/commands"
 import type { TrustClass } from "@/app/system/commands"
 
 export async function POST(req: NextRequest) {
+	
   const supabase = getSupabaseAdmin()
+  if (!supabase) {
+  return NextResponse.json(
+    { error: "Service unavailable" },
+    { status: 503 }
+  )
+}
+
 
   const user = await getUserFromRequest(req)
   if (!user) {
