@@ -1,8 +1,6 @@
 "use client"
 
-export const dynamic = "force-dynamic"
-
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import PasswordInput from "../components/PasswordInput"
@@ -10,18 +8,23 @@ import { getSupabaseBrowser } from "@/lib/supabase-browser"
 
 export default function RegisterPage() {
   const router = useRouter()
+  const supabase = getSupabaseBrowser()
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const passwordValid =
-    password.length >= 8 &&
-    /[A-Z]/.test(password) &&
-    /[a-z]/.test(password) &&
-    /\d/.test(password) &&
-    /[^A-Za-z0-9]/.test(password)
+  // ✅ SINGLE SOURCE OF TRUTH
+  const passwordValid = useMemo(() => {
+    return (
+      password.length >= 8 &&
+      /[A-Z]/.test(password) &&
+      /[a-z]/.test(password) &&
+      /\d/.test(password) &&
+      /[^A-Za-z0-9]/.test(password)
+    )
+  }, [password])
 
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault()
@@ -30,37 +33,27 @@ export default function RegisterPage() {
     setLoading(true)
     setError(null)
 
-    try {
-      // 🔒 CRITICAL: Supabase created ONLY inside handler
-      const supabase = getSupabaseBrowser()
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: "https://inboxae.com/login",
+      },
+    })
 
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: "https://inboxae.com/login",
-        },
-      })
-
-      if (error) {
-        setError(error.message)
-        setLoading(false)
-        return
-      }
-
-      // fire welcome email (non-blocking)
-      fetch("/api/email/welcome", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      }).catch(() => {})
-
-      router.push("/register/check-email")
-    } catch (err) {
-      console.error(err)
-      setError("Registration failed. Please try again.")
+    if (error) {
+      setError(error.message)
       setLoading(false)
+      return
     }
+
+    fetch("/api/email/welcome", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    }).catch(() => {})
+
+    router.push("/register/check-email")
   }
 
   return (
@@ -94,19 +87,6 @@ export default function RegisterPage() {
           placeholder="Password"
         />
 
-        <p style={{ fontSize: 12, marginTop: 8, opacity: 0.7 }}>
-          Password must be at least 8 characters and include uppercase,
-          lowercase, a number, and a special character.
-        </p>
-
-        <ul style={{ fontSize: 12, marginTop: 6 }}>
-          <Rule ok={password.length >= 8} label="At least 8 characters" />
-          <Rule ok={/[A-Z]/.test(password)} label="Uppercase letter" />
-          <Rule ok={/[a-z]/.test(password)} label="Lowercase letter" />
-          <Rule ok={/\d/.test(password)} label="Number" />
-          <Rule ok={/[^A-Za-z0-9]/.test(password)} label="Special character" />
-        </ul>
-
         {error && (
           <div style={{ marginTop: 10, color: "#f87171", fontSize: 14 }}>
             {error}
@@ -115,7 +95,7 @@ export default function RegisterPage() {
 
         <button
           type="submit"
-          disabled={loading || !passwordValid}
+          disabled={!passwordValid || loading}
           style={{
             marginTop: 22,
             width: "100%",
@@ -125,6 +105,7 @@ export default function RegisterPage() {
             color: "#000",
             fontWeight: 700,
             cursor: passwordValid ? "pointer" : "not-allowed",
+            opacity: loading ? 0.6 : 1,
           }}
         >
           {loading ? "Creating account…" : "Create account"}
@@ -139,10 +120,6 @@ export default function RegisterPage() {
       </form>
     </div>
   )
-}
-
-function Rule({ ok, label }: { ok: boolean; label: string }) {
-  return <li style={{ color: ok ? "#00ffa3" : "#6b7280" }}>• {label}</li>
 }
 
 const container: React.CSSProperties = {
