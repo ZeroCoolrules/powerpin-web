@@ -6,28 +6,29 @@ import { getSupabaseBrowser } from "@/lib/supabase-browser"
 
 export default function LoginPage() {
   const router = useRouter()
-  const supabase = getSupabaseBrowser()
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
 
-  // 🔁 Redirect if already logged in
+  // 🔐 Redirect if already logged in (CLIENT ONLY)
   useEffect(() => {
+    const supabase = getSupabaseBrowser()
+
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) {
         router.replace("/aeinbox")
       }
     })
-  }, [router, supabase])
+  }, [router])
 
   async function signIn(e: React.FormEvent) {
     e.preventDefault()
-    if (loading) return
-
     setLoading(true)
     setError(null)
+
+    const supabase = getSupabaseBrowser()
 
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -45,9 +46,28 @@ export default function LoginPage() {
   }
 
   return (
-    <div style={container}>
-      <form onSubmit={signIn} style={card}>
-        <h1 style={{ marginBottom: 20 }}>Sign in</h1>
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "#000",
+        color: "#e6eaf0",
+      }}
+    >
+      <form
+        onSubmit={signIn}
+        style={{
+          width: 420,
+          padding: 32,
+          borderRadius: 20,
+          background: "rgba(15,23,32,0.9)",
+          border: "1px solid #1f2937",
+          boxShadow: "0 0 60px rgba(0,255,163,0.15)",
+        }}
+      >
+        <h2 style={{ marginBottom: 20 }}>Sign in</h2>
 
         <input
           type="email"
@@ -55,7 +75,16 @@ export default function LoginPage() {
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          style={input}
+          style={{
+            width: "100%",
+            padding: "14px 16px",
+            marginBottom: 12,
+            borderRadius: 12,
+            background: "#000",
+            border: "1px solid #1f2937",
+            color: "#e6eaf0",
+            outline: "none",
+          }}
         />
 
         <input
@@ -64,11 +93,20 @@ export default function LoginPage() {
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          style={input}
+          style={{
+            width: "100%",
+            padding: "14px 16px",
+            marginBottom: 12,
+            borderRadius: 12,
+            background: "#000",
+            border: "1px solid #1f2937",
+            color: "#e6eaf0",
+            outline: "none",
+          }}
         />
 
         {error && (
-          <div style={{ color: "#f87171", marginTop: 10 }}>
+          <div style={{ color: "#f87171", fontSize: 14, marginBottom: 10 }}>
             {error}
           </div>
         )}
@@ -77,14 +115,14 @@ export default function LoginPage() {
           type="submit"
           disabled={loading}
           style={{
-            marginTop: 20,
             width: "100%",
-            padding: "12px",
-            borderRadius: 10,
+            padding: "14px 0",
+            borderRadius: 999,
             background: "#00ffa3",
             color: "#000",
             fontWeight: 700,
             cursor: loading ? "not-allowed" : "pointer",
+            opacity: loading ? 0.6 : 1,
           }}
         >
           {loading ? "Signing in…" : "Sign in"}
@@ -92,32 +130,4 @@ export default function LoginPage() {
       </form>
     </div>
   )
-}
-
-const container: React.CSSProperties = {
-  minHeight: "100vh",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  background: "#000",
-  color: "#e6eaf0",
-}
-
-const card: React.CSSProperties = {
-  width: 380,
-  padding: 28,
-  borderRadius: 18,
-  background: "rgba(15,23,32,0.9)",
-  border: "1px solid #1f2937",
-}
-
-const input: React.CSSProperties = {
-  width: "100%",
-  padding: "12px 14px",
-  borderRadius: 10,
-  background: "#000",
-  border: "1px solid #1f2937",
-  color: "#e6eaf0",
-  outline: "none",
-  marginBottom: 12,
 }
