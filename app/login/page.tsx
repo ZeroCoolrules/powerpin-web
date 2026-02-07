@@ -14,11 +14,32 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
+  // 🔎 DEBUG AUTH STATE (THIS IS WHAT YOU ASKED FOR)
+  useEffect(() => {
+    const supabase = supabaseBrowser()
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("AUTH EVENT:", event)
+      console.log("SESSION:", session)
+    })
+
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [])
+
+  // 🔐 Redirect if already logged in
   useEffect(() => {
     const supabase = supabaseBrowser()
 
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) router.replace("/aeinbox")
+      console.log("INITIAL SESSION CHECK:", data.session)
+
+      if (data.session) {
+        router.replace("/aeinbox")
+      }
     })
   }, [router])
 
@@ -35,7 +56,11 @@ export default function LoginPage() {
     })
 
     setLoading(false)
-    if (error) return setError(error.message)
+
+    if (error) {
+      setError(error.message)
+      return
+    }
 
     router.push("/aeinbox")
   }
