@@ -12,21 +12,17 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  // ✅ Supabase client created ONLY in browser
-  const getSupabase = () =>
-    createClient(
+  // 🔐 redirect if already logged in (CLIENT ONLY)
+  useEffect(() => {
+    if (typeof window === "undefined") return
+
+    const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     )
 
-  // ✅ Client-only session check
-  useEffect(() => {
-    const supabase = getSupabase()
-
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) {
-        router.replace("/aeinbox")
-      }
+      if (data.session) router.replace("/aeinbox")
     })
   }, [router])
 
@@ -35,7 +31,10 @@ export default function LoginPage() {
     setLoading(true)
     setError(null)
 
-    const supabase = getSupabase()
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
 
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -88,8 +87,6 @@ export default function LoginPage() {
     </div>
   )
 }
-
-/* ===== styles ===== */
 
 const container: React.CSSProperties = {
   minHeight: "100vh",

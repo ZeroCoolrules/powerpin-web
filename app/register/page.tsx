@@ -1,6 +1,5 @@
 "use client"
 
-export const dynamic = "force-dynamic"
 import { useState, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
@@ -15,12 +14,6 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
-
-  // ✅ Password rules (single source of truth)
   const passwordValid = useMemo(() => {
     return (
       password.length >= 8 &&
@@ -38,9 +31,18 @@ export default function RegisterPage() {
     setLoading(true)
     setError(null)
 
+    // ✅ CREATE SUPABASE HERE — NOT ABOVE
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
+
     const { error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        emailRedirectTo: "https://inboxae.com/login",
+      },
     })
 
     setLoading(false)
@@ -50,7 +52,6 @@ export default function RegisterPage() {
       return
     }
 
-    // Optional welcome email (non-blocking)
     fetch("/api/email/welcome", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -91,7 +92,7 @@ export default function RegisterPage() {
           placeholder="Password"
         />
 
-        <ul style={{ fontSize: 12, marginTop: 8 }}>
+        <ul style={{ fontSize: 12, marginTop: 10 }}>
           <Rule ok={password.length >= 8} label="At least 8 characters" />
           <Rule ok={/[A-Z]/.test(password)} label="Uppercase letter" />
           <Rule ok={/[a-z]/.test(password)} label="Lowercase letter" />
@@ -108,17 +109,7 @@ export default function RegisterPage() {
         <button
           type="submit"
           disabled={!passwordValid || loading}
-          style={{
-            marginTop: 22,
-            width: "100%",
-            padding: "14px 0",
-            borderRadius: 999,
-            background: passwordValid ? "#00ffa3" : "#064e3b",
-            color: "#000",
-            fontWeight: 700,
-            cursor: passwordValid ? "pointer" : "not-allowed",
-            opacity: loading ? 0.6 : 1,
-          }}
+          style={button(passwordValid, loading)}
         >
           {loading ? "Creating account…" : "Create account"}
         </button>
@@ -165,3 +156,15 @@ const input: React.CSSProperties = {
   color: "#e6eaf0",
   outline: "none",
 }
+
+const button = (valid: boolean, loading: boolean): React.CSSProperties => ({
+  marginTop: 22,
+  width: "100%",
+  padding: "14px 0",
+  borderRadius: 999,
+  background: valid ? "#00ffa3" : "#064e3b",
+  color: "#000",
+  fontWeight: 700,
+  cursor: valid ? "pointer" : "not-allowed",
+  opacity: loading ? 0.6 : 1,
+})
