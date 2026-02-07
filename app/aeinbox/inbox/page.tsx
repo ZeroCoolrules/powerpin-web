@@ -3,6 +3,8 @@ import { redirect } from "next/navigation"
 import InboxClient from "./InboxClient"
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
 
+export const dynamic = "force-dynamic"
+
 export default async function InboxPage() {
   const supabase = createRouteHandlerClient({ cookies })
 

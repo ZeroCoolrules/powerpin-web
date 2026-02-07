@@ -11,7 +11,27 @@ export default function LoginPage() {
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const input: React.CSSProperties = {
+  width: "100%",
+  padding: "14px 16px",
+  marginBottom: 12,
+  borderRadius: 12,
+  background: "#000",
+  border: "1px solid #1f2937",
+  color: "#e6eaf0",
+  outline: "none",
+}
 
+const button: React.CSSProperties = {
+  width: "100%",
+  padding: "14px 0",
+  borderRadius: 999,
+  background: "#00ffa3",
+  color: "#000",
+  fontWeight: 700,
+  cursor: "pointer",
+  opacity: 1,
+}
   // 🔐 Redirect if already logged in (CLIENT ONLY)
   useEffect(() => {
     const supabase = createClient(
@@ -68,3 +88,4 @@ export default function LoginPage() {
     </div>
   )
 }
+
