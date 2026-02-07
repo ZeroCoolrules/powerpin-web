@@ -69,30 +69,27 @@ export default function InboxClient() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-green-400 font-mono">
-      {/* REPLACE THIS with your full inbox UI */}
-      <div className="p-8">
-        <h1 className="text-lg mb-4">Inbox</h1>
+    <div className="min-h-screen bg-black text-green-400 font-mono p-8">
+      <h1 className="text-lg mb-4">Inbox</h1>
 
-        {emails.length === 0 ? (
-          <p className="opacity-60">No messages.</p>
-        ) : (
-          <ul className="space-y-2">
-            {emails.map((email) => (
-              <li
-                key={email.id}
-                className="border border-green-800 p-3 cursor-pointer hover:border-green-600"
-                onClick={() => setSelectedEmail(email)}
-              >
-                <strong>{email.sender}</strong>
-                <div className="text-sm opacity-70">
-                  {email.subject}
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      {emails.length === 0 ? (
+        <p className="opacity-60">No messages.</p>
+      ) : (
+        <ul className="space-y-2">
+          {emails.map((email) => (
+            <li
+              key={email.id}
+              className="border border-green-800 p-3 cursor-pointer hover:border-green-600"
+              onClick={() => setSelectedEmail(email)}
+            >
+              <strong>{email.sender}</strong>
+              <div className="text-sm opacity-70">
+                {email.subject}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   )
 }

@@ -14,7 +14,12 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // ✅ SINGLE SOURCE OF TRUTH
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+
+  // ✅ Password rules (single source of truth)
   const passwordValid = useMemo(() => {
     return (
       password.length >= 8 &&
@@ -32,21 +37,24 @@ export default function RegisterPage() {
     setLoading(true)
     setError(null)
 
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    )
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+    })
 
-    const { error } = await supabaseBrowser.auth.signUp({
-		email,
-		password,
-	})
     setLoading(false)
 
     if (error) {
       setError(error.message)
       return
     }
+
+    // Optional welcome email (non-blocking)
+    fetch("/api/email/welcome", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    }).catch(() => {})
 
     router.push("/register/check-email")
   }
@@ -82,6 +90,14 @@ export default function RegisterPage() {
           placeholder="Password"
         />
 
+        <ul style={{ fontSize: 12, marginTop: 8 }}>
+          <Rule ok={password.length >= 8} label="At least 8 characters" />
+          <Rule ok={/[A-Z]/.test(password)} label="Uppercase letter" />
+          <Rule ok={/[a-z]/.test(password)} label="Lowercase letter" />
+          <Rule ok={/\d/.test(password)} label="Number" />
+          <Rule ok={/[^A-Za-z0-9]/.test(password)} label="Special character" />
+        </ul>
+
         {error && (
           <div style={{ marginTop: 10, color: "#f87171", fontSize: 14 }}>
             {error}
@@ -90,7 +106,7 @@ export default function RegisterPage() {
 
         <button
           type="submit"
-          disabled={loading || !passwordValid}
+          disabled={!passwordValid || loading}
           style={{
             marginTop: 22,
             width: "100%",
@@ -115,6 +131,10 @@ export default function RegisterPage() {
       </form>
     </div>
   )
+}
+
+function Rule({ ok, label }: { ok: boolean; label: string }) {
+  return <li style={{ color: ok ? "#00ffa3" : "#6b7280" }}>• {label}</li>
 }
 
 const container: React.CSSProperties = {
