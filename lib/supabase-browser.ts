@@ -1,16 +1,24 @@
-import { createClient } from "@supabase/supabase-js"
+// lib/supabase-browser.ts
+"use client"
 
-export function getSupabaseBrowser() {
+import { createClient, SupabaseClient } from "@supabase/supabase-js"
+
+let _client: SupabaseClient | null = null
+
+export function supabaseBrowser(): SupabaseClient {
   if (typeof window === "undefined") {
-    throw new Error("Supabase browser client called on server")
+    throw new Error("supabaseBrowser called on server")
   }
+
+  if (_client) return _client
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-  if (!url || !key) {
-    throw new Error("Supabase env vars missing")
+  if (!url || !anon) {
+    throw new Error("supabaseUrl is required")
   }
 
-  return createClient(url, key)
+  _client = createClient(url, anon)
+  return _client
 }
