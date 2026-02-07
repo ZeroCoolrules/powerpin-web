@@ -4,25 +4,26 @@ import { useState, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import PasswordInput from "../components/PasswordInput"
-import { createClient } from "@supabase/supabase-js"
+import { supabaseBrowser } from "@/lib/supabase-browser"
 
 export default function RegisterPage() {
   const router = useRouter()
+  const supabase = supabaseBrowser()
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const passwordValid = useMemo(() => {
-    return (
+  const passwordValid = useMemo(
+    () =>
       password.length >= 8 &&
       /[A-Z]/.test(password) &&
       /[a-z]/.test(password) &&
       /\d/.test(password) &&
-      /[^A-Za-z0-9]/.test(password)
-    )
-  }, [password])
+      /[^A-Za-z0-9]/.test(password),
+    [password]
+  )
 
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault()
@@ -31,140 +32,39 @@ export default function RegisterPage() {
     setLoading(true)
     setError(null)
 
-    // ✅ CREATE SUPABASE HERE — NOT ABOVE
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    )
-
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: "https://inboxae.com/login",
-      },
-    })
-
+    const { error } = await supabase.auth.signUp({ email, password })
     setLoading(false)
 
-    if (error) {
-      setError(error.message)
-      return
-    }
-
-    fetch("/api/email/welcome", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    }).catch(() => {})
+    if (error) return setError(error.message)
 
     router.push("/register/check-email")
   }
 
   return (
-    <div style={container}>
-      <form onSubmit={handleRegister} style={card}>
-        <div style={{ textAlign: "center", marginBottom: 32 }}>
-          <Image
-            src="/aeinbox-wordmark.png"
-            alt="ÆInbox"
-            width={300}
-            height={70}
-            priority
-          />
-          <p style={{ marginTop: 14, opacity: 0.8 }}>
-            Create your ÆInbox account
-          </p>
-        </div>
+    <div className="min-h-screen flex items-center justify-center bg-black text-white">
+      <form onSubmit={handleRegister} className="w-[420px] p-8 rounded-2xl bg-[#0f1720]">
+        <Image src="/aeinbox-wordmark.png" alt="ÆInbox" width={300} height={70} />
 
         <input
           type="email"
-          placeholder="Email"
           required
+          placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          style={input}
+          className="w-full mt-4 p-3 bg-black border rounded"
         />
 
-        <PasswordInput
-          value={password}
-          onChange={setPassword}
-          placeholder="Password"
-        />
+        <PasswordInput value={password} onChange={setPassword} />
 
-        <ul style={{ fontSize: 12, marginTop: 10 }}>
-          <Rule ok={password.length >= 8} label="At least 8 characters" />
-          <Rule ok={/[A-Z]/.test(password)} label="Uppercase letter" />
-          <Rule ok={/[a-z]/.test(password)} label="Lowercase letter" />
-          <Rule ok={/\d/.test(password)} label="Number" />
-          <Rule ok={/[^A-Za-z0-9]/.test(password)} label="Special character" />
-        </ul>
-
-        {error && (
-          <div style={{ marginTop: 10, color: "#f87171", fontSize: 14 }}>
-            {error}
-          </div>
-        )}
+        {error && <div className="text-red-400 text-sm mt-2">{error}</div>}
 
         <button
-          type="submit"
           disabled={!passwordValid || loading}
-          style={button(passwordValid, loading)}
+          className="w-full mt-6 p-3 bg-green-400 text-black rounded-full"
         >
           {loading ? "Creating account…" : "Create account"}
         </button>
-
-        <div style={{ marginTop: 22, textAlign: "center", fontSize: 14 }}>
-          Already have an account?{" "}
-          <a href="/login" style={{ color: "#00ffa3" }}>
-            Log in
-          </a>
-        </div>
       </form>
     </div>
   )
 }
-
-function Rule({ ok, label }: { ok: boolean; label: string }) {
-  return <li style={{ color: ok ? "#00ffa3" : "#6b7280" }}>• {label}</li>
-}
-
-const container: React.CSSProperties = {
-  minHeight: "100vh",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  background: "#000",
-  color: "#e6eaf0",
-}
-
-const card: React.CSSProperties = {
-  width: 420,
-  padding: 32,
-  borderRadius: 20,
-  background: "rgba(15,23,32,0.9)",
-  border: "1px solid #1f2937",
-  boxShadow: "0 0 60px rgba(0,255,163,0.15)",
-}
-
-const input: React.CSSProperties = {
-  width: "100%",
-  padding: "14px 16px",
-  borderRadius: 12,
-  background: "#000",
-  border: "1px solid #1f2937",
-  color: "#e6eaf0",
-  outline: "none",
-}
-
-const button = (valid: boolean, loading: boolean): React.CSSProperties => ({
-  marginTop: 22,
-  width: "100%",
-  padding: "14px 0",
-  borderRadius: 999,
-  background: valid ? "#00ffa3" : "#064e3b",
-  color: "#000",
-  fontWeight: 700,
-  cursor: valid ? "pointer" : "not-allowed",
-  opacity: loading ? 0.6 : 1,
-})
