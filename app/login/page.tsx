@@ -1,16 +1,8 @@
 "use client"
 
-export const dynamic = "force-dynamic"
-
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { createClient } from "@supabase/supabase-js"
-
-// ✅ create client ONCE (module scope is OK for client components)
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
 
 export default function LoginPage() {
   const router = useRouter()
@@ -20,8 +12,17 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  // 🔐 Redirect if already logged in
+  // ✅ Supabase client created ONLY in browser
+  const getSupabase = () =>
+    createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
+
+  // ✅ Client-only session check
   useEffect(() => {
+    const supabase = getSupabase()
+
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) {
         router.replace("/aeinbox")
@@ -33,6 +34,8 @@ export default function LoginPage() {
     e.preventDefault()
     setLoading(true)
     setError(null)
+
+    const supabase = getSupabase()
 
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -86,7 +89,7 @@ export default function LoginPage() {
   )
 }
 
-/* ───────────────────────── STYLES ───────────────────────── */
+/* ===== styles ===== */
 
 const container: React.CSSProperties = {
   minHeight: "100vh",
