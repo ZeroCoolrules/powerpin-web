@@ -1,37 +1,30 @@
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import InboxClient from "./InboxClient"
-import { getSupabaseAdmin } from "@/lib/supabase-admin"
+import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
 
 export default async function InboxPage() {
-  const cookieStore = cookies()
+  const supabase = createRouteHandlerClient({ cookies })
 
-  const accessToken =
-    cookieStore.get("sb-access-token")?.value ??
-    cookieStore.get("supabase-auth-token")?.value
+  // 1️⃣ Verify session (CORRECT)
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
 
-  if (!accessToken) {
+  if (!session?.user) {
     redirect("/login")
   }
 
-  const supabase = getSupabaseAdmin()
+  const user_id = session.user.id
 
-  // 1️⃣ Verify session
-  const { data: userData, error: userError } =
-    await supabase.auth.getUser()
-
-  if (userError || !userData.user) {
-    redirect("/login")
-  }
-
-  // 2️⃣ Subscription check
+  // 2️⃣ Subscription check (USER-SCOPED)
   const { data: subscription } = await supabase
     .from("subscriptions")
     .select("id")
+    .eq("user_id", user_id)
     .eq("status", "active")
     .single()
 
-  // 3️⃣ Gate
   if (!subscription) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black text-green-400 font-mono">
@@ -51,6 +44,6 @@ export default async function InboxPage() {
     )
   }
 
-  // 4️⃣ Allowed in
+  // 3️⃣ Allowed in
   return <InboxClient />
 }

@@ -8,7 +8,11 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = createRouteHandlerClient({ cookies })
-    await supabase.auth.exchangeCodeForSession(code)
+    const { error } = await supabase.auth.exchangeCodeForSession(code)
+
+    if (error) {
+      console.error("Auth callback error:", error.message)
+    }
   }
 
   return NextResponse.redirect(requestUrl.origin)

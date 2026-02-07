@@ -1,54 +1,84 @@
 import { NextRequest, NextResponse } from "next/server"
+import { cookies } from "next/headers"
+import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
 import { getSupabaseAdmin } from "@/lib/supabase-admin"
 
 export async function POST(req: NextRequest) {
-  // ─────────────────────────────────────────────
-  // 1️⃣ Extract JWT
-  // ─────────────────────────────────────────────
-  const authHeader = req.headers.get("authorization")
-  const jwt = authHeader?.replace("Bearer ", "")
+  /* ===============================
+     1️⃣ Identify caller (session)
+  =============================== */
+  const supabaseUser = createRouteHandlerClient({ cookies })
+  const {
+    data: { session },
+  } = await supabaseUser.auth.getSession()
 
-  if (!jwt) {
+  if (!session?.user) {
     return NextResponse.json(
       { error: "Unauthorized" },
       { status: 401 }
     )
   }
 
-  // ─────────────────────────────────────────────
-  // 2️⃣ Admin client ONLY (server-safe)
-  // ─────────────────────────────────────────────
-  const supabase = getSupabaseAdmin()
+  const user = session.user
 
-  // ─────────────────────────────────────────────
-  // 3️⃣ Validate user from JWT
-  // ─────────────────────────────────────────────
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser(jwt)
+  /* ===============================
+     2️⃣ Check approver role
+     (example: table = reviewers)
+  =============================== */
+  const { data: reviewer } = await supabaseUser
+    .from("store_reviewers")
+    .select("role")
+    .eq("user_id", user.id)
+    .single()
 
-  if (error || !user) {
+  if (!reviewer) {
     return NextResponse.json(
-      { error: "Invalid user" },
-      { status: 401 }
+      { error: "Not an approver" },
+      { status: 403 }
     )
   }
 
-  // ─────────────────────────────────────────────
-  // 4️⃣ Parse body
-  // ─────────────────────────────────────────────
-  const body = await req.json()
+  /* ===============================
+     3️⃣ Parse request
+  =============================== */
+  const {
+    artifact_id,
+    decision, // "approved" | "rejected"
+    notes,
+  } = await req.json()
 
-  // TODO: replace with your actual logic
-  // Example:
-  // await supabase.from("some_table").insert({...})
+  if (!artifact_id || !decision) {
+    return NextResponse.json(
+      { error: "Missing fields" },
+      { status: 400 }
+    )
+  }
 
-  // ─────────────────────────────────────────────
-  // 5️⃣ Return success
-  // ─────────────────────────────────────────────
+  /* ===============================
+     4️⃣ Admin write (approval log)
+  =============================== */
+  const supabaseAdmin = getSupabaseAdmin()
+
+  const { error } = await supabaseAdmin
+    .from("store_approvals")
+    .insert({
+      artifact_id,
+      status: decision,
+      approver_id: user.id,
+      approver_role: reviewer.role,
+      notes,
+    })
+
+  if (error) {
+    return NextResponse.json(
+      { error: error.message },
+      { status: 500 }
+    )
+  }
+
   return NextResponse.json({
-    ok: true,
-    user_id: user.id,
+    status: "ok",
+    artifact_id,
+    decision,
   })
 }

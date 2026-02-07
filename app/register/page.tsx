@@ -4,11 +4,10 @@ import { useState, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import PasswordInput from "../components/PasswordInput"
-import { getSupabaseBrowser } from "@/lib/supabase-browser"
+import { createClient } from "@supabase/supabase-js"
 
 export default function RegisterPage() {
   const router = useRouter()
-  const supabase = getSupabaseBrowser()
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -33,6 +32,11 @@ export default function RegisterPage() {
     setLoading(true)
     setError(null)
 
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
+
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -41,17 +45,12 @@ export default function RegisterPage() {
       },
     })
 
+    setLoading(false)
+
     if (error) {
       setError(error.message)
-      setLoading(false)
       return
     }
-
-    fetch("/api/email/welcome", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    }).catch(() => {})
 
     router.push("/register/check-email")
   }
@@ -95,7 +94,7 @@ export default function RegisterPage() {
 
         <button
           type="submit"
-          disabled={!passwordValid || loading}
+          disabled={loading || !passwordValid}
           style={{
             marginTop: 22,
             width: "100%",

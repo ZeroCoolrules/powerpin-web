@@ -8,17 +8,7 @@ import StartButton from "@/app/components/StartButton"
 export default function AEinboxLanding() {
   const router = useRouter()
 
-  async function startCheckout() {
-    const res = await fetch("/api/checkout", { method: "POST" })
-    if (!res.ok) {
-      alert("Checkout failed")
-      return
-    }
-    const { url } = await res.json()
-    window.location.href = url
-  }
-
-  return (
+    return (
     <main
       style={{
         minHeight: "100vh",
@@ -210,18 +200,6 @@ export default function AEinboxLanding() {
           </p>
         </div>
       </section>
-
-      {/* FOOTER */}
-      <footer
-        style={{
-          marginTop: 120,
-          fontSize: 12,
-          opacity: 0.45,
-          textAlign: "center",
-        }}
-      >
-        Powered by Archway Power · © 2026 ÆInbox
-      </footer>
 
       {/* STYLES */}
       <style>{`
