@@ -1,4 +1,3 @@
-// lib/supabase-browser.ts
 "use client"
 
 import { createClient, SupabaseClient } from "@supabase/supabase-js"

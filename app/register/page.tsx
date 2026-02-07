@@ -1,4 +1,3 @@
-// app/register/page.tsx
 "use client"
 
 export const dynamic = "force-dynamic"
@@ -11,7 +10,6 @@ import { supabaseBrowser } from "@/lib/supabase-browser"
 
 export default function RegisterPage() {
   const router = useRouter()
-  const supabase = supabaseBrowser()
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -35,6 +33,8 @@ export default function RegisterPage() {
     setLoading(true)
     setError(null)
 
+    const supabase = supabaseBrowser()
+
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -51,7 +51,9 @@ export default function RegisterPage() {
       <form onSubmit={handleRegister} style={card}>
         <div style={{ textAlign: "center", marginBottom: 32 }}>
           <Image src="/aeinbox-wordmark.png" alt="ÆInbox" width={300} height={70} priority />
-          <p style={{ marginTop: 14, opacity: 0.8 }}>Create your ÆInbox account</p>
+          <p style={{ marginTop: 14, opacity: 0.8 }}>
+            Create your ÆInbox account
+          </p>
         </div>
 
         <input

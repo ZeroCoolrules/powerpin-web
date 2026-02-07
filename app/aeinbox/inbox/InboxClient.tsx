@@ -1,4 +1,3 @@
-// app/aeinbox/inbox/InboxClient.tsx
 "use client"
 
 import { useEffect, useState } from "react"
@@ -14,12 +13,12 @@ type Email = {
 
 export default function InboxClient() {
   const router = useRouter()
-  const supabase = supabaseBrowser()
-
   const [loading, setLoading] = useState(true)
   const [emails, setEmails] = useState<Email[]>([])
 
   useEffect(() => {
+    const supabase = supabaseBrowser()
+
     const load = async () => {
       const { data } = await supabase.auth.getSession()
       if (!data.session) return router.push("/login")
@@ -42,15 +41,20 @@ export default function InboxClient() {
     }
 
     load()
-  }, [router, supabase])
+  }, [router])
 
   if (loading) {
-    return <div className="min-h-screen bg-black text-green-400 flex items-center justify-center">Loading…</div>
+    return (
+      <div className="min-h-screen bg-black text-green-400 flex items-center justify-center">
+        Loading…
+      </div>
+    )
   }
 
   return (
     <div className="min-h-screen bg-black text-green-400 p-8">
       <h1 className="mb-4">Inbox</h1>
+
       {emails.map((e) => (
         <div key={e.id} className="border border-green-700 p-3 mb-2">
           <strong>{e.sender}</strong>
