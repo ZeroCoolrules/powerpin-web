@@ -4,6 +4,12 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { createClient } from "@supabase/supabase-js"
 
+// ✅ create client ONCE (module scope is OK for client components)
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
+
 export default function LoginPage() {
   const router = useRouter()
 
@@ -12,13 +18,7 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-   useEffect(() => {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    )
-
-  // Redirect if already logged in
+  // 🔐 Redirect if already logged in
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) {
@@ -83,6 +83,8 @@ export default function LoginPage() {
     </div>
   )
 }
+
+/* ───────────────────────── STYLES ───────────────────────── */
 
 const container: React.CSSProperties = {
   minHeight: "100vh",
