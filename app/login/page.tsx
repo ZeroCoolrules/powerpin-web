@@ -14,9 +14,11 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  // 🔎 DEBUG AUTH STATE (THIS IS WHAT YOU ASKED FOR)
+  // 🔍 AUTH DEBUG + SESSION CHECK
   useEffect(() => {
     const supabase = supabaseBrowser()
+
+    console.log("Login page mounted")
 
     const {
       data: { subscription },
@@ -25,22 +27,16 @@ export default function LoginPage() {
       console.log("SESSION:", session)
     })
 
-    return () => {
-      subscription.unsubscribe()
-    }
-  }, [])
-
-  // 🔐 Redirect if already logged in
-  useEffect(() => {
-    const supabase = supabaseBrowser()
-
     supabase.auth.getSession().then(({ data }) => {
-      console.log("INITIAL SESSION CHECK:", data.session)
-
+      console.log("INITIAL SESSION:", data.session)
       if (data.session) {
         router.replace("/aeinbox")
       }
     })
+
+    return () => {
+      subscription.unsubscribe()
+    }
   }, [router])
 
   async function signIn(e: React.FormEvent) {
