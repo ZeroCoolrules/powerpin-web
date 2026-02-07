@@ -37,14 +37,10 @@ export default function RegisterPage() {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     )
 
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: "https://inboxae.com/login",
-      },
-    })
-
+    const { error } = await supabaseBrowser.auth.signUp({
+		email,
+		password,
+	})
     setLoading(false)
 
     if (error) {
