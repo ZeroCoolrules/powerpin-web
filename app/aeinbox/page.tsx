@@ -4,16 +4,14 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import StartButton from "@/app/components/StartButton"
 
-
 export default function AEinboxLanding() {
   const router = useRouter()
 
-    return (
+  return (
     <main
       style={{
         minHeight: "100vh",
-        background:
-          "radial-gradient(circle at top, #0f172a 0%, #020617 60%)",
+        background: "radial-gradient(circle at top, #0f172a 0%, #020617 60%)",
         color: "#e5e7eb",
         padding: "120px 20px 80px",
         textAlign: "center",
@@ -70,7 +68,10 @@ export default function AEinboxLanding() {
 
             <div style={{ marginTop: 12, fontSize: 13 }}>
               New here?{" "}
-              <button onClick={() => router.push("/register")} style={linkBtn}>
+              <button
+                onClick={() => router.push("/register")}
+                style={linkBtn}
+              >
                 Create an account
               </button>
             </div>
@@ -146,13 +147,7 @@ export default function AEinboxLanding() {
       </section>
 
       {/* PRICING */}
-      <section
-        style={{
-          marginTop: 110,
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
+      <section style={{ marginTop: 110, position: "relative" }}>
         <div className="sectionPulse" />
 
         <div style={{ position: "relative", zIndex: 2 }}>
@@ -169,16 +164,18 @@ export default function AEinboxLanding() {
               flexWrap: "wrap",
             }}
           >
-            <button
-              onClick={startCheckout}
-              className="priceCard featured"
-              style={{ cursor: "pointer" }}
-            >
+            {/* PRIMARY PLAN */}
+            <div className="priceCard featured">
               <strong>$10</strong>
               <div>Secure Email + AI</div>
               <small>Most Popular</small>
-            </button>
 
+              <div style={{ marginTop: 14 }}>
+                <StartButton />
+              </div>
+            </div>
+
+            {/* COMING SOON */}
             <div className="priceCard">
               <strong>$15</strong>
               <div>Pro Tier</div>
@@ -273,8 +270,6 @@ export default function AEinboxLanding() {
           border-radius: 14px;
           background: rgba(255,255,255,0.04);
           box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
-          border: none;
-          color: inherit;
         }
 
         .priceCard strong {
