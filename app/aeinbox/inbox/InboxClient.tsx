@@ -69,5 +69,10 @@ export default function InboxClient() {
   }
 
   // UI stays exactly as you wrote it
-  return (/* unchanged UI */)
+  return (
+     <div className="min-h-screen bg-black text-green-400 flex items-center justify-center font-mono">
+    Inbox loading…
+     </div>
+  )
+
 }
