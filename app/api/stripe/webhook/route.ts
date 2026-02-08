@@ -42,7 +42,11 @@ export async function POST(req: NextRequest) {
     if (event.type === "checkout.session.completed") {
       const session = event.data.object as Stripe.Checkout.Session
       const email = session.customer_email
-      if (!email) throw new Error("Missing customer_email")
+      if (!email) {
+		console.warn("checkout.session.completed without customer_email (likely test event)")
+		return NextResponse.json({ received: true })
+	  }
+
 
       const { data: profile } = await supabaseAdmin
         .from("profiles")
@@ -50,7 +54,11 @@ export async function POST(req: NextRequest) {
         .eq("email", email)
         .single()
 
-      if (!profile) throw new Error("Profile not found")
+     if (!profile) {
+		console.warn("Profile not found for email:", email)
+		return NextResponse.json({ received: true })
+	  }
+
 
       await supabaseAdmin.from("subscriptions").upsert({
         user_id: profile.user_id,
