@@ -3,6 +3,10 @@ import { NextRequest, NextResponse } from "next/server"
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
   const host = req.headers.get("host") || ""
+  
+  if (req.nextUrl.pathname.startsWith("/api/stripe")) {
+  return NextResponse.next()
+  }
 
   const isInboxDomain =
     host.includes("inboxae.com") || host.includes("www.inboxae.com")
