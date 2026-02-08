@@ -7,17 +7,33 @@ export function middleware(req: NextRequest) {
   const isInboxDomain =
     host.includes("inboxae.com") || host.includes("www.inboxae.com")
 
-  // 🔒 BLOCK INVALID LOGIN PATHS
-  if (pathname.includes("/aeinbox/login") || pathname.includes("/inbox/login")) {
+  /* ─────────────────────────────────────────────
+     🔓 ALWAYS ALLOW SUPABASE AUTH CALLBACK
+  ───────────────────────────────────────────── */
+  if (pathname.startsWith("/auth/callback")) {
+    return NextResponse.next()
+  }
+
+  /* ─────────────────────────────────────────────
+     🔒 BLOCK INVALID LOGIN PATHS
+  ───────────────────────────────────────────── */
+  if (
+    pathname.includes("/aeinbox/login") ||
+    pathname.includes("/inbox/login")
+  ) {
     return NextResponse.redirect(new URL("/login", req.url))
   }
 
-  // 🔁 FORCE ÆInbox LANDING ON inboxae.com
+  /* ─────────────────────────────────────────────
+     🔁 FORCE ÆInbox LANDING (ROOT ONLY)
+  ───────────────────────────────────────────── */
   if (isInboxDomain && pathname === "/") {
     return NextResponse.redirect(new URL("/aeinbox", req.url))
   }
 
-  // 🔐 PROTECT /inbox (auth gate happens client-side for now)
+  /* ─────────────────────────────────────────────
+     🔐 PROTECT /inbox (client auth handles gate)
+  ───────────────────────────────────────────── */
   if (pathname.startsWith("/inbox")) {
     return NextResponse.next()
   }
