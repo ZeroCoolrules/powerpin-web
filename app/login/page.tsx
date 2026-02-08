@@ -30,7 +30,7 @@ export default function LoginPage() {
     supabase.auth.getSession().then(({ data }) => {
       console.log("INITIAL SESSION:", data.session)
       if (data.session) {
-        router.replace("/aeinbox")
+        router.replace("/inbox")
       }
     })
 
@@ -58,7 +58,7 @@ export default function LoginPage() {
       return
     }
 
-    router.push("/aeinbox")
+    router.push("/inbox")
   }
 
   return (
