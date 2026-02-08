@@ -1,43 +1,36 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { supabaseBrowser } from "@/lib/supabase-browser"
 
 export default function StartButton() {
   const router = useRouter()
 
   const handleCheckout = async () => {
-    const supabase = supabaseBrowser()
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+      })
 
-    // 1️⃣ Verify session FIRST
-    const {
-      data: { session },
-    } = await supabase.auth.getSession()
+      if (res.status === 401) {
+        router.push("/login")
+        return
+      }
 
-    if (!session?.user) {
-      router.push("/login")
-      return
-    }
+      if (!res.ok) {
+        throw new Error("Checkout failed")
+      }
 
-    // 2️⃣ Call checkout API
-    const res = await fetch("/api/checkout", {
-      method: "POST",
-    })
+      const { url } = await res.json()
 
-    if (!res.ok) {
+      if (!url) {
+        throw new Error("Missing checkout URL")
+      }
+
+      window.location.href = url
+    } catch (err) {
       alert("Checkout failed. Please try again.")
-      return
+      console.error(err)
     }
-
-    const { url } = await res.json()
-
-    if (!url) {
-      alert("Missing checkout URL")
-      return
-    }
-
-    // 3️⃣ Redirect to Stripe
-    window.location.href = url
   }
 
   return (

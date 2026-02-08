@@ -18,7 +18,9 @@ export async function POST(req: NextRequest) {
   const supabaseAdmin = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } }
+    {
+      auth: { persistSession: false },
+    }
   )
 
   /* ─────────────────────────────────────────────
@@ -63,7 +65,7 @@ export async function POST(req: NextRequest) {
       const userId = session.metadata?.user_id
       if (!userId) {
         console.warn(
-          "⚠️ checkout.session.completed without metadata.user_id (test event or misconfigured checkout)"
+          "⚠️ checkout.session.completed without metadata.user_id"
         )
         return NextResponse.json({ received: true })
       }
@@ -76,7 +78,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ received: true })
       }
 
-      // 1️⃣ Upsert subscription record
+      // 1️⃣ Upsert subscription
       await supabaseAdmin.from("subscriptions").upsert({
         user_id: userId,
         stripe_customer_id: stripeCustomerId,
