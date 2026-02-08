@@ -3,10 +3,6 @@ import { NextRequest, NextResponse } from "next/server"
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
   const host = req.headers.get("host") || ""
-  
-  if (req.nextUrl.pathname.startsWith("/api/stripe")) {
-  return NextResponse.next()
-  }
 
   const isInboxDomain =
     host.includes("inboxae.com") || host.includes("www.inboxae.com")
@@ -23,7 +19,6 @@ export function middleware(req: NextRequest) {
 
   // 🔐 PROTECT /inbox (auth gate happens client-side for now)
   if (pathname.startsWith("/inbox")) {
-    // Allow page load, Supabase will handle auth state
     return NextResponse.next()
   }
 
@@ -31,5 +26,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next|favicon.ico).*)"],
+  matcher: ["/((?!api|_next|favicon.ico).*)"],
 }
