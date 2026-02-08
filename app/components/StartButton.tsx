@@ -27,9 +27,17 @@ export default function StartButton() {
   return (
     <button
       onClick={handleCheckout}
-      className="px-6 py-3 border border-green-500 text-green-400 hover:bg-green-900"
+      style={{
+        padding: "15px 30px",
+        background: "#00ffa3",
+        color: "#000",
+        fontWeight: "bold",
+        borderRadius: 8,
+        border: "none",
+        cursor: "pointer",
+      }}
     >
-      Start with ÆInbox + Æi — $10/month 
+      Start with Æi — $10/month
     </button>
   )
 }
