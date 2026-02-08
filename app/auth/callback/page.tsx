@@ -1,21 +1,21 @@
+// app/auth/callback/page.tsx
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
 
 export const dynamic = "force-dynamic"
 
-export default async function AuthCallbackPage() {
+export default async function AuthCallbackPage({
+  searchParams,
+}: {
+  searchParams: { code?: string }
+}) {
   const supabase = createRouteHandlerClient({ cookies })
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
-
-  // If session exists, user is verified & logged in
-  if (session) {
-    redirect("/login")
+  if (searchParams.code) {
+    // 🔑 THIS is what you were missing
+    await supabase.auth.exchangeCodeForSession(searchParams.code)
   }
 
-  // If something failed, send to login anyway
   redirect("/login")
 }
