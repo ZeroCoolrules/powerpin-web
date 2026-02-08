@@ -36,9 +36,13 @@ export default function RegisterPage() {
     const supabase = supabaseBrowser()
 
     const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    })
+	  email,
+	  password,
+	  options: {
+      emailRedirectTo: "https://www.inboxae.com/auth/callback",
+      },
+	})
+
 
     setLoading(false)
     if (error) return setError(error.message)
