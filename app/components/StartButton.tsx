@@ -7,37 +7,37 @@ export default function StartButton() {
   const router = useRouter()
 
   const handleCheckout = async () => {
-    try {
-      const supabase = supabaseBrowser()
-      const { data } = await supabase.auth.getSession()
+    const supabase = supabaseBrowser()
 
-      // 🔐 Not logged in → redirect to login
-      if (!data.session) {
-        router.push("/login")
-        return
-      }
+    // 1️⃣ Verify session FIRST
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
 
-      // 💳 Create Stripe checkout
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-      })
-
-      if (!res.ok) {
-        throw new Error("Checkout API failed")
-      }
-
-      const { url } = await res.json()
-
-      if (!url) {
-        throw new Error("Missing checkout URL")
-      }
-
-      // 🚀 Redirect to Stripe Checkout
-      window.location.href = url
-    } catch (err) {
-      console.error("Checkout failed:", err)
-      alert("Checkout failed. Please try again.")
+    if (!session?.user) {
+      router.push("/login")
+      return
     }
+
+    // 2️⃣ Call checkout API
+    const res = await fetch("/api/checkout", {
+      method: "POST",
+    })
+
+    if (!res.ok) {
+      alert("Checkout failed. Please try again.")
+      return
+    }
+
+    const { url } = await res.json()
+
+    if (!url) {
+      alert("Missing checkout URL")
+      return
+    }
+
+    // 3️⃣ Redirect to Stripe
+    window.location.href = url
   }
 
   return (
