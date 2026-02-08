@@ -1,8 +1,23 @@
 "use client"
 
+import { useRouter } from "next/navigation"
+import { supabaseBrowser } from "@/lib/supabase-browser"
+
 export default function StartButton() {
+  const router = useRouter()
+
   const handleCheckout = async () => {
     try {
+      const supabase = supabaseBrowser()
+      const { data } = await supabase.auth.getSession()
+
+      // 🔐 Not logged in → redirect to login
+      if (!data.session) {
+        router.push("/login")
+        return
+      }
+
+      // 💳 Create Stripe checkout
       const res = await fetch("/api/checkout", {
         method: "POST",
       })
@@ -14,9 +29,10 @@ export default function StartButton() {
       const { url } = await res.json()
 
       if (!url) {
-        throw new Error("No checkout URL returned")
+        throw new Error("Missing checkout URL")
       }
 
+      // 🚀 Redirect to Stripe Checkout
       window.location.href = url
     } catch (err) {
       console.error("Checkout failed:", err)
