@@ -8,7 +8,6 @@ export const dynamic = "force-dynamic"
 export default async function InboxPage() {
   const supabase = createRouteHandlerClient({ cookies })
 
-  // 1️⃣ Verify session (CORRECT)
   const {
     data: { session },
   } = await supabase.auth.getSession()
@@ -19,22 +18,24 @@ export default async function InboxPage() {
 
   const user_id = session.user.id
 
-  // 2️⃣ Subscription check (USER-SCOPED)
-  const { data: subscription } = await supabase
-    .from("subscriptions")
-    .select("id")
+  // ✅ Gate using profiles (what your webhook updates)
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("subscription_status, plan")
     .eq("user_id", user_id)
-    .eq("status", "active")
     .single()
 
-  if (!subscription) {
+  const isActive =
+    profile?.subscription_status === "active" &&
+    profile?.plan &&
+    profile.plan !== "free"
+
+  if (!isActive) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black text-green-400 font-mono">
         <div className="border border-green-700 p-8 text-center">
           <h1 className="text-lg mb-2">ÆInbox</h1>
-          <p className="opacity-70 mb-6">
-            Unlock secure, AI-powered email.
-          </p>
+          <p className="opacity-70 mb-6">Unlock secure, AI-powered email.</p>
           <a
             href="/pricing"
             className="border border-green-600 px-6 py-2 hover:bg-green-900"
@@ -46,6 +47,5 @@ export default async function InboxPage() {
     )
   }
 
-  // 3️⃣ Allowed in
   return <InboxClient />
 }
