@@ -1,33 +1,29 @@
 import { NextRequest, NextResponse } from "next/server"
-import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs"
 
-export async function middleware(req: NextRequest) {
-  const res = NextResponse.next()
-
-  // Keep Supabase session cookies in sync
-  const supabase = createMiddlewareClient({ req, res })
-  await supabase.auth.getSession()
-
+export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
   const host = req.headers.get("host") || ""
 
-  // ✅ allow auth callback paths
-  if (pathname.startsWith("/auth/callback")) return res
+  // ✅ ABSOLUTE BYPASS for Supabase auth callback
+  // (no redirects, no checks, nothing)
+  if (pathname === "/auth/callback") {
+    return NextResponse.next()
+  }
 
   const isInboxDomain =
-    host.includes("inboxae.com") || host.includes("www.inboxae.com")
+    host === "inboxae.com" || host === "www.inboxae.com" || host.endsWith(".inboxae.com")
 
-  // 🔒 block weird nested login routes
-  if (pathname.includes("/aeinbox/login") || pathname.includes("/inbox/login")) {
+  // 🔒 BLOCK INVALID LOGIN PATHS
+  if (pathname.startsWith("/aeinbox/login") || pathname.startsWith("/inbox/login")) {
     return NextResponse.redirect(new URL("/login", req.url))
   }
 
-  // 🔁 optional: force landing on inbox domain
+  // 🔁 FORCE ÆInbox LANDING ON inboxae.com
   if (isInboxDomain && pathname === "/") {
     return NextResponse.redirect(new URL("/aeinbox", req.url))
   }
 
-  return res
+  return NextResponse.next()
 }
 
 export const config = {
