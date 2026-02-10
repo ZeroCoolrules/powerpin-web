@@ -14,29 +14,23 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  // 🔍 AUTH DEBUG + SESSION CHECK
   useEffect(() => {
     const supabase = supabaseBrowser()
 
-    console.log("Login page mounted")
+    // Only redirect if the session is valid AND now cookie-backed via auth-helpers
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) router.replace("/aeinbox/inbox")
+    })
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log("AUTH EVENT:", event)
-      console.log("SESSION:", session)
-    })
-
-    supabase.auth.getSession().then(({ data }) => {
-      console.log("INITIAL SESSION:", data.session)
-      if (data.session) {
+      if (event === "SIGNED_IN" && session) {
         router.replace("/aeinbox/inbox")
       }
     })
 
-    return () => {
-      subscription.unsubscribe()
-    }
+    return () => subscription.unsubscribe()
   }, [router])
 
   async function signIn(e: React.FormEvent) {
@@ -58,7 +52,7 @@ export default function LoginPage() {
       return
     }
 
-    router.push("/aeinbox/inbox")
+    router.replace("/aeinbox/inbox")
   }
 
   return (

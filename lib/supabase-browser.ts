@@ -1,23 +1,12 @@
 "use client"
 
-import { createClient, SupabaseClient } from "@supabase/supabase-js"
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import type { SupabaseClient } from "@supabase/supabase-js"
 
 let _client: SupabaseClient | null = null
 
 export function supabaseBrowser(): SupabaseClient {
-  if (typeof window === "undefined") {
-    throw new Error("supabaseBrowser called on server")
-  }
-
   if (_client) return _client
-
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-  if (!url || !anon) {
-    throw new Error("supabaseUrl is required")
-  }
-
-  _client = createClient(url, anon)
+  _client = createClientComponentClient()
   return _client
 }
