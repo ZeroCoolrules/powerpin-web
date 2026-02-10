@@ -1,27 +1,19 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { supabaseBrowser } from "@/lib/supabase-browser"
 
 export const dynamic = "force-dynamic"
 
 export default function LoginPage() {
   const router = useRouter()
-  const params = useSearchParams()
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [show, setShow] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    // Show a clearer error if callback failed
-    if (params.get("auth") === "failed") {
-      setError("Auth callback failed. Please sign in again.")
-    }
-  }, [params])
 
   async function signIn(e: React.FormEvent) {
     e.preventDefault()
@@ -42,7 +34,6 @@ export default function LoginPage() {
       return
     }
 
-    // ✅ go to the gated inbox
     router.replace("/aeinbox/inbox")
   }
 
@@ -60,7 +51,7 @@ export default function LoginPage() {
           style={input}
         />
 
-        <div style={{ position: "relative" }}>
+        <div style={{ position: "relative", marginBottom: 12 }}>
           <input
             type={show ? "text" : "password"}
             placeholder="Password"
@@ -82,7 +73,7 @@ export default function LoginPage() {
         </div>
 
         {error && (
-          <div style={{ color: "#f87171", fontSize: 14, marginTop: 12 }}>
+          <div style={{ color: "#f87171", fontSize: 14, marginBottom: 10 }}>
             {error}
           </div>
         )}
@@ -132,7 +123,6 @@ const button: React.CSSProperties = {
   color: "#000",
   fontWeight: 700,
   cursor: "pointer",
-  marginTop: 16,
 }
 
 const eyeBtn: React.CSSProperties = {
