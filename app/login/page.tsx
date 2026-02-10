@@ -2,7 +2,7 @@
 
 export const dynamic = "force-dynamic"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { supabaseBrowser } from "@/lib/supabase-browser"
 
@@ -13,25 +13,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    const supabase = supabaseBrowser()
-
-    // Only redirect if the session is valid AND now cookie-backed via auth-helpers
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) router.replace("/aeinbox/inbox")
-    })
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "SIGNED_IN" && session) {
-        router.replace("/aeinbox/inbox")
-      }
-    })
-
-    return () => subscription.unsubscribe()
-  }, [router])
 
   async function signIn(e: React.FormEvent) {
     e.preventDefault()
@@ -52,6 +33,7 @@ export default function LoginPage() {
       return
     }
 
+    // cookie session will exist because middleware synced it
     router.replace("/aeinbox/inbox")
   }
 

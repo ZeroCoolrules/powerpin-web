@@ -1,33 +1,28 @@
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import InboxClient from "./InboxClient"
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
 
 export const dynamic = "force-dynamic"
 
 export default async function InboxPage() {
-  const supabase = createRouteHandlerClient({ cookies })
+  const supabase = createServerComponentClient({ cookies })
 
   const {
     data: { session },
   } = await supabase.auth.getSession()
 
-  if (!session?.user) {
-    redirect("/login")
-  }
+  if (!session?.user) redirect("/login")
 
   const user_id = session.user.id
 
-  // ✅ Gate using profiles (what webhook updates)
-  const { data: profile, error: profileError } = await supabase
+  const { data: profile } = await supabase
     .from("profiles")
     .select("subscription_status, plan")
     .eq("user_id", user_id)
-    .maybeSingle()
+    .single()
 
-  // If profile row missing or query fails, treat as inactive
   const isActive =
-    !profileError &&
     profile?.subscription_status === "active" &&
     !!profile?.plan &&
     profile.plan !== "free"
