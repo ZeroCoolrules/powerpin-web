@@ -1,18 +1,27 @@
 "use client"
 
-export const dynamic = "force-dynamic"
-
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { supabaseBrowser } from "@/lib/supabase-browser"
+
+export const dynamic = "force-dynamic"
 
 export default function LoginPage() {
   const router = useRouter()
+  const params = useSearchParams()
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [show, setShow] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    // Show a clearer error if callback failed
+    if (params.get("auth") === "failed") {
+      setError("Auth callback failed. Please sign in again.")
+    }
+  }, [params])
 
   async function signIn(e: React.FormEvent) {
     e.preventDefault()
@@ -33,7 +42,7 @@ export default function LoginPage() {
       return
     }
 
-    // cookie session will exist because middleware synced it
+    // ✅ go to the gated inbox
     router.replace("/aeinbox/inbox")
   }
 
@@ -51,17 +60,29 @@ export default function LoginPage() {
           style={input}
         />
 
-        <input
-          type="password"
-          placeholder="Password"
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          style={input}
-        />
+        <div style={{ position: "relative" }}>
+          <input
+            type={show ? "text" : "password"}
+            placeholder="Password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            style={{ ...input, paddingRight: 52, marginBottom: 0 }}
+          />
+
+          <button
+            type="button"
+            onClick={() => setShow((v) => !v)}
+            style={eyeBtn}
+            aria-label={show ? "Hide password" : "Show password"}
+            title={show ? "Hide password" : "Show password"}
+          >
+            {show ? "🙈" : "👁️"}
+          </button>
+        </div>
 
         {error && (
-          <div style={{ color: "#f87171", fontSize: 14, marginBottom: 10 }}>
+          <div style={{ color: "#f87171", fontSize: 14, marginTop: 12 }}>
             {error}
           </div>
         )}
@@ -111,4 +132,18 @@ const button: React.CSSProperties = {
   color: "#000",
   fontWeight: 700,
   cursor: "pointer",
+  marginTop: 16,
+}
+
+const eyeBtn: React.CSSProperties = {
+  position: "absolute",
+  right: 10,
+  top: "50%",
+  transform: "translateY(-50%)",
+  border: "none",
+  background: "transparent",
+  color: "#9ca3af",
+  cursor: "pointer",
+  fontSize: 18,
+  padding: 6,
 }
