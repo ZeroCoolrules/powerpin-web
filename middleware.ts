@@ -6,9 +6,10 @@ export function middleware(req: NextRequest) {
 
   // ✅ ABSOLUTE BYPASS for Supabase auth callback
   // (no redirects, no checks, nothing)
-  if (pathname === "/auth/callback") {
-    return NextResponse.next()
+  if (pathname.startsWith("/auth/callback")) {
+  return NextResponse.next()
   }
+
 
   const isInboxDomain =
     host === "inboxae.com" || host === "www.inboxae.com" || host.endsWith(".inboxae.com")
