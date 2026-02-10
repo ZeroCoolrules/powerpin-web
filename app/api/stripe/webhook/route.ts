@@ -144,25 +144,62 @@ export async function POST(req: NextRequest) {
     // CHECKOUT COMPLETED (PRIMARY ACTIVATION)
     // ============================================
     if (event.type === "checkout.session.completed") {
-      const session = event.data.object as Stripe.Checkout.Session
+  const session = event.data.object as Stripe.Checkout.Session
 
-      const userId = await resolveUserId(session)
-      if (!userId) {
-        console.warn("⚠️ checkout.session.completed but could not resolve user_id (no metadata + no email match)")
-        return NextResponse.json({ received: true })
-      }
+  const stripeCustomerId = session.customer as string | null
+  const stripeSubscriptionId = session.subscription as string | null
 
-      const stripeCustomerId = typeof session.customer === "string" ? session.customer : null
-      const stripeSubscriptionId = typeof session.subscription === "string" ? session.subscription : null
+  if (!stripeCustomerId || !stripeSubscriptionId) {
+    console.warn("⚠️ Missing customer or subscription ID")
+    return NextResponse.json({ received: true })
+  }
 
-      if (!stripeCustomerId || !stripeSubscriptionId) {
-        console.warn("⚠️ Missing customer or subscription ID on checkout.session.completed")
-        return NextResponse.json({ received: true })
-      }
+  // ✅ 1) Try user id from metadata OR Buy Button client_reference_id
+  let userId =
+    session.metadata?.user_id ||
+    (session.client_reference_id ? String(session.client_reference_id) : null)
 
-      await activateUser({ userId, stripeCustomerId, stripeSubscriptionId })
+  // ✅ 2) If still missing, try email -> auth.users lookup
+  if (!userId) {
+    const email =
+      session.customer_details?.email ||
+      session.customer_email ||
+      session.metadata?.email ||
+      null
+
+    if (email) {
+      const { data: authUser } = await supabaseAdmin
+        .schema("auth")
+        .from("users")
+        .select("id")
+        .eq("email", email)
+        .single()
+
+      userId = authUser?.id ?? null
     }
+  }
 
+    if (!userId) {
+      console.warn("⚠️ Could not map Stripe session to a Supabase user")
+        return NextResponse.json({ received: true })
+     }
+
+    await supabaseAdmin.from("subscriptions").upsert({
+      user_id: userId,
+      stripe_customer_id: stripeCustomerId,
+      stripe_subscription_id: stripeSubscriptionId,
+      status: "active",
+    })
+
+    await supabaseAdmin
+      .from("profiles")
+      .update({
+        stripe_customer_id: stripeCustomerId,
+        subscription_status: "active",
+        plan: "aeinbox_pro",
+      })
+      .eq("user_id", userId)
+  }
     // ============================================
     // SUBSCRIPTION UPDATED
     // ============================================
