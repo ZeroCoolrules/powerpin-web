@@ -12,7 +12,9 @@ export default async function InboxPage() {
     data: { session },
   } = await supabase.auth.getSession()
 
-  if (!session?.user) redirect("/login")
+  if (!session?.user) {
+    redirect("/login")
+  }
 
   const user_id = session.user.id
 
