@@ -18,16 +18,18 @@ export default async function InboxPage() {
 
   const user_id = session.user.id
 
-  // ✅ Gate using profiles (what your webhook updates)
-  const { data: profile } = await supabase
+  // ✅ Gate using profiles (what webhook updates)
+  const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("subscription_status, plan")
     .eq("user_id", user_id)
-    .single()
+    .maybeSingle()
 
+  // If profile row missing or query fails, treat as inactive
   const isActive =
+    !profileError &&
     profile?.subscription_status === "active" &&
-    profile?.plan &&
+    !!profile?.plan &&
     profile.plan !== "free"
 
   if (!isActive) {
