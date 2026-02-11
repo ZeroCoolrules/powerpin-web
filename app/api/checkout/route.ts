@@ -25,7 +25,7 @@ export async function POST() {
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
       apiVersion: "2024-06-20",
     })
-
+	console.log("STRIPE KEY PREFIX:", process.env.STRIPE_SECRET_KEY?.slice(0, 5))
     const priceId = process.env.STRIPE_PRICE_ID
     if (!priceId) {
       return NextResponse.json({ error: "missing_price_id" }, { status: 500 })
