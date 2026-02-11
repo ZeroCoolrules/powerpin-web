@@ -184,12 +184,16 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ received: true })
      }
 
-    await supabaseAdmin.from("subscriptions").upsert({
-      user_id: userId,
-      stripe_customer_id: stripeCustomerId,
-      stripe_subscription_id: stripeSubscriptionId,
-      status: "active",
-    })
+    await supabaseAdmin
+      .from("subscriptions")
+      .upsert({
+        user_id: userId,
+        stripe_customer_id: stripeCustomerId,
+        stripe_subscription_id: stripeSubscriptionId,
+        status: "active",
+      },
+    { onConflict: "user_id" }
+  )
 
     await supabaseAdmin
       .from("profiles")

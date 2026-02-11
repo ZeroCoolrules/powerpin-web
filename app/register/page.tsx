@@ -1,8 +1,6 @@
 "use client"
 
-export const dynamic = "force-dynamic"
-
-import { useState, useMemo } from "react"
+import { useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import PasswordInput from "../components/PasswordInput"
@@ -16,15 +14,15 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const passwordValid = useMemo(
-    () =>
+  const passwordValid = useMemo(() => {
+    return (
       password.length >= 8 &&
       /[A-Z]/.test(password) &&
       /[a-z]/.test(password) &&
       /\d/.test(password) &&
-      /[^A-Za-z0-9]/.test(password),
-    [password]
-  )
+      /[^A-Za-z0-9]/.test(password)
+    )
+  }, [password])
 
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault()
@@ -33,31 +31,45 @@ export default function RegisterPage() {
     setLoading(true)
     setError(null)
 
-    const supabase = supabaseBrowser()
+    try {
+      const supabase = supabaseBrowser()
 
-    const { error } = await supabase.auth.signUp({
-	  email,
-	  password,
-	  options: {
-      emailRedirectTo: "https://www.inboxae.com/auth/callback",
-      },
-	})
+      // IMPORTANT: use the current origin (handles www vs non-www + preview domains)
+      const emailRedirectTo = new URL("/auth/callback", window.location.origin).toString()
 
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { emailRedirectTo },
+      })
 
-    setLoading(false)
-    if (error) return setError(error.message)
+      if (error) {
+        setError(error.message)
+        setLoading(false)
+        return
+      }
 
-    router.push("/register/check-email")
+      setLoading(false)
+      router.push("/register/check-email")
+    } catch (err: any) {
+      console.error(err)
+      setError(err?.message || "register_failed")
+      setLoading(false)
+    }
   }
 
   return (
     <div style={container}>
       <form onSubmit={handleRegister} style={card}>
         <div style={{ textAlign: "center", marginBottom: 32 }}>
-          <Image src="/aeinbox-wordmark.png" alt="ÆInbox" width={300} height={70} priority />
-          <p style={{ marginTop: 14, opacity: 0.8 }}>
-            Create your ÆInbox account
-          </p>
+          <Image
+            src="/aeinbox-wordmark.png"
+            alt="ÆInbox"
+            width={300}
+            height={70}
+            priority
+          />
+          <p style={{ marginTop: 14, opacity: 0.8 }}>Create your ÆInbox account</p>
         </div>
 
         <input
