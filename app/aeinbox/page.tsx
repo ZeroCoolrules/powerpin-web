@@ -15,8 +15,8 @@ export default function AEmailLanding() {
         <Image
           src="/aemail-wordmark.png"
           alt="AEmail"
-          width={170}
-          height={40}
+          width={190}
+          height={50}
           priority
         />
         <Link
@@ -44,7 +44,7 @@ export default function AEmailLanding() {
         <div className="flex justify-center gap-4">
           <Link
             href="/aeinbox/inbox"
-            className="px-8 py-4 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-semibold transition shadow-lg shadow-cyan-500/20"
+            className="px-8 py-4 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-semibold transition shadow-lg shadow-cyan-500/30 hover:shadow-cyan-400/40 hover:-translate-y-0.5 duration-200"
           >
             Get AEmail — $10/month
           </Link>
@@ -96,7 +96,7 @@ export default function AEmailLanding() {
             Paste a long email thread. Get a clean summary in seconds.
           </p>
 
-          <div className="bg-black rounded-xl p-4 text-left text-sm text-gray-300">
+          <div className="bg-[#0B1220] rounded-xl p-4 text-left text-sm text-gray-300">
             <p className="opacity-60 mb-3">Incoming Email:</p>
             <p className="mb-4">
               “Hey team, following up on the Q3 projections, vendor contracts,
@@ -143,7 +143,7 @@ export default function AEmailLanding() {
 
       {/* SUBTLE GATEWAY HINT */}
       <footer className="text-center text-xs text-gray-600 pb-10">
-        Powered by a larger intelligence network.
+        Part of a larger intelligence network...
       </footer>
 
     </main>
