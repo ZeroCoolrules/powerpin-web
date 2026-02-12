@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 import { supabaseBrowser } from "@/lib/supabase-browser"
 
 export const dynamic = "force-dynamic"
@@ -38,60 +39,100 @@ export default function LoginPage() {
   }
 
   return (
-    <div style={container} className="bg-gray-900/60 backdrop-blur-md border border-cyan-500/20 shadow-[0_0_30px_rgba(0,229,255,0.15)] rounded-2xl p-8">
-	<Image
-		src="/aemail-wordmark.png"
-		alt="AEmail"
-		width={200}
-		height={60}
-		priority
-	/>
-	<form onSubmit={signIn} style={card}>
-        <h2 style={{ marginBottom: 20 }}>Sign in</h2>
+    <div style={container}>
+      {/* STARFIELD BACKGROUND */}
+      <div className="absolute inset-0 overflow-hidden -z-10">
+        <div className="stars" />
+      </div>
 
-        <input
-          type="email"
-          placeholder="Email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          style={input}
-        />
-
-        <div style={{ position: "relative", marginBottom: 12 }}>
-          <input
-            type={show ? "text" : "password"}
-            placeholder="Password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={{ ...input, paddingRight: 52, marginBottom: 0 }}
+      {/* LOGIN CARD */}
+      <div style={card}>
+        <div style={{ textAlign: "center", marginBottom: 24 }}>
+          <Image
+            src="/aemail-wordmark.png"
+            alt="AEmail"
+            width={220}
+            height={60}
+            priority
           />
-
-          <button
-            type="button"
-            onClick={() => setShow((v) => !v)}
-            style={eyeBtn}
-            aria-label={show ? "Hide password" : "Show password"}
-            title={show ? "Hide password" : "Show password"}
-          >
-            {show ? "🙈" : "👁️"}
-          </button>
         </div>
 
-        {error && (
-          <div style={{ color: "#f87171", fontSize: 14, marginBottom: 10 }}>
-            {error}
-          </div>
-        )}
+        <form onSubmit={signIn}>
+          <h2 style={{ marginBottom: 20, textAlign: "center" }}>Sign in</h2>
 
-        <button type="submit" disabled={loading} style={button}>
-          {loading ? "Signing in…" : "Sign in"}
-        </button>
-      </form>
+          <input
+            type="email"
+            placeholder="Email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            style={input}
+          />
+
+          <div style={{ position: "relative", marginBottom: 12 }}>
+            <input
+              type={show ? "text" : "password"}
+              placeholder="Password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              style={{ ...input, paddingRight: 52, marginBottom: 0 }}
+            />
+
+            <button
+              type="button"
+              onClick={() => setShow((v) => !v)}
+              style={eyeBtn}
+              aria-label={show ? "Hide password" : "Show password"}
+            >
+              {show ? "🙈" : "👁️"}
+            </button>
+          </div>
+
+          {error && (
+            <div style={{ color: "#f87171", fontSize: 14, marginBottom: 10 }}>
+              {error}
+            </div>
+          )}
+
+          <button type="submit" disabled={loading} style={button}>
+            {loading ? "Signing in…" : "Sign in"}
+          </button>
+        </form>
+      </div>
+
+      {/* STARFIELD CSS */}
+      <style jsx>{`
+        .stars {
+          width: 100%;
+          height: 100%;
+          background: black;
+          background-image:
+            radial-gradient(2px 2px at 20px 30px, #00e5ff, transparent),
+            radial-gradient(2px 2px at 40px 70px, #00e5ff, transparent),
+            radial-gradient(1px 1px at 90px 40px, #00e5ff, transparent),
+            radial-gradient(2px 2px at 130px 80px, #00e5ff, transparent),
+            radial-gradient(1px 1px at 160px 120px, #00e5ff, transparent);
+          background-repeat: repeat;
+          background-size: 200px 200px;
+          animation: moveStars 8s linear infinite;
+          opacity: 0.5;
+        }
+
+        @keyframes moveStars {
+          from {
+            transform: translateY(0);
+          }
+          to {
+            transform: translateY(-200px);
+          }
+        }
+      `}</style>
     </div>
   )
 }
+
+/* STYLES */
 
 const container: React.CSSProperties = {
   minHeight: "100vh",
@@ -100,15 +141,19 @@ const container: React.CSSProperties = {
   justifyContent: "center",
   background: "#000",
   color: "#e6eaf0",
+  position: "relative",
+  overflow: "hidden",
 }
 
 const card: React.CSSProperties = {
   width: 420,
   padding: 32,
   borderRadius: 20,
-  background: "rgba(15,23,32,0.9)",
-  border: "1px solid #1f2937",
-  boxShadow: "0 0 60px rgba(0,255,163,0.15)",
+  background: "rgba(15,23,32,0.85)",
+  border: "1px solid rgba(0,229,255,0.2)",
+  boxShadow: "0 0 60px rgba(0,229,255,0.15)",
+  backdropFilter: "blur(12px)",
+  zIndex: 2,
 }
 
 const input: React.CSSProperties = {
@@ -126,10 +171,11 @@ const button: React.CSSProperties = {
   width: "100%",
   padding: "14px 0",
   borderRadius: 999,
-  background: "#00ffa3",
+  background: "#00e5ff",
   color: "#000",
   fontWeight: 700,
   cursor: "pointer",
+  border: "none",
 }
 
 const eyeBtn: React.CSSProperties = {
