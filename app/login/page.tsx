@@ -38,8 +38,15 @@ export default function LoginPage() {
   }
 
   return (
-    <div style={container}>
-      <form onSubmit={signIn} style={card}>
+    <div style={container} className="bg-gray-900/60 backdrop-blur-md border border-cyan-500/20 shadow-[0_0_30px_rgba(0,229,255,0.15)] rounded-2xl p-8">
+	<Image
+		src="/aemail-wordmark.png"
+		alt="AEmail"
+		width={200}
+		height={60}
+		priority
+	/>
+	<form onSubmit={signIn} style={card}>
         <h2 style={{ marginBottom: 20 }}>Sign in</h2>
 
         <input

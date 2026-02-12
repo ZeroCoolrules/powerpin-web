@@ -35,22 +35,21 @@ export default async function InboxPage() {
 
   if (!isActive) {
     return (
-      <div className="min-h-screen bg-black text-green-400 font-mono flex items-center justify-center p-8">
-        <div className="w-full max-w-md border border-green-700/60 bg-black/40 p-8 text-center">
-          <h1 className="text-lg mb-2 tracking-wide">Æmail</h1>
-          <p className="opacity-70 mb-6">
-            Unlock secure, AI-powered email.
-          </p>
-
+      <div className="mb-8 text-center">
+		<h1 className="text-3xl font-semibold tracking-wide text-cyan-400">
+			Æmail
+		</h1>
+			<p className="text-gray-400 mt-2">
+				Unlock secure, AI-powered email.
+			</p>
           {/* Stripe Checkout button */}
           <InboxUpgrade />
 
           <div className="mt-6 text-xs opacity-60">
             Already paid? Refresh this page.
           </div>
-        </div>
       </div>
-    )
+     )
   }
 
   return <InboxClient />

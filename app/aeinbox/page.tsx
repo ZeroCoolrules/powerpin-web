@@ -1,5 +1,6 @@
 "use client"
 
+
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import StartButton from "@/app/components/StartButton"
@@ -35,8 +36,8 @@ export default function AEinboxLanding() {
         <Image
           src="/aemail-wordmark.png"
           alt="Æmail"
-          width={343}
-          height={80}
+          width={300}
+          height={70}
           priority
         />
       </div>
@@ -167,7 +168,7 @@ export default function AEinboxLanding() {
             {/* PRIMARY PLAN */}
             <div className="priceCard featured">
               <strong>$10</strong>
-              <div>Secure Email + AI</div>
+              <div>Secure Æmail + AI</div>
               <small>Most Popular</small>
 
               <div style={{ marginTop: 14 }}>
