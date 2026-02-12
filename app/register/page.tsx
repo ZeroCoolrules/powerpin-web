@@ -63,8 +63,8 @@ export default function RegisterPage() {
       <form onSubmit={handleRegister} style={card}>
         <div style={{ textAlign: "center", marginBottom: 32 }}>
           <Image
-            src="/aeinbox-wordmark.png"
-            alt="ÆInbox"
+            src="/aemail-wordmark.png"
+            alt="Æmail"
             width={300}
             height={70}
             priority

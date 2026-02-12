@@ -23,7 +23,7 @@ function StartCTA() {
 export default function BillingPage() {
   return (
     <div className="p-6">
-      <h1 className="text-xl mb-2">Activate ÆInbox</h1>
+      <h1 className="text-xl mb-2">Activate Æmail</h1>
       <p className="opacity-70">Subscription required.</p>
       <StartCTA />
     </div>
