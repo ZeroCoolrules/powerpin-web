@@ -4,7 +4,12 @@ import StartButton from "@/app/components/StartButton"
 
 export default function InboxUpgrade() {
   return (
-    <div className="absolute w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-3xl -z-10 animate-pulse" />
+    <div className="relative mt-10 flex flex-col items-center">
+
+      {/* Cyan Glow Background */}
+      <div className="absolute w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-3xl -z-10 animate-pulse" />
+
+      {/* Upgrade Card */}
       <div className="w-full max-w-md bg-[#0f172a]/80 backdrop-blur-xl border border-cyan-500/20 rounded-2xl p-8 shadow-[0_0_40px_rgba(0,229,255,0.15)] text-center">
 
         <h2 className="text-2xl font-semibold text-cyan-400 mb-2">
@@ -22,7 +27,6 @@ export default function InboxUpgrade() {
         </div>
 
       </div>
-
     </div>
   )
 }
