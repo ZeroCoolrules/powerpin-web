@@ -58,7 +58,7 @@ export default function AEinboxLanding() {
               marginInline: "auto",
             }}
           >
-            ÆInbox is a private inbox with a built-in AI assistant called Æi.
+            Æmailis a private inbox with a built-in AI assistant called Æi.
             No ads. No tracking. No data selling.
           </p>
 
@@ -84,7 +84,7 @@ export default function AEinboxLanding() {
         <div className="sectionPulse" />
         <div style={{ position: "relative", zIndex: 2 }}>
           <h2 style={{ fontSize: "1.7rem", fontWeight: 600 }}>
-            What Makes ÆInbox Different
+            What Makes Æmail Different
           </h2>
 
           <ul
