@@ -11,46 +11,39 @@ export default async function InboxPage() {
 
   const {
     data: { session },
-    error: sessionError,
   } = await supabase.auth.getSession()
 
-  if (sessionError || !session?.user) {
-    redirect("/login")
-  }
+  if (!session?.user) redirect("/login")
 
   const user_id = session.user.id
 
-  // Gate using profiles (what your webhook updates)
-  const { data: profile, error: profileError } = await supabase
+  const { data: profile } = await supabase
     .from("profiles")
     .select("subscription_status, plan")
     .eq("user_id", user_id)
     .single()
 
   const isActive =
-    !profileError &&
     profile?.subscription_status === "active" &&
-    profile?.plan &&
-    profile.plan !== "free"
+    profile?.plan === "aeinbox_pro"
 
   if (!isActive) {
     return (
-      <div className="mb-8 text-center">
-		<h1 className="text-3xl font-semibold tracking-wide text-cyan-400">
-			Æmail
-		</h1>
-			<p className="text-gray-400 mt-2">
-				Unlock secure, AI-powered email.
-			</p>
-          {/* Stripe Checkout button */}
-          <InboxUpgrade />
-
-          <div className="mt-6 text-xs opacity-60">
-            Already paid? Refresh this page.
-          </div>
+      <div className="text-center mt-16">
+        <h1 className="text-3xl text-cyan-400 font-semibold">Æmail</h1>
+        <p className="text-gray-400 mt-2">
+          Unlock secure, AI-powered email.
+        </p>
+        <InboxUpgrade />
       </div>
-     )
+    )
   }
 
-  return <InboxClient />
+  const { data: messages } = await supabase
+    .from("messages")
+    .select("*")
+    .eq("user_id", user_id)
+    .order("created_at", { ascending: false })
+
+  return <InboxClient messages={messages || []} />
 }

@@ -35,8 +35,8 @@ export async function POST() {
       mode: "subscription",
       customer_email: email,
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: "https://www.inboxae.com/aeinbox?checkout=success",
-      cancel_url: "https://www.inboxae.com/aeinbox?checkout=cancel",
+      success_url: "https://www.inboxae.com/aeinbox/inbox?paid=1,
+	  cancel_url "https://www.inboxae.com/aeinbox/inbox?canceled=1",
       metadata: {
         user_id: session.user.id,
         email,

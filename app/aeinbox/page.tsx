@@ -51,7 +51,7 @@ export default function AEmailLanding() {
 
           <Link
             href="/login"
-            className="px-8 py-4 rounded-xl border border-gray-700 hover:border-gray-500 text-gray-300 hover:text-white transition"
+            className="px-6 py-4 rounded-xl border border-gray-600 text-gray-300 hover:border-gray-400 hover:text-white transition"
           >
             Sign in
           </Link>
@@ -60,9 +60,9 @@ export default function AEmailLanding() {
       </section>
 
       {/* FEATURE GRID */}
-      <section className="max-w-6xl mx-auto px-6 pb-32">
+      <section className="text-left mb-12 md:mb-0">
 
-        <div className="grid md:grid-cols-3 gap-12">
+        <div className="grid md:grid-cols-3 gap-12 md:gap-16">
 
           <Feature
             title="Built-in AI"
@@ -117,7 +117,7 @@ export default function AEmailLanding() {
       </section>
 
       {/* PRICING */}
-      <section className="max-w-3xl mx-auto px-6 pb-32 text-center">
+      <section className="max-w-md md:max-w-3xl mx-auto px-6 pb-32 text-center">
 
         <div className="border border-gray-800 rounded-2xl p-10 bg-[#0F172A]/80 backdrop-blur-xl">
 
