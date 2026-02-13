@@ -16,14 +16,19 @@ export default async function InboxPage() {
   if (!session?.user) {
     redirect("/login")
   }
+console.log("SERVER SESSION USER:", session?.user?.id)
 
   const user_id = session.user.id
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("subscription_status, plan")
-    .eq("user_id", user_id)
-    .single()
+  const { data: profile, error: profileError } = await supabase
+  .from("profiles")
+  .select("*")
+  .eq("user_id", user_id)
+  .single()
+
+  console.log("PROFILE:", profile)
+  console.log("PROFILE ERROR:", profileError)
+
 
   const isActive =
     profile?.subscription_status === "active" &&
