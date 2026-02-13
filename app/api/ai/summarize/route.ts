@@ -1,38 +1,51 @@
-import OpenAI from "openai"
 import { NextResponse } from "next/server"
 
 export const runtime = "nodejs"
-export const dynamic = "force-dynamic"
-
-const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
 export async function POST(req: Request) {
   try {
-    const { text } = await req.json()
-
-    if (!text || typeof text !== "string" || text.trim().length < 10) {
-      return NextResponse.json({ error: "missing_text" }, { status: 400 })
+    if (!process.env.OPENAI_API_KEY) {
+      console.error("OPENAI_API_KEY missing at runtime")
+      return NextResponse.json(
+        { error: "Missing OPENAI_API_KEY" },
+        { status: 500 }
+      )
     }
 
-    const prompt = `Summarize the email thread below into 3-6 bullet points.
-- Keep it crisp.
-- Include action items and deadlines if present.
-- If no action items, say "No action items found."
+    const { text } = await req.json()
 
-EMAIL:
-${text}`
+    if (!text) {
+      return NextResponse.json(
+        { error: "Missing text" },
+        { status: 400 }
+      )
+    }
 
-    // Using the official SDK (Responses is recommended in OpenAI docs for new projects)
-    const resp = await client.responses.create({
-      model: "gpt-4.1-mini",
-      input: prompt,
+    // 👇 IMPORTANT: require inside function
+    const OpenAI = (await import("openai")).default
+
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
     })
 
-    const summary = resp.output_text?.trim() || ""
+    const response = await openai.responses.create({
+      model: "gpt-4.1-mini",
+      input: `Summarize this email into concise bullet points.
+Include action items if present.
 
-    return NextResponse.json({ summary })
-  } catch (e: any) {
-    console.error("summarize_error", e)
-    return NextResponse.json({ error: "server_error" }, { status: 500 })
+EMAIL:
+${text}`,
+    })
+
+    return NextResponse.json({
+      summary: response.output_text ?? "",
+    })
+
+  } catch (err) {
+    console.error("Summarize route error:", err)
+    return NextResponse.json(
+      { error: "AI failure" },
+      { status: 500 }
+    )
   }
 }
