@@ -1,25 +1,26 @@
-function EmailList() { 
+"use client"
 
-  return ( 
+import EmailRow from "./EmailRow"
 
-    <div className="w-96 border-r p-4"> 
+type Props = {
+  emails: any[]
+  onSelect: (email: any) => void
+}
 
-      <h2>Inbox</h2> 
+export default function EmailList({ emails, onSelect }: Props) {
+  return (
+    <div className="w-full p-4">
+      <h2 className="text-xl font-semibold mb-4">Inbox</h2>
 
- 
-
-      <div className="mt-4 space-y-2"> 
-
-        <EmailRow /> 
-
-        <EmailRow /> 
-
-        <EmailRow /> 
-
-      </div> 
-
-    </div> 
-
-  ) 
-
-} 
+      <div className="space-y-2">
+        {emails.map((email) => (
+          <EmailRow
+            key={email.id}
+            email={email}
+            onClick={() => onSelect(email)}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}

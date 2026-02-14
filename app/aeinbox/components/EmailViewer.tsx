@@ -1,73 +1,34 @@
 "use client"
 
-import { useState } from "react"
-import { runAI } from "@/hooks/useAI"
-
-type EmailViewerProps = {
+type Props = {
   subject: string
   sender: string
   body: string
 }
 
-export default function EmailViewer({ subject, sender, body }: EmailViewerProps) {
-  const [aiOutput, setAiOutput] = useState("")
-  const [aiLoading, setAiLoading] = useState(false)
-
-  async function handleAI(mode: "summarize" | "reply" | "safety") {
-    try {
-      setAiLoading(true)
-      setAiOutput("")
-
-      const { result } = await runAI(mode, body)
-      setAiOutput(result)
-    } catch (err) {
-      setAiOutput("Æi encountered an error.")
-    } finally {
-      setAiLoading(false)
-    }
-  }
-
+export default function EmailViewer({ subject, sender, body }: Props) {
   return (
-    <div className="flex-1 p-6">
+    <div className="flex-1 p-8">
 
-      {/* SUBJECT */}
-      <h2 className="text-lg">{subject}</h2>
+      <h2 className="text-xl font-semibold">{subject}</h2>
       <p className="text-sm opacity-70 mt-1">From: {sender}</p>
 
-      {/* BODY */}
-      <div className="mt-4 text-sm leading-relaxed whitespace-pre-wrap">
+      <div className="mt-6 text-sm leading-relaxed whitespace-pre-wrap">
         {body}
       </div>
 
-      {/* EMAIL ACTIONS */}
-      <div className="mt-6 flex gap-2">
-        <button className="border px-3 py-1">Reply</button>
-        <button className="border px-3 py-1">Archive</button>
-        <button className="border px-3 py-1">Delete</button>
-      </div>
-
-      {/* AI ACTIONS */}
-      <div className="mt-6 flex gap-2">
-        <button onClick={() => handleAI("summarize")} className="border px-3 py-1">
-          🧠 Summarize
+      <div className="mt-8 flex gap-3">
+        <button className="border border-cyan-500/20 px-4 py-2 rounded-lg">
+          Reply
         </button>
-        <button onClick={() => handleAI("reply")} className="border px-3 py-1">
-          ✍️ Draft Reply
+        <button className="border border-cyan-500/20 px-4 py-2 rounded-lg">
+          Archive
         </button>
-        <button onClick={() => handleAI("safety")} className="border px-3 py-1">
-          🛡️ Is This Safe?
+        <button className="border border-cyan-500/20 px-4 py-2 rounded-lg">
+          Delete
         </button>
       </div>
 
-      {/* AI OUTPUT */}
-      {(aiLoading || aiOutput) && (
-        <div className="mt-6 border p-4">
-          <strong>Æi:</strong>
-          <pre className="mt-2 text-sm whitespace-pre-wrap">
-            {aiLoading ? "Thinking…" : aiOutput}
-          </pre>
-        </div>
-      )}
     </div>
   )
 }
