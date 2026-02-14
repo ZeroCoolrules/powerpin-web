@@ -7,8 +7,14 @@ export const runtime = "nodejs"
 
 export async function POST() {
   try {
-    const supabase = createRouteHandlerClient({ cookies })
+    if (!process.env.STRIPE_SECRET_KEY) {
+      return NextResponse.json({ error: "missing_STRIPE_SECRET_KEY" }, { status: 500 })
+    }
+    if (!process.env.STRIPE_PRICE_ID) {
+      return NextResponse.json({ error: "missing_STRIPE_PRICE_ID" }, { status: 500 })
+    }
 
+    const supabase = createRouteHandlerClient({ cookies })
     const {
       data: { session },
     } = await supabase.auth.getSession()
@@ -22,34 +28,26 @@ export async function POST() {
       return NextResponse.json({ error: "missing_email" }, { status: 400 })
     }
 
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-      apiVersion: "2024-06-20",
-    })
-	console.log("STRIPE KEY PREFIX:", process.env.STRIPE_SECRET_KEY?.slice(0, 5))
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2024-06-20" })
     const priceId = process.env.STRIPE_PRICE_ID
-    if (!priceId) {
-      return NextResponse.json({ error: "missing_price_id" }, { status: 500 })
-    }
 
-    const checkoutSession = await stripe.checkout.sessions.create({
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.inboxae.com"
+
+    const checkout = await stripe.checkout.sessions.create({
       mode: "subscription",
       customer_email: email,
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: "https://www.inboxae.com/aeinbox/inbox?paid=1",
-	  cancel_url: "https://www.inboxae.com/aeinbox/inbox?canceled=1",
-		metadata: {
-		user_id: session.user.id,
-		email,
-		},
-
+      success_url: `${siteUrl}/aeinbox/inbox?paid=1`,
+      cancel_url: `${siteUrl}/aeinbox/inbox?canceled=1`,
+      metadata: {
+        user_id: session.user.id,
+        email,
+      },
     })
 
-    return NextResponse.json({ url: checkoutSession.url })
-  } catch (err: any) {
-    console.error("Checkout error:", err)
-    return NextResponse.json(
-      { error: err?.message ?? "checkout_failed" },
-      { status: 500 }
-    )
+    return NextResponse.json({ url: checkout.url })
+  } catch (e: any) {
+    console.error("checkout error:", e?.message || e)
+    return NextResponse.json({ error: "checkout_failed" }, { status: 500 })
   }
 }
