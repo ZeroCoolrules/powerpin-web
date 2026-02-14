@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { runAI } from "@/hooks/useAI"
+import { useAI } from "@/app/hooks/useAI"
 import AIResponse from "./AIResponse"
 
 type EmailViewerProps = {
