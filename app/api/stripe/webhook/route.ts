@@ -107,12 +107,13 @@ export async function POST(req: NextRequest) {
       // Create welcome email (safe insert: uses fields you already select)
       // If your emails table requires different columns, tell me the columns and I’ll map it.
       await supabaseAdmin.from("emails").insert({
-        user_id: userId,
-        from_name: "Æi (AEmail)",
-        subject: "Welcome to AEmail — your first 60 seconds",
-        summary: welcomeEmailText(email || "there"),
-        received_at: new Date().toISOString(),
-      })
+		user_id: userId,
+		from_name: "AEmail",
+		subject: "Welcome to AEmail",
+		summary: "Your AI-powered inbox is now active.",
+		received_at: new Date().toISOString()
+	  })
+
     }
 
     if (event.type === "customer.subscription.updated") {
