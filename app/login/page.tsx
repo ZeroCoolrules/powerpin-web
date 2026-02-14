@@ -34,8 +34,20 @@ export default function LoginPage() {
       setError(error.message)
       return
     }
+	await fetch("/api/2fa/send", { method: "POST" })
 
-    router.replace("/aeinbox/inbox")
+    const { data: profile } = await supabase
+  .from("profiles")
+  .select("twofa_enabled")
+  .eq("user_id", session.user.id)
+  .single()
+
+	 if (profile?.twofa_enabled) {
+	router.replace("/2fa")
+	} else {
+	router.replace("/aeinbox/inbox")
+	}
+
   }
 
   return (
