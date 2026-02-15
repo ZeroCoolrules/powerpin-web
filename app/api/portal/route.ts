@@ -12,8 +12,9 @@ export async function POST() {
       apiVersion: "2023-10-16",
     })
 
-    // 🔐 Get logged-in user
+    // 🔐 Get logged in user
     const supabase = createRouteHandlerClient({ cookies })
+
     const {
       data: { session },
     } = await supabase.auth.getSession()
@@ -31,22 +32,24 @@ export async function POST() {
       { auth: { persistSession: false } }
     )
 
-    const { data: subscription } = await supabaseAdmin
-      .from("subscriptions")
+    // ✅ LOOK IN PROFILES TABLE (NOT subscriptions)
+    const { data: profile } = await supabaseAdmin
+      .from("profiles")
       .select("stripe_customer_id")
       .eq("user_id", user_id)
       .single()
 
-    if (!subscription?.stripe_customer_id) {
+    if (!profile?.stripe_customer_id) {
       return NextResponse.json({ error: "customer_not_found" }, { status: 404 })
     }
 
     const portalSession = await stripe.billingPortal.sessions.create({
-      customer: subscription.stripe_customer_id,
+      customer: profile.stripe_customer_id,
       return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/aeinbox`,
     })
 
     return NextResponse.json({ url: portalSession.url })
+
   } catch (err) {
     console.error("Stripe portal error:", err)
     return NextResponse.json({ error: "portal_failed" }, { status: 500 })
