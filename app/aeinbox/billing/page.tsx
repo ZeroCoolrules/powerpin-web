@@ -1,31 +1,60 @@
 "use client"
 
-function StartCTA() {
-  async function goToBilling() {
-    const res = await fetch("/api/portal", { method: "POST" })
-    const data = await res.json()
+import { useState } from "react"
 
-    if (data.url) {
+export default function BillingPage() {
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  async function openPortal() {
+    try {
+      setLoading(true)
+      setError(null)
+
+      const res = await fetch("/api/portal", {
+        method: "POST",
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data?.error || "portal_failed")
+      }
+
+      if (!data.url) {
+        throw new Error("missing_portal_url")
+      }
+
       window.location.href = data.url
+    } catch (err: any) {
+      setError(err.message)
+      setLoading(false)
     }
   }
 
   return (
-    <button
-      onClick={goToBilling}
-      className="mt-4 border border-green-600 px-4 py-2"
-    >
-      Manage Billing
-    </button>
-  )
-}
+    <div className="min-h-screen bg-[#0A0F1E] text-white flex items-center justify-center px-6">
+      <div className="w-full max-w-md text-center">
+        <h1 className="text-3xl font-semibold text-cyan-400">Manage Billing</h1>
 
-export default function BillingPage() {
-  return (
-    <div className="p-6">
-      <h1 className="text-xl mb-2">Activate Æmail</h1>
-      <p className="opacity-70">Subscription required.</p>
-      <StartCTA />
+        <p className="text-gray-400 mt-4">
+          Update payment method, cancel subscription, or view invoices.
+        </p>
+
+        <button
+          onClick={openPortal}
+          disabled={loading}
+          className="mt-8 w-full py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-semibold transition"
+        >
+          {loading ? "Opening…" : "Open Billing Portal"}
+        </button>
+
+        {error && (
+          <div className="mt-4 text-red-400 text-sm">
+            {error}
+          </div>
+        )}
+      </div>
     </div>
   )
 }
