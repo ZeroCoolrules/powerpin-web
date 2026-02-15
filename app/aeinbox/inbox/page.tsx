@@ -16,7 +16,6 @@ export default async function InboxPage() {
   if (!session?.user) redirect("/login")
 
   const user_id = session.user.id
-  console.log("SERVER PROFILE:", profile)
 
   const { data: profile } = await supabase
     .from("profiles")
@@ -24,7 +23,7 @@ export default async function InboxPage() {
     .eq("user_id", user_id)
     .maybeSingle()
 
-  console.log("PROFILE:", profile)
+ 
   const isActive = profile?.subscription_status === "active" && profile?.plan === "aeinbox_pro"
 
   if (!isActive) {
