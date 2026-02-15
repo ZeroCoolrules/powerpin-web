@@ -78,7 +78,7 @@ export default function InboxClient() {
 
           <div className="flex items-center gap-6 text-sm">
             <button
-              onClick={() => router.push("/aeinbox/billing"))}
+              onClick={() => router.push("/aeinbox/billing")}
               className="text-gray-400 hover:text-cyan-400 transition"
             >
               Billing
