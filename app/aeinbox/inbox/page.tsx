@@ -16,6 +16,7 @@ export default async function InboxPage() {
   if (!session?.user) redirect("/login")
 
   const user_id = session.user.id
+  console.log("SERVER PROFILE:", profile)
 
   const { data: profile } = await supabase
     .from("profiles")
