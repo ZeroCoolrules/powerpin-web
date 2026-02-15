@@ -6,13 +6,12 @@ import { cookies } from "next/headers"
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
 import { createClient } from "@supabase/supabase-js"
 
-export async function POST() {
+export async function POST(req: Request) {
   try {
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
       apiVersion: "2023-10-16",
     })
 
-    // 🔐 Get logged in user
     const supabase = createRouteHandlerClient({ cookies })
 
     const {
@@ -25,14 +24,12 @@ export async function POST() {
 
     const user_id = session.user.id
 
-    // 🔑 Admin client
     const supabaseAdmin = createClient(
       process.env.SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!,
       { auth: { persistSession: false } }
     )
 
-    // ✅ LOOK IN PROFILES TABLE (NOT subscriptions)
     const { data: profile } = await supabaseAdmin
       .from("profiles")
       .select("stripe_customer_id")
@@ -43,9 +40,13 @@ export async function POST() {
       return NextResponse.json({ error: "customer_not_found" }, { status: 404 })
     }
 
+    // 🔥 BUILD ABSOLUTE URL FROM REQUEST
+    const origin = new URL(req.url).origin
+    const returnUrl = `${origin}/aeinbox`
+
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: profile.stripe_customer_id,
-      return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/aeinbox`,
+      return_url: returnUrl,
     })
 
     return NextResponse.json({ url: portalSession.url })
