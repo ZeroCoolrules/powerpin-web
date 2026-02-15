@@ -21,8 +21,9 @@ export function middleware(req: NextRequest) {
 
   // 🔁 FORCE ÆInbox LANDING ON inboxae.com
   if (isInboxDomain && pathname === "/") {
-    return NextResponse.redirect(new URL("/aeinbox", req.url))
+  return NextResponse.redirect(new URL("/aeinbox/inbox", req.url))
   }
+
 
   return NextResponse.next()
 }
