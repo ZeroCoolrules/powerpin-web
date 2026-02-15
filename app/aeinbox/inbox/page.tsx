@@ -23,6 +23,7 @@ export default async function InboxPage() {
     .eq("user_id", user_id)
     .maybeSingle()
 
+  console.log("PROFILE:", profile)
   const isActive = profile?.subscription_status === "active" && profile?.plan === "aeinbox_pro"
 
   if (!isActive) {
