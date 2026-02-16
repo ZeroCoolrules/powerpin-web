@@ -42,6 +42,9 @@ export default function RegisterPage() {
         password,
         options: { emailRedirectTo },
       })
+	  if (!error) {
+		await fetch("/api/increment-user", { method: "POST" })
+      }
 
       if (error) {
         setError(error.message)
@@ -110,7 +113,7 @@ export default function RegisterPage() {
           {loading ? "Creating account…" : "Create account"}
         </button>
       </form>
-    </div>
+	</div>
   )
 }
 

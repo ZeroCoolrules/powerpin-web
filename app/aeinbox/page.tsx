@@ -2,6 +2,8 @@
 
 import Image from "next/image"
 import Link from "next/link"
+import MilestoneAnnouncement from "@/app/components/MilestoneAnnouncement"
+
 
 export default function AEmailLanding() {
   return (
@@ -66,10 +68,13 @@ export default function AEmailLanding() {
           </Link>
 
         </div>
+		 {/* 🔥 LIVE DISTRIBUTION ANNOUNCEMENT */}
+			<MilestoneAnnouncement className="mt-12 border border-green-500/30 rounded-xl p-6 bg-[#0F172A]/80 backdrop-blur-xl shadow-[0_0_40px_rgba(0,255,100,0.15)] animate-pulse"
+			/>
 
       </section>
 
-      {/* FEATURE STRIP */}
+	  {/* FEATURE STRIP */}
       <section className="relative z-10 max-w-6xl mx-auto px-6 pb-28">
 
         <div className="grid md:grid-cols-3 gap-16 text-center">
