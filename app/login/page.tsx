@@ -1,9 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { supabaseBrowser } from "@/lib/supabase-browser"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
+import { validatePassword, isPasswordValid } from "@/lib/passwordRules"
 
 export default function LoginPage() {
   const supabase = supabaseBrowser()
@@ -14,8 +15,17 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const rules = useMemo(() => validatePassword(password), [password])
+  const passwordValid = useMemo(() => isPasswordValid(password), [password])
+
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
+
+    if (!passwordValid) {
+      setError("Password does not meet security requirements.")
+      return
+    }
+
     setLoading(true)
     setError(null)
 
@@ -25,7 +35,7 @@ export default function LoginPage() {
     })
 
     if (error) {
-      setError(error.message)
+      setError("Invalid email or password.")
       setLoading(false)
       return
     }
@@ -36,10 +46,8 @@ export default function LoginPage() {
   return (
     <main className="relative min-h-screen bg-[#0A0F1E] text-white flex flex-col items-center justify-center overflow-hidden">
 
-      {/* Subtle Premium Glow */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,229,255,0.06),transparent_70%)] pointer-events-none" />
 
-      {/* Logo */}
       <div className="mb-10">
         <Image
           src="/aemail-wordmark.png"
@@ -50,7 +58,6 @@ export default function LoginPage() {
         />
       </div>
 
-      {/* Headline */}
       <div className="text-center mb-10 px-6 max-w-xl">
         <h1 className="text-4xl md:text-5xl font-semibold tracking-tight leading-tight">
           Private email.
@@ -65,7 +72,6 @@ export default function LoginPage() {
         </p>
       </div>
 
-      {/* Login Card */}
       <form
         onSubmit={handleLogin}
         className="w-full max-w-md bg-[#0F172A]/80 backdrop-blur-xl border border-cyan-500/20 rounded-2xl p-8 shadow-[0_0_50px_rgba(0,229,255,0.08)]"
@@ -90,6 +96,25 @@ export default function LoginPage() {
             className="w-full px-4 py-3 rounded-xl bg-black border border-gray-700 focus:border-cyan-400 outline-none transition"
           />
 
+          {/* Password Rules */}
+          <ul className="text-xs space-y-1">
+            <li className={rules.length ? "text-green-400" : "text-gray-500"}>
+              • At least 8 characters
+            </li>
+            <li className={rules.upper ? "text-green-400" : "text-gray-500"}>
+              • Uppercase letter
+            </li>
+            <li className={rules.lower ? "text-green-400" : "text-gray-500"}>
+              • Lowercase letter
+            </li>
+            <li className={rules.number ? "text-green-400" : "text-gray-500"}>
+              • Number
+            </li>
+            <li className={rules.special ? "text-green-400" : "text-gray-500"}>
+              • Special character
+            </li>
+          </ul>
+
           {error && (
             <div className="text-red-400 text-sm">
               {error}
@@ -98,8 +123,12 @@ export default function LoginPage() {
 
           <button
             type="submit"
-            disabled={loading}
-            className="w-full py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-semibold transition shadow-lg shadow-cyan-500/20"
+            disabled={!passwordValid || loading}
+            className={`w-full py-3 rounded-xl font-semibold transition shadow-lg ${
+              passwordValid
+                ? "bg-cyan-500 hover:bg-cyan-400 text-black shadow-cyan-500/20"
+                : "bg-gray-700 text-gray-400 cursor-not-allowed"
+            }`}
           >
             {loading ? "Signing in…" : "Sign in"}
           </button>
@@ -107,11 +136,9 @@ export default function LoginPage() {
         </div>
       </form>
 
-      {/* Subtle Footer Identity */}
       <div className="absolute bottom-6 text-xs text-gray-600">
         Part of the AEmail Intelligence Network
       </div>
-
     </main>
   )
 }

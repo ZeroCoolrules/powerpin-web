@@ -1,10 +1,11 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useState, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import PasswordInput from "../components/PasswordInput"
 import { supabaseBrowser } from "@/lib/supabase-browser"
+import { validatePassword, isPasswordValid } from "@/lib/passwordRules"
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -14,18 +15,12 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const passwordValid = useMemo(() => {
-    return (
-      password.length >= 8 &&
-      /[A-Z]/.test(password) &&
-      /[a-z]/.test(password) &&
-      /\d/.test(password) &&
-      /[^A-Za-z0-9]/.test(password)
-    )
-  }, [password])
+  const rules = useMemo(() => validatePassword(password), [password])
+  const passwordValid = useMemo(() => isPasswordValid(password), [password])
 
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault()
+
     if (!passwordValid || loading) return
 
     setLoading(true)
@@ -34,17 +29,16 @@ export default function RegisterPage() {
     try {
       const supabase = supabaseBrowser()
 
-      // IMPORTANT: use the current origin (handles www vs non-www + preview domains)
-      const emailRedirectTo = new URL("/auth/callback", window.location.origin).toString()
+      const emailRedirectTo = new URL(
+        "/auth/callback",
+        window.location.origin
+      ).toString()
 
       const { error } = await supabase.auth.signUp({
         email,
         password,
         options: { emailRedirectTo },
       })
-	  if (!error) {
-		await fetch("/api/increment-user", { method: "POST" })
-      }
 
       if (error) {
         setError(error.message)
@@ -52,8 +46,12 @@ export default function RegisterPage() {
         return
       }
 
+      // Increment network count
+      await fetch("/api/increment-user", { method: "POST" })
+
       setLoading(false)
       router.push("/register/check-email")
+
     } catch (err: any) {
       console.error(err)
       setError(err?.message || "register_failed")
@@ -72,7 +70,9 @@ export default function RegisterPage() {
             height={70}
             priority
           />
-          <p style={{ marginTop: 14, opacity: 0.8 }}>Create your ÆInbox account</p>
+          <p style={{ marginTop: 14, opacity: 0.8 }}>
+            Create your ÆInbox account
+          </p>
         </div>
 
         <input
@@ -84,17 +84,26 @@ export default function RegisterPage() {
           style={input}
         />
 
-        <PasswordInput value={password} onChange={setPassword} placeholder="Password" />
+        <PasswordInput
+          value={password}
+          onChange={setPassword}
+          placeholder="Password"
+        />
 
+        {/* Password Rules */}
         <ul style={{ fontSize: 12, marginTop: 6 }}>
-          <Rule ok={password.length >= 8} label="At least 8 characters" />
-          <Rule ok={/[A-Z]/.test(password)} label="Uppercase letter" />
-          <Rule ok={/[a-z]/.test(password)} label="Lowercase letter" />
-          <Rule ok={/\d/.test(password)} label="Number" />
-          <Rule ok={/[^A-Za-z0-9]/.test(password)} label="Special character" />
+          <Rule ok={rules.length} label="At least 8 characters" />
+          <Rule ok={rules.upper} label="Uppercase letter" />
+          <Rule ok={rules.lower} label="Lowercase letter" />
+          <Rule ok={rules.number} label="Number" />
+          <Rule ok={rules.special} label="Special character" />
         </ul>
 
-        {error && <div style={{ marginTop: 10, color: "#f87171" }}>{error}</div>}
+        {error && (
+          <div style={{ marginTop: 10, color: "#f87171" }}>
+            {error}
+          </div>
+        )}
 
         <button
           type="submit"
@@ -113,12 +122,16 @@ export default function RegisterPage() {
           {loading ? "Creating account…" : "Create account"}
         </button>
       </form>
-	</div>
+    </div>
   )
 }
 
 function Rule({ ok, label }: { ok: boolean; label: string }) {
-  return <li style={{ color: ok ? "#00ffa3" : "#6b7280" }}>• {label}</li>
+  return (
+    <li style={{ color: ok ? "#00ffa3" : "#6b7280" }}>
+      • {label}
+    </li>
+  )
 }
 
 const container: React.CSSProperties = {
