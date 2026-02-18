@@ -2,35 +2,58 @@
 
 import { useEffect, useState } from "react"
 
+type NetworkStats = {
+  active_users: number
+  next_milestone: number
+  current_milestone: number | null
+  last_milestone: number | null
+}
+
 export default function MilestoneAnnouncement() {
-  const [events, setEvents] = useState<any[]>([])
+  const [stats, setStats] = useState<NetworkStats | null>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch("/api/milestones")
-      .then(res => res.json())
-      .then(setEvents)
+    async function fetchStats() {
+      try {
+        const res = await fetch("/api/network")
+        const data = await res.json()
+        setStats(data)
+      } catch (err) {
+        console.error("Failed to fetch network stats", err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchStats()
   }, [])
 
-  if (!events.length) return null
+  if (loading) return null
+  if (!stats) return null
 
-  const latest = events[0]
+  const progress =
+    (stats.active_users / stats.next_milestone) * 100
 
   return (
-    <div className="mt-12 border border-green-500/30 rounded-xl p-6 bg-[#0F172A]/80 backdrop-blur-xl">
-      <div className="text-sm text-green-400 mb-2">
-        Distribution Event Executed
-      </div>
+    <div className="w-full bg-black border-y border-cyan-500/20 py-6 text-center">
+      <h2 className="text-lg text-cyan-400 font-semibold">
+        Network Autonomy Counter
+      </h2>
 
-      <div className="text-xl font-semibold">
-        {latest.milestone.toLocaleString()} Users Reached
-      </div>
+      <p className="text-3xl font-bold text-white mt-2">
+        {stats.active_users.toLocaleString()} users
+      </p>
 
-      <div className="text-sm text-gray-400 mt-2">
-        Winner ID: {latest.winner_user_id.slice(0, 8)}...
-      </div>
+      <p className="text-sm text-gray-400 mt-1">
+        Next draw at {stats.next_milestone.toLocaleString()}
+      </p>
 
-      <div className="text-xs text-gray-500 mt-2">
-        Snapshot Count: {latest.snapshot_count}
+      <div className="max-w-xl mx-auto mt-4 h-2 bg-gray-800 rounded-full overflow-hidden">
+        <div
+          className="h-full bg-cyan-500 transition-all duration-700"
+          style={{ width: `${progress}%` }}
+        />
       </div>
     </div>
   )
