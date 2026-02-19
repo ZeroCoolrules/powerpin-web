@@ -1,10 +1,12 @@
 import Link from "next/link";
 import AppShell from "@/app/components/AppShell";
+import MilestoneAnnouncement from "@/app/components/MilestoneAnnouncement"
 
 export default function HomePage() {
   return (
     <AppShell>
-      <section className="home">
+     <MilestoneAnnouncement />
+       <section className="home">
         <div className="home-inner">
 
           <div className="badge">SHOWCASE BUILD</div>
@@ -40,3 +42,4 @@ export default function HomePage() {
     </AppShell>
   );
 }
+
