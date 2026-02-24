@@ -1,5 +1,6 @@
 export const metadata = {
   title: "Privacy Policy · ÆMail",
+  description: "Privacy Policy for ÆMail secure email platform.",
 }
 
 export default function PrivacyPage() {
@@ -9,36 +10,50 @@ export default function PrivacyPage() {
       <p><strong>Last Updated:</strong> January 2, 2026</p>
 
       <p>
-        ÆMail is a privacy-first email service with an optional AI assistant.
-        We do not sell data, run ads, or track users across the web.
+        ÆMail is a privacy-first email service with optional AI assistance.
+        We do not sell user data, run behavioral advertising, or track users across the web.
       </p>
 
-      <h2>Information We Collect</h2>
+      <h2>1. Information We Collect</h2>
       <ul>
-        <li>Account information (email address, login credentials)</li>
-        <li>Subscription and billing data (processed by Stripe)</li>
-        <li>Basic technical logs for security and reliability</li>
+        <li>Account information (email address and authentication credentials)</li>
+        <li>Subscription and billing data (processed securely by Stripe)</li>
+        <li>Technical logs necessary for security, fraud prevention, and reliability</li>
       </ul>
 
-      <h2>Email Content & AI</h2>
+      <h2>2. Email Content & AI Processing</h2>
       <p>
-        Email content is stored only to provide the service.
-        AI features analyze content <strong>only when you request it</strong>
-        and are not used for training.
+        Email content is stored solely to provide the core email service.
+        AI features analyze content only when explicitly requested by the user.
+        AI interactions are not used to train public models.
       </p>
 
-      <h2>Data Sharing</h2>
+      <h2>3. Data Sharing</h2>
       <p>
-        We share data only with infrastructure providers required to operate
-        the service and with payment processors. We do not sell or rent data.
+        We share information only with infrastructure providers required to operate
+        the service (such as hosting and payment processing providers).
+        We do not sell, rent, or trade personal data.
       </p>
 
-      <h2>Your Rights</h2>
+      <h2>4. Data Retention</h2>
       <p>
-        You may request access, correction, or deletion of your data at any time.
+        Account data is retained while your account remains active.
+        You may request deletion of your account and associated data at any time.
       </p>
 
-      <h2>Contact</h2>
+      <h2>5. Your Rights</h2>
+      <p>
+        You may request access, correction, export, or deletion of your data
+        by contacting us directly.
+      </p>
+
+      <h2>6. Security</h2>
+      <p>
+        We use industry-standard encryption in transit (TLS) and implement
+        access controls to protect user information.
+      </p>
+
+      <h2>7. Contact</h2>
       <p>
         Email: endless1@aeinbox.com<br />
         Owner: Archway Power, LLC
