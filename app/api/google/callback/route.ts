@@ -1,24 +1,39 @@
 import { google } from "googleapis"
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 
-export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url)
-  const code = searchParams.get("code")
+export const runtime = "nodejs"
+export const dynamic = "force-dynamic"
 
-  if (!code) {
-    return NextResponse.json({ error: "No code provided" }, { status: 400 })
+export async function GET(req: NextRequest) {
+  try {
+    const url = new URL(req.url)
+    const code = url.searchParams.get("code")
+
+    if (!code) {
+      return NextResponse.json({ error: "No code provided" }, { status: 400 })
+    }
+
+    const origin = url.origin
+
+    const oauth2Client = new google.auth.OAuth2(
+      process.env.GOOGLE_CLIENT_ID,
+      process.env.GOOGLE_CLIENT_SECRET,
+      `${origin}/api/google/callback`
+    )
+
+    const { tokens } = await oauth2Client.getToken(code)
+
+    // 🔥 For now just log them
+    console.log("GMAIL TOKENS:", tokens)
+
+    // TODO: Save tokens to DB tied to logged-in user
+
+    return NextResponse.redirect(`${origin}/aeinbox/inbox`)
+  } catch (err) {
+    console.error("GMAIL CALLBACK ERROR:", err)
+    return NextResponse.json(
+      { error: "OAuth callback failed" },
+      { status: 500 }
+    )
   }
-
-  const oauth2Client = new google.auth.OAuth2(
-    process.env.GOOGLE_CLIENT_ID,
-    process.env.GOOGLE_CLIENT_SECRET,
-    `${process.env.NEXT_PUBLIC_SITE_URL}/api/google/callback`
-  )
-
-  const { tokens } = await oauth2Client.getToken(code)
-
-  // TODO: store tokens in database tied to logged-in user
-  console.log("Google tokens:", tokens)
-
-  return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL}/dashboard`)
 }
