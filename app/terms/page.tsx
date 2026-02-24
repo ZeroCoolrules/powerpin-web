@@ -1,16 +1,15 @@
 export const metadata = {
-  title: "Terms of Service · ÆInbox",
-}
+  title: "Terms of Service · ÆMail
 
 export default function TermsPage() {
   return (
     <main style={{ maxWidth: 900, margin: "auto", padding: "60px 20px" }}>
-      <h1>ÆInbox Terms of Service</h1>
+      <h1>ÆMail Terms of Service</h1>
       <p><strong>Last Updated:</strong> January 2, 2026</p>
 
       <p>
-        These Terms of Service (“Terms”) govern your use of ÆInbox.
-        By using ÆInbox, you agree to these Terms.
+        These Terms of Service (“Terms”) govern your use of ÆMail.
+        By using ÆMail, you agree to these Terms.
       </p>
 
       <h2>1. The Service:</h2>
@@ -84,7 +83,7 @@ export default function TermsPage() {
 
       <h2>11. Contact:</h2>
       <p>
-        Email: support@aeinbox.com<br />
+        Email: endless1@aeinbox.com<br />
         Owner: Archway Power, LLC
       </p>
     </main>

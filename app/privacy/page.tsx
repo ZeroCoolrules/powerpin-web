@@ -1,15 +1,15 @@
 export const metadata = {
-  title: "Privacy Policy · ÆInbox",
+  title: "Privacy Policy · ÆMail",
 }
 
 export default function PrivacyPage() {
   return (
     <main style={{ maxWidth: 900, margin: "auto", padding: "60px 20px" }}>
-      <h1>ÆInbox Privacy Policy</h1>
+      <h1>ÆMail Privacy Policy</h1>
       <p><strong>Last Updated:</strong> January 2, 2026</p>
 
       <p>
-        ÆInbox is a privacy-first email service with an optional AI assistant.
+        ÆMail is a privacy-first email service with an optional AI assistant.
         We do not sell data, run ads, or track users across the web.
       </p>
 
@@ -40,7 +40,7 @@ export default function PrivacyPage() {
 
       <h2>Contact</h2>
       <p>
-        Email: privacy@aeinbox.com<br />
+        Email: endless1@aeinbox.com<br />
         Owner: Archway Power, LLC
       </p>
     </main>
