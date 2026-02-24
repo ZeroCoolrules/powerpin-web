@@ -1,35 +1,32 @@
 import { NextRequest, NextResponse } from "next/server"
+import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs"
 
-export function middleware(req: NextRequest) {
-  const { pathname, search } = req.nextUrl
-  const host = req.headers.get("host") || ""
+export async function middleware(req: NextRequest) {
+  const res = NextResponse.next()
 
-  // ✅ Absolute bypass for Supabase auth callback
+  const supabase = createMiddlewareClient({ req, res })
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+
+  const { pathname } = req.nextUrl
+
+  // Allow auth callback always
   if (pathname.startsWith("/auth/callback")) {
-    return NextResponse.next()
+    return res
   }
 
-  const isInboxDomain =
-    host === "inboxae.com" ||
-    host === "www.inboxae.com" ||
-    host.endsWith(".inboxae.com")
-
-  // 🔒 Block invalid login paths
-  if (
-    pathname.startsWith("/aeinbox/login") ||
-    pathname.startsWith("/inbox/login")
-  ) {
+  // If trying to access inbox and not logged in → send to login
+  if (pathname.startsWith("/aeinbox") && !session) {
     return NextResponse.redirect(new URL("/login", req.url))
   }
 
-  // 🛑 DO NOT redirect root during recovery
-  const isRecovery = search.includes("type=recovery")
-
-  if (isInboxDomain && pathname === "/" && !isRecovery) {
+  // If logged in and trying to visit login → send to inbox
+  if (pathname === "/login" && session) {
     return NextResponse.redirect(new URL("/aeinbox/inbox", req.url))
   }
 
-  return NextResponse.next()
+  return res
 }
 
 export const config = {
