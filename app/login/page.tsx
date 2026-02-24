@@ -31,7 +31,6 @@ export default function LoginPage() {
       setError("Reset link expired. Please request a new password reset.")
     }
 
-    // Only auto-redirect if NOT recovery
     supabase.auth.getSession().then(({ data }) => {
       if (data.session && !recovery) {
         router.push("/aeinbox/inbox")
@@ -40,7 +39,6 @@ export default function LoginPage() {
       }
     })
 
-    // Clean hash from URL after processing
     if (hash) {
       window.history.replaceState(null, "", window.location.pathname)
     }
@@ -63,6 +61,28 @@ export default function LoginPage() {
     }
 
     router.push("/aeinbox/inbox")
+  }
+
+  async function handleGoogleLogin() {
+    setLoading(true)
+    setError(null)
+
+    const origin =
+      typeof window !== "undefined"
+        ? window.location.origin
+        : "https://www.inboxae.com"
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${origin}/auth/callback`,
+      },
+    })
+
+    if (error) {
+      setError(error.message)
+      setLoading(false)
+    }
   }
 
   async function handlePasswordUpdate(e: React.FormEvent) {
@@ -177,6 +197,25 @@ export default function LoginPage() {
               ? "Update Password"
               : "Sign in"}
           </button>
+
+          {!isRecovery && (
+            <>
+              <div className="flex items-center gap-3 my-6">
+                <div className="h-px flex-1 bg-gray-700/60" />
+                <span className="text-xs text-gray-400">or</span>
+                <div className="h-px flex-1 bg-gray-700/60" />
+              </div>
+
+              <button
+                type="button"
+                onClick={handleGoogleLogin}
+                disabled={loading}
+                className="w-full py-3 rounded-xl font-semibold transition bg-white text-black hover:bg-gray-200"
+              >
+                Continue with Google
+              </button>
+            </>
+          )}
 
         </div>
       </form>
