@@ -1,6 +1,8 @@
-//google connect route//
 import { google } from "googleapis"
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
+
+export const runtime = "nodejs"
+export const dynamic = "force-dynamic"
 
 export async function GET(req: NextRequest) {
   const siteUrl = new URL(req.url).origin
@@ -11,13 +13,6 @@ export async function GET(req: NextRequest) {
     `${siteUrl}/api/google/callback`
   )
 
-  if (!siteUrl) {
-    return NextResponse.json({
-      error: "SITE_URL_UNDEFINED"
-    })
-  }
-
- 
   const authUrl = oauth2Client.generateAuthUrl({
     access_type: "offline",
     scope: ["https://www.googleapis.com/auth/gmail.readonly"],
