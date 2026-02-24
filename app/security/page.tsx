@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Security & Responsible Disclosure · ÆInbox",
+  title: "Security & Responsible Disclosure · ÆMail",
 }
 
 export default function SecurityPage() {
@@ -8,13 +8,13 @@ export default function SecurityPage() {
       <h1>Responsible Disclosure</h1>
 
       <p>
-        ÆInbox values the security of our users and systems.
+        ÆMail values the security of our users and systems.
         If you discover a security vulnerability, please report it responsibly.
       </p>
 
       <h2>Security Reporting</h2>
       <p>
-        Email: <strong>security@aeinbox.com</strong>
+        Email: <strong>endless1@inboxae.com</strong>
       </p>
 
       <h2>Please Include:</h2>
