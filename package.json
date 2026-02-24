@@ -15,6 +15,7 @@
     "@supabase/supabase-js": "^2.89.0",
     "framer-motion": "^12.23.26",
     "fund": "^1.0.0",
+    "googleapis": "^168.0.0",
     "next": "^15.4.8",
     "openai": "^6.15.0",
     "pip": "^0.0.1",
