@@ -182,7 +182,7 @@ export default function LoginPage() {
       </form>
 
       <div className="absolute bottom-6 text-xs text-gray-600">
-        <br>Part of the AEmail Intelligence Network
+        <br />Part of the AEmail Intelligence Network
       </div>
     </main>
   )
