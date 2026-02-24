@@ -15,18 +15,35 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [showPassword, setShowPassword] = useState(false)
   const [isRecovery, setIsRecovery] = useState(false)
+  const [checkedSession, setCheckedSession] = useState(false)
 
   useEffect(() => {
     const hash = window.location.hash
-    if (hash.includes("type=recovery")) {
+
+    const recovery = hash.includes("type=recovery")
+    const expired = hash.includes("error=access_denied")
+
+    if (recovery) {
       setIsRecovery(true)
     }
 
+    if (expired) {
+      setError("Reset link expired. Please request a new password reset.")
+    }
+
+    // Only auto-redirect if NOT recovery
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) {
+      if (data.session && !recovery) {
         router.push("/aeinbox/inbox")
+      } else {
+        setCheckedSession(true)
       }
     })
+
+    // Clean hash from URL after processing
+    if (hash) {
+      window.history.replaceState(null, "", window.location.pathname)
+    }
   }, [])
 
   async function handleLogin(e: React.FormEvent) {
@@ -48,7 +65,8 @@ export default function LoginPage() {
     router.push("/aeinbox/inbox")
   }
 
-  async function handlePasswordUpdate() {
+  async function handlePasswordUpdate(e: React.FormEvent) {
+    e.preventDefault()
     setLoading(true)
     setError(null)
 
@@ -64,6 +82,8 @@ export default function LoginPage() {
 
     router.push("/aeinbox/inbox")
   }
+
+  if (!checkedSession) return null
 
   return (
     <main className="relative min-h-screen bg-[#0A0F1E] text-white flex flex-col items-center justify-center overflow-hidden">
@@ -94,7 +114,7 @@ export default function LoginPage() {
       </div>
 
       <form
-        onSubmit={isRecovery ? (e) => { e.preventDefault(); handlePasswordUpdate() } : handleLogin}
+        onSubmit={isRecovery ? handlePasswordUpdate : handleLogin}
         className="w-full max-w-md bg-[#0F172A]/80 backdrop-blur-xl border border-cyan-500/20 rounded-2xl p-8 shadow-[0_0_50px_rgba(0,229,255,0.08)]"
       >
         <div className="space-y-4">
@@ -162,7 +182,7 @@ export default function LoginPage() {
       </form>
 
       <div className="absolute bottom-6 text-xs text-gray-600">
-        Part of the AEmail Intelligence Network
+        <br>Part of the AEmail Intelligence Network
       </div>
     </main>
   )
