@@ -6,8 +6,7 @@ export async function GET() {
 
   if (!siteUrl) {
     return NextResponse.json({
-      error: "SITE_URL_UNDEFINED",
-      value: siteUrl
+      error: "SITE_URL_UNDEFINED"
     })
   }
 
@@ -23,10 +22,5 @@ export async function GET() {
     prompt: "consent",
   })
 
-  return NextResponse.json({
-    success: true,
-    siteUrl,
-    redirectUri: `${siteUrl}/api/google/callback`,
-    authUrl
-  })
+  return NextResponse.redirect(authUrl)
 }
