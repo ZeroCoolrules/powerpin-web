@@ -1,29 +1,33 @@
 import { NextRequest, NextResponse } from "next/server"
 
 export function middleware(req: NextRequest) {
-  const { pathname } = req.nextUrl
+  const { pathname, search } = req.nextUrl
   const host = req.headers.get("host") || ""
 
-  // ✅ ABSOLUTE BYPASS for Supabase auth callback
-  // (no redirects, no checks, nothing)
+  // ✅ Absolute bypass for Supabase auth callback
   if (pathname.startsWith("/auth/callback")) {
-  return NextResponse.next()
+    return NextResponse.next()
   }
 
-
   const isInboxDomain =
-    host === "inboxae.com" || host === "www.inboxae.com" || host.endsWith(".inboxae.com")
+    host === "inboxae.com" ||
+    host === "www.inboxae.com" ||
+    host.endsWith(".inboxae.com")
 
-  // 🔒 BLOCK INVALID LOGIN PATHS
-  if (pathname.startsWith("/aeinbox/login") || pathname.startsWith("/inbox/login")) {
+  // 🔒 Block invalid login paths
+  if (
+    pathname.startsWith("/aeinbox/login") ||
+    pathname.startsWith("/inbox/login")
+  ) {
     return NextResponse.redirect(new URL("/login", req.url))
   }
 
-  // 🔁 FORCE ÆInbox LANDING ON inboxae.com
-  if (isInboxDomain && pathname === "/") {
-  return NextResponse.redirect(new URL("/aeinbox/inbox", req.url))
-  }
+  // 🛑 DO NOT redirect root during recovery
+  const isRecovery = search.includes("type=recovery")
 
+  if (isInboxDomain && pathname === "/" && !isRecovery) {
+    return NextResponse.redirect(new URL("/aeinbox/inbox", req.url))
+  }
 
   return NextResponse.next()
 }
