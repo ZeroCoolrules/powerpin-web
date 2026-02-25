@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { supabaseBrowser } from "@/lib/supabase-browser"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
+import Link from "next/link"
 
 export default function LoginPage() {
   const supabase = supabaseBrowser()
