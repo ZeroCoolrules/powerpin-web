@@ -1,33 +1,16 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { supabaseBrowser } from "@/lib/supabase-browser"
-import EmailList from "../components/EmailList"
-import EmailViewer from "../components/EmailViewer"
-
-type EmailRow = {
-  id: string
-  from_name: string | null
-  subject: string | null
-  summary: string | null
-}
 
 export default function InboxClient() {
   const router = useRouter()
-  const params = useSearchParams()
-  const paid = params.get("paid")
-  const canceled = params.get("canceled")
-
-  const [loading, setLoading] = useState(true)
-  const [emails, setEmails] = useState<EmailRow[]>([])
-  const [selectedId, setSelectedId] = useState<string | null>(null)
-  const [banner, setBanner] = useState<string | null>(null)
-
-  const selected = useMemo(() => {
-    const e = emails.find((x) => x.id === selectedId) || emails[0]
-    return e || null
-  }, [emails, selectedId])
+  const [input, setInput] = useState("")
+  const [summary, setSummary] = useState("")
+  const [reply, setReply] = useState("")
+  const [draft, setDraft] = useState("")
+  const [loading, setLoading] = useState(false)
 
   async function handleLogout() {
     const supabase = supabaseBrowser()
@@ -35,104 +18,123 @@ export default function InboxClient() {
     router.push("/login")
   }
 
-  useEffect(() => {
-    const supabase = supabaseBrowser()
+  async function callAPI(
+    endpoint: string,
+    body: any,
+    setter: (v: string) => void
+  ) {
+    setLoading(true)
+    const res = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    })
 
-    const load = async () => {
-      const { data } = await supabase.auth.getSession()
-      if (!data.session) return router.push("/login")
-
-      if (paid) setBanner("Payment confirmed. Welcome to AEmail.")
-      if (canceled) setBanner("Checkout canceled. You can start again anytime.")
-
-      const { data: rows } = await supabase
-        .from("emails")
-        .select("id, from_name, subject, summary")
-        .order("received_at", { ascending: false })
-        .limit(50)
-
-      setEmails((rows as EmailRow[]) || [])
-      setSelectedId((rows as EmailRow[])?.[0]?.id || null)
-      setLoading(false)
-    }
-
-    load()
-  }, [router, paid, canceled])
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#0A0F1E] text-white flex items-center justify-center">
-        Loading…
-      </div>
-    )
+    const data = await res.json()
+    setter(data.summary || data.reply || data.draft || "")
+    setLoading(false)
   }
 
   return (
     <div className="min-h-screen bg-[#0A0F1E] text-white">
-      <div className="sticky top-0 z-10 border-b border-cyan-500/10 bg-[#0A0F1E]/80 backdrop-blur-xl">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div className="border-b border-cyan-500/10">
+        <div className="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
             <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_18px_rgba(0,229,255,0.55)]" />
             <div className="font-semibold tracking-wide">AEmail</div>
           </div>
 
-          <div className="flex items-center gap-6 text-sm">
+          <div className="flex gap-6 text-sm">
             <button
               onClick={() => router.push("/aeinbox/billing")}
-              className="text-gray-400 hover:text-cyan-400 transition"
+              className="text-gray-400 hover:text-cyan-400"
             >
               Billing
             </button>
 
             <button
               onClick={handleLogout}
-              className="text-gray-400 hover:text-red-400 transition"
+              className="text-gray-400 hover:text-red-400"
             >
               Logout
             </button>
           </div>
         </div>
-
-        {banner && (
-          <div className="max-w-6xl mx-auto px-4 pb-4">
-            <div className="rounded-xl border border-cyan-500/20 bg-cyan-500/10 px-4 py-3 text-sm text-cyan-100">
-              {banner}
-            </div>
-          </div>
-        )}
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 py-6">
-        {emails.length === 0 ? (
-          <div className="rounded-2xl border border-cyan-500/15 bg-[#0f172a]/60 backdrop-blur-xl p-8">
-            <h2 className="text-2xl font-semibold text-cyan-300">
-              Your inbox is empty.
-            </h2>
-            <p className="text-gray-400 mt-2">
-              Connect your email to start using Æi daily.
-            </p>
-          </div>
-        ) : (
-          <div className="grid md:grid-cols-[360px_1fr] gap-6">
-            <EmailList
-              emails={emails.map((e) => ({
-                id: e.id,
-                sender: e.from_name ?? "Unknown",
-                subject: e.subject ?? "(no subject)",
-                preview: (e.summary ?? "").slice(0, 90),
-              }))}
-              selectedId={selectedId}
-              onSelect={setSelectedId}
-            />
+      <div className="max-w-5xl mx-auto px-4 py-10">
+        <h1 className="text-3xl font-semibold text-cyan-400 mb-6">
+          AI Email Intelligence
+        </h1>
 
-            {selected && (
-              <EmailViewer
-                emailId={selected.id}
-                subject={selected.subject ?? "(no subject)"}
-                sender={selected.from_name ?? "Unknown"}
-                body={selected.summary ?? ""}
-              />
-            )}
+        <textarea
+          className="w-full h-48 p-4 bg-black border border-gray-700 rounded-lg"
+          placeholder="Paste an email here..."
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+        />
+
+        <div className="flex gap-4 mt-4 flex-wrap">
+          <button
+            onClick={() =>
+              callAPI("/api/ai/summarize", { text: input }, setSummary)
+            }
+            className="px-4 py-2 bg-cyan-500 text-black rounded"
+          >
+            Summarize
+          </button>
+
+          <button
+            onClick={() =>
+              callAPI(
+                "/api/ai/reply",
+                { text: input, tone: "professional" },
+                setReply
+              )
+            }
+            className="px-4 py-2 bg-green-500 text-black rounded"
+          >
+            Generate Reply
+          </button>
+
+          <button
+            onClick={() =>
+              callAPI("/api/ai/compose", { prompt: input }, setDraft)
+            }
+            className="px-4 py-2 bg-purple-500 text-black rounded"
+          >
+            Compose Draft
+          </button>
+        </div>
+
+        {loading && (
+          <div className="mt-4 text-gray-400">Processing...</div>
+        )}
+
+        {summary && (
+          <div className="mt-8 p-6 bg-[#111827] rounded-xl border border-gray-700">
+            <h2 className="text-cyan-400 mb-3 text-lg font-semibold">
+              Summary
+            </h2>
+            <p className="text-gray-300 whitespace-pre-wrap">{summary}</p>
+          </div>
+        )}
+
+        {reply && (
+          <div className="mt-8 p-6 bg-[#111827] rounded-xl border border-gray-700">
+            <h2 className="text-green-400 mb-3 text-lg font-semibold">
+              Suggested Reply
+            </h2>
+            <p className="text-gray-300 whitespace-pre-wrap">{reply}</p>
+          </div>
+        )}
+
+        {draft && (
+          <div className="mt-8 p-6 bg-[#111827] rounded-xl border border-gray-700">
+            <h2 className="text-purple-400 mb-3 text-lg font-semibold">
+              Draft Email
+            </h2>
+            <p className="text-gray-300 whitespace-pre-wrap">{draft}</p>
           </div>
         )}
       </div>
