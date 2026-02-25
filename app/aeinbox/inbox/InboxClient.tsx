@@ -13,9 +13,12 @@ export default function InboxClient() {
   const [loading, setLoading] = useState(false)
 
   async function handleLogout() {
-    const supabase = supabaseBrowser()
-    await supabase.auth.signOut()
-    router.push("/login")
+  const supabase = supabaseBrowser()
+
+  await supabase.auth.signOut({ scope: "local" })
+
+  // Force hard refresh to clear everything
+  window.location.href = "/login"
   }
 
   async function callAPI(
