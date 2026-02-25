@@ -221,8 +221,20 @@ export default function LoginPage() {
       </form>
 
       <div className="absolute bottom-6 text-xs text-gray-600">
-        <br />Part of the AEmail Intelligence Network
+        <br /><br />Part of the AEmail Intelligence Network
       </div>
+	  <footer className="relative z-10 text-center text-xs text-gray-600 pb-10 border-t border-gray-900 pt-8">
+        <div className="mb-4">
+          <Link href="/privacy" className="mx-3 hover:text-cyan-400 transition">Privacy</Link>
+          ·
+          <Link href="/terms" className="mx-3 hover:text-cyan-400 transition">Terms</Link>
+          ·
+          <Link href="/security" className="mx-3 hover:text-cyan-400 transition">Security</Link>
+        </div>
+        <div>
+          © 2026 AEmail · An Archway Power product
+        </div>
+      </footer>
     </main>
   )
 }
