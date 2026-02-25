@@ -2,6 +2,7 @@ import OpenAI from "openai"
 import { NextRequest, NextResponse } from "next/server"
 import { cookies } from "next/headers"
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
+import Link from "next/link"
 
 export const runtime = "nodejs"
 
