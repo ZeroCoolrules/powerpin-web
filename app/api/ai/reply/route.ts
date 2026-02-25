@@ -5,10 +5,6 @@ import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
 
 export const runtime = "nodejs"
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
-})
-
 export async function POST(req: NextRequest) {
   const supabase = createRouteHandlerClient({ cookies })
 
@@ -19,7 +15,11 @@ export async function POST(req: NextRequest) {
   if (!session?.user) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 })
   }
-
+  
+  const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY!,
+  })
+  
   const { text, tone } = await req.json()
 
   const completion = await openai.chat.completions.create({

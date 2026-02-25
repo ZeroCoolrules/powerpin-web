@@ -5,10 +5,6 @@ import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
 
 export const runtime = "nodejs"
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
-})
-
 export async function POST(req: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies })
@@ -22,7 +18,11 @@ export async function POST(req: NextRequest) {
     }
 
     const { text } = await req.json()
-
+    
+	const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY!,
+    })
+	
     if (!text) {
       return NextResponse.json({ error: "missing_text" }, { status: 400 })
     }
