@@ -156,20 +156,6 @@ export default function AEmailLanding() {
 
       </section>
 
-      {/* FOOTER */}
-      <footer className="relative z-10 text-center text-xs text-gray-600 pb-10 border-t border-gray-900 pt-8">
-        <div className="mb-4">
-          <Link href="/privacy" className="mx-3 hover:text-cyan-400 transition">Privacy</Link>
-          ·
-          <Link href="/terms" className="mx-3 hover:text-cyan-400 transition">Terms</Link>
-          ·
-          <Link href="/security" className="mx-3 hover:text-cyan-400 transition">Security</Link>
-        </div>
-        <div>
-          © 2026 AEmail · An Archway Power productt
-        </div>
-      </footer>
-
     </main>
   )
 }

@@ -17,32 +17,16 @@ export default function AEinboxLayout({
         {children}
       </main>
 
-      <footer
-        style={{
-          marginTop: 80,
-          padding: "40px 20px",
-          textAlign: "center",
-          fontSize: "0.9rem",
-          color: "#7d8696",
-          borderTop: "1px solid #1f2937",
-        }}
-      >
-        <div style={{ marginBottom: 12 }}>
-          <a href="/privacy" style={linkStyle}>
-            Privacy
-          </a>
+      <footer className="relative z-10 text-center text-xs text-gray-600 pb-10 border-t border-gray-900 pt-8">
+        <div className="mb-4">
+          <Link href="/privacy" className="mx-3 hover:text-cyan-400 transition">Privacy</Link>
           ·
-          <a href="/terms" style={linkStyle}>
-            Terms
-          </a>
+          <Link href="/terms" className="mx-3 hover:text-cyan-400 transition">Terms</Link>
           ·
-          <a href="/security" style={linkStyle}>
-            Security
-          </a>
+          <Link href="/security" className="mx-3 hover:text-cyan-400 transition">Security</Link>
         </div>
-
         <div>
-          © {new Date().getFullYear()} ÆInbox · An Archway Power product
+          © 2026 AEmail · An Archway Power productt
         </div>
       </footer>
     </div>
