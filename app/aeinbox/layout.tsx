@@ -28,7 +28,7 @@ export default function AEinboxLayout({
           <Link href="/security" className="mx-3 hover:text-cyan-400 transition">Security</Link>
         </div>
         <div>
-          © 2026 AEmail · An Archway Power product
+          © 2026 Æmail · An Archway Power product
         </div>
       </footer>
     </div>

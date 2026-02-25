@@ -114,7 +114,7 @@ export default function LoginPage() {
       <div className="mb-10">
         <Image
           src="/aemail-wordmark.png"
-          alt="AEmail"
+          alt="Æmail"
           width={160}
           height={40}
           priority
@@ -222,7 +222,7 @@ export default function LoginPage() {
       </form>
 
       <div className="absolute bottom-6 text-xs text-gray-600">
-        <br /><br />Part of the AEmail Intelligence Network
+        <br /><br />Part of the Æmail Intelligence Network
       </div>
 	  <footer className="relative z-10 text-center text-xs text-gray-600 pb-10 border-t border-gray-900 pt-8">
         <div className="mb-4">
@@ -233,7 +233,7 @@ export default function LoginPage() {
           <Link href="/security" className="mx-3 hover:text-cyan-400 transition">Security</Link>
         </div>
         <div>
-          © 2026 AEmail · An Archway Power product
+          © 2026 Æmail · An Archway Power product
         </div>
       </footer>
     </main>

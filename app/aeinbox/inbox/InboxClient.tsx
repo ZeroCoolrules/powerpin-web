@@ -41,7 +41,7 @@ export default function InboxClient() {
         <div className="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
             <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_18px_rgba(0,229,255,0.55)]" />
-            <div className="font-semibold tracking-wide">AEmail</div>
+            <div className="font-semibold tracking-wide">Æmail</div>
           </div>
 
           <div className="flex gap-6 text-sm">

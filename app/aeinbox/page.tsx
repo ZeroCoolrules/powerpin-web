@@ -17,7 +17,7 @@ export default function AEmailLanding() {
       <nav className="relative z-10 max-w-6xl mx-auto px-6 py-8 flex justify-between items-center">
         <Image
           src="/aemail-wordmark.png"
-          alt="AEmail"
+          alt="Æmail"
           width={200}
           height={60}
           priority
@@ -55,7 +55,7 @@ export default function AEmailLanding() {
             hover:bg-cyan-400 hover:shadow-[0_0_60px_rgba(0,229,255,0.8)]
             hover:-translate-y-1 transition duration-200"
           >
-            Get AEmail — $10/month
+            Get Æmail — $10/month
           </Link>
 
           <Link

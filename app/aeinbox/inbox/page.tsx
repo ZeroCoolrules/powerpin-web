@@ -30,7 +30,7 @@ export default async function InboxPage() {
     return (
       <div className="min-h-screen bg-[#0A0F1E] text-white flex items-center justify-center px-6">
         <div className="w-full max-w-lg text-center">
-          <h1 className="text-3xl font-semibold text-cyan-400">AEmail</h1>
+          <h1 className="text-3xl font-semibold text-cyan-400">Æmail</h1>
           <p className="text-gray-400 mt-2">Unlock secure, AI-powered email.</p>
 
           <div className="mt-10">
