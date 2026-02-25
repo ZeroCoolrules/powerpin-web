@@ -109,7 +109,7 @@ export default function AEmailLanding() {
           <div className="bg-black rounded-xl p-6 text-sm text-gray-300 space-y-6">
 
             <div>
-              <p className="text-gray-500 mb-2">Incoming Email</p>
+              <p className="text-cyan-400 font-semibold mb-2">Incoming Email</p>
               <p>
                 “Hey team — following up on Q3 projections, vendor contracts,
                 and the revised deployment timeline…”
