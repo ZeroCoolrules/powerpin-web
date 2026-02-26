@@ -1,15 +1,38 @@
 "use client"
 
 import { useState } from "react"
+import { supabaseBrowser } from "@/lib/supabase-browser"
 
 export default function ComposeModal({
   onClose,
+  onSent,
 }: {
   onClose: () => void
+  onSent: () => void
 }) {
+  const supabase = supabaseBrowser()
+
   const [to, setTo] = useState("")
   const [subject, setSubject] = useState("")
   const [body, setBody] = useState("")
+  const [sending, setSending] = useState(false)
+
+  async function handleSend() {
+    if (!subject && !body) return
+
+    setSending(true)
+
+    await supabase.from("messages").insert({
+      from_name: "You",
+      subject,
+      body,
+      folder: "sent",
+    })
+
+    setSending(false)
+    onSent()
+    onClose()
+  }
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
@@ -49,8 +72,12 @@ export default function ComposeModal({
         />
 
         <div className="flex justify-end mt-4">
-          <button className="bg-cyan-500 hover:bg-cyan-400 text-black px-6 py-2 rounded-lg">
-            Send
+          <button
+            onClick={handleSend}
+            disabled={sending}
+            className="bg-cyan-500 hover:bg-cyan-400 text-black px-6 py-2 rounded-lg transition disabled:opacity-50"
+          >
+            {sending ? "Sending..." : "Send"}
           </button>
         </div>
 

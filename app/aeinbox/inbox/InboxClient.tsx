@@ -95,8 +95,11 @@ return (
     </div>
 
     {showCompose && (
-      <ComposeModal onClose={() => setShowCompose(false)} />
-    )}
+		<ComposeModal
+			onClose={() => setShowCompose(false)}
+			onSent={loadMessages}
+		/>
+	)}
   </div>
 )
 
