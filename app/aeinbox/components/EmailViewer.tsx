@@ -14,7 +14,7 @@ export default function EmailViewer({
 
   const [aiOutput, setAiOutput] = useState("")
   const [loading, setLoading] = useState(false)
-
+  const [showDelete, setShowDelete] = useState(false)
   async function runAI(type: string) {
     setLoading(true)
 
@@ -54,12 +54,31 @@ export default function EmailViewer({
           </div>
         </div>
 
-        <button
-          onClick={onDelete}
-          className="text-red-400 hover:text-red-300 text-sm"
-        >
-          Delete
-        </button>
+        {showDelete && (
+				<div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+					<div className="bg-[#0f172a] border border-red-500/20 rounded-xl p-6 w-full max-w-md">
+						<h3 className="text-lg font-semibold text-red-400 mb-4">
+							Delete this email?
+						</h3>
+
+					<div className="flex justify-end gap-4">
+						<button
+							onClick={() => setShowDelete(false)}
+							className="text-gray-400 hover:text-white"
+						>
+							Cancel
+						</button>
+
+						<button
+							onClick={() => setShowDelete(true)}
+							className="text-red-400 hover:text-red-500 text-sm"
+						>
+							Delete
+						</button>
+					</div>
+				</div>
+			</div>
+		)}
       </div>
 
       <div className="whitespace-pre-wrap text-gray-300 mb-6">

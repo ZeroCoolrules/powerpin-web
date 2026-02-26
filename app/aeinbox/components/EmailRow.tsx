@@ -5,37 +5,45 @@ export default function EmailRow({
   subject,
   preview,
   active,
+  unread = true,
+  time = "2h",
   onClick,
 }: {
   sender: string
   subject: string
   preview: string
-  active?: boolean
+  active: boolean
+  unread?: boolean
+  time?: string
   onClick: () => void
 }) {
   return (
     <div
       onClick={onClick}
-      className={`cursor-pointer rounded-xl p-4 transition border ${
-        active
-          ? "bg-cyan-500/10 border-cyan-500/30"
-          : "bg-[#0b1220] border-transparent hover:bg-white/5"
-      }`}
+      className={`
+        cursor-pointer rounded-xl px-4 py-3 transition-all duration-200
+        ${active
+          ? "bg-cyan-500/10 border border-cyan-500/30"
+          : "hover:bg-cyan-500/5 border border-transparent"}
+      `}
     >
       <div className="flex justify-between items-center">
-        <div className="font-medium text-white truncate">
-          {sender}
+        <div className="flex items-center gap-2">
+          {unread && (
+            <div className="w-2 h-2 rounded-full bg-cyan-400" />
+          )}
+          <span className={`font-medium ${unread ? "text-white" : "text-gray-400"}`}>
+            {sender}
+          </span>
         </div>
-        <div className="text-xs text-gray-500">
-          2h
-        </div>
+        <span className="text-xs text-gray-500">{time}</span>
       </div>
 
-      <div className="text-sm text-gray-300 truncate mt-1">
+      <div className="mt-1 font-semibold text-gray-200 truncate">
         {subject}
       </div>
 
-      <div className="text-xs text-gray-500 truncate mt-1">
+      <div className="text-sm text-gray-500 truncate">
         {preview}
       </div>
     </div>
