@@ -26,14 +26,21 @@ export default function InboxClient() {
   const [showCompose, setShowCompose] = useState(false)
   const [loading, setLoading] = useState(true)
 
-  async function loadMessages(folder = currentFolder) {
-    setLoading(true)
+	async function loadMessages(folder = currentFolder) {
+	setLoading(true)
 
-    const { data } = await supabase
-      .from("messages")
-      .select("*")
-      .eq("folder", folder)
-      .order("created_at", { ascending: false })
+	const {
+		data: { session },
+	} = await supabase.auth.getSession()
+
+	if (!session?.user) return
+
+	const { data } = await supabase
+		.from("messages")
+		.select("*")
+		.eq("folder", folder)
+		.eq("user_id", session.user.id)
+		.order("created_at", { ascending: false })
 
     const rows = data ?? []
     setMessages(rows)

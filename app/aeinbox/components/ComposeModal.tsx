@@ -22,13 +22,18 @@ export default function ComposeModal({
 
     setSending(true)
 
-    await supabase.from("messages").insert({
-      from_name: "You",
-      subject,
-      body,
-      folder: "sent",
-      is_read: true,
-    })
+    const {
+		data: { session },
+	} 	= await supabase.auth.getSession()
+
+	await supabase.from("messages").insert({
+		user_id: session?.user.id,
+		from_name: "You",
+		subject,
+		body,
+		folder: "sent",
+		is_read: true,
+	})
 
     setSending(false)
     onSent()
