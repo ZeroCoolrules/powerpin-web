@@ -2,7 +2,6 @@ import OpenAI from "openai"
 import { NextRequest, NextResponse } from "next/server"
 import { cookies } from "next/headers"
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
-import Link from "next/link"
 
 export const runtime = "nodejs"
 
@@ -19,14 +18,14 @@ export async function POST(req: NextRequest) {
     }
 
     const { text } = await req.json()
-    
-	const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY!,
-    })
-	
+
     if (!text) {
       return NextResponse.json({ error: "missing_text" }, { status: 400 })
     }
+
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY!,
+    })
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
@@ -43,7 +42,7 @@ export async function POST(req: NextRequest) {
       ],
     })
 
-    const summary = completion.choices[0].message.content
+    const summary = completion.choices[0].message.content ?? ""
 
     await supabase.from("email_history").insert({
       user_id: session.user.id,

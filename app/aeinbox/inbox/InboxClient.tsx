@@ -15,6 +15,7 @@ type Message = {
   created_at: string
   folder: string
   is_read: boolean
+  user_id: string
 }
 
 export default function InboxClient() {
@@ -26,21 +27,24 @@ export default function InboxClient() {
   const [showCompose, setShowCompose] = useState(false)
   const [loading, setLoading] = useState(true)
 
-	async function loadMessages(folder = currentFolder) {
-	setLoading(true)
+  async function loadMessages(folder = currentFolder) {
+    setLoading(true)
 
-	const {
-		data: { session },
-	} = await supabase.auth.getSession()
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
 
-	if (!session?.user) return
+    if (!session?.user) {
+      setLoading(false)
+      return
+    }
 
-	const { data } = await supabase
-		.from("messages")
-		.select("*")
-		.eq("folder", folder)
-		.eq("user_id", session.user.id)
-		.order("created_at", { ascending: false })
+    const { data } = await supabase
+      .from("messages")
+      .select("*")
+      .eq("folder", folder)
+      .eq("user_id", session.user.id)
+      .order("created_at", { ascending: false })
 
     const rows = data ?? []
     setMessages(rows)
@@ -52,13 +56,55 @@ export default function InboxClient() {
     loadMessages(currentFolder)
   }, [currentFolder])
 
+  // 🔴 REALTIME SUBSCRIPTION
+  useEffect(() => {
+    let channel: any
+
+    async function setupRealtime() {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
+
+      if (!session?.user) return
+
+      channel = supabase
+        .channel("realtime-messages")
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: "messages",
+            filter: `user_id=eq.${session.user.id}`,
+          },
+          (payload) => {
+            const changed = payload.new as Message | undefined
+
+            // Only reload if relevant to current folder
+            if (!changed || changed.folder === currentFolder) {
+              loadMessages(currentFolder)
+            }
+          }
+        )
+        .subscribe()
+    }
+
+    setupRealtime()
+
+    return () => {
+      if (channel) {
+        supabase.removeChannel(channel)
+      }
+    }
+  }, [currentFolder])
+
   async function handleDelete(id: string) {
     await supabase
       .from("messages")
       .update({ folder: "trash" })
       .eq("id", id)
 
-    loadMessages()
+    loadMessages(currentFolder)
   }
 
   async function markAsRead(id: string) {
@@ -67,7 +113,7 @@ export default function InboxClient() {
       .update({ is_read: true })
       .eq("id", id)
 
-    loadMessages()
+    loadMessages(currentFolder)
   }
 
   const selected = messages.find((m) => m.id === selectedId)
@@ -82,7 +128,6 @@ export default function InboxClient() {
 
   return (
     <div className="min-h-screen bg-[#0A0F1E] text-white">
-
       <div className="grid grid-cols-[220px_380px_1fr] gap-6 max-w-7xl mx-auto px-6 py-6">
 
         <Sidebar
