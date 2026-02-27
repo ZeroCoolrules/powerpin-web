@@ -27,6 +27,7 @@ export default function ComposeModal({
       subject,
       body,
       folder: "sent",
+      is_read: true,
     })
 
     setSending(false)
