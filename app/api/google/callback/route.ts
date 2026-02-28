@@ -1,5 +1,7 @@
 import { google } from "googleapis"
 import { NextRequest, NextResponse } from "next/server"
+import { cookies } from "next/headers"
+import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
@@ -23,10 +25,24 @@ export async function GET(req: NextRequest) {
 
     const { tokens } = await oauth2Client.getToken(code)
 
-    // 🔥 For now just log them
-    console.log("GMAIL TOKENS:", tokens)
+    const supabase = createRouteHandlerClient({ cookies })
 
-    // TODO: Save tokens to DB tied to logged-in user
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
+
+    if (!session?.user) {
+      return NextResponse.redirect(`${origin}/login`)
+    }
+
+    await supabase
+      .from("profiles")
+      .update({
+        google_access_token: tokens.access_token ?? null,
+        google_refresh_token: tokens.refresh_token ?? null,
+        google_token_expiry: tokens.expiry_date ?? null,
+      })
+      .eq("user_id", session.user.id)
 
     return NextResponse.redirect(`${origin}/aeinbox/inbox`)
   } catch (err) {

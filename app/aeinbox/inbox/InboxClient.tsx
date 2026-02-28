@@ -131,16 +131,24 @@ export default function InboxClient() {
       <div className="grid grid-cols-[220px_380px_1fr] gap-6 max-w-7xl mx-auto px-6 py-6">
 
         <Sidebar
-          currentFolder={currentFolder}
-          onChangeFolder={setCurrentFolder}
-        >
-          <button
-            onClick={() => setShowCompose(true)}
-            className="mb-4 bg-cyan-500 hover:bg-cyan-400 text-black px-4 py-2 rounded-lg transition"
-          >
-            Compose
-          </button>
-        </Sidebar>
+			currentFolder={currentFolder}
+			onChangeFolder={setCurrentFolder}
+		>
+		<button
+			onClick={() => setShowCompose(true)}
+			className="mb-4 bg-cyan-500 hover:bg-cyan-400 text-black px-4 py-2 rounded-lg transition"
+		>
+			Compose
+		</button>
+
+		<a
+			href="/api/google/connect"
+			className="block mt-2 px-4 py-2 bg-purple-500 hover:bg-purple-400 text-black rounded-lg text-center transition"
+		>
+			Activate AI Inbox
+		</a>
+
+		</Sidebar>
 
         <EmailList
           emails={messages.map((m) => ({
