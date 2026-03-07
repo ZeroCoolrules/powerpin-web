@@ -1,5 +1,8 @@
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+import SellerCard from "@/components/petme/SellerCard";
 import { supabase } from "@/lib/supabase";
-import Link from "next/link";
 
 type Profile = {
   user_id: string;
@@ -33,19 +36,13 @@ export default async function ProfilesPage() {
 
         <div className="grid md:grid-cols-2 gap-4 mt-8">
           {profiles.map((profile) => (
-            <Link
-              key={profile.user_id}
-              href={`/petme-baby/profile/${profile.user_id}`}
-              className="rounded-2xl border border-zinc-800 bg-zinc-950 p-5 hover:border-green-500/50 transition"
-            >
-              <h2 className="text-xl font-semibold">
-                {profile.username || "Unnamed User"}
-              </h2>
-              <p className="mt-2 text-zinc-400">{profile.email}</p>
-              <p className="mt-2 text-xs text-zinc-500">{profile.user_id}</p>
-            </Link>
+            <SellerCard key={profile.user_id} profile={profile} />
           ))}
         </div>
+
+        {!profiles.length && (
+          <div className="mt-8 text-zinc-500">No profiles found yet.</div>
+        )}
       </div>
     </main>
   );
