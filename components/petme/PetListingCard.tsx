@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 type PetListing = {
   id: number;
   title: string;
@@ -30,7 +32,11 @@ export default function PetListingCard({ listing }: { listing: PetListing }) {
       </div>
 
       <div className="p-5">
-        <h3 className="text-xl font-semibold text-white">{listing.title}</h3>
+        <Link href={`/petme-baby/listings/${listing.id}`}>
+          <h3 className="text-xl font-semibold text-white hover:text-green-400 transition cursor-pointer">
+            {listing.title}
+          </h3>
+        </Link>
 
         <p className="mt-2 text-green-400 font-medium">
           {listing.price ? `$${listing.price}` : "Price on request"}
@@ -49,6 +55,13 @@ export default function PetListingCard({ listing }: { listing: PetListing }) {
         </p>
 
         <div className="mt-5 flex flex-wrap gap-3">
+          <Link
+            href={`/petme-baby/listings/${listing.id}`}
+            className="px-4 py-2 rounded-lg border border-zinc-700 text-white hover:bg-zinc-900 transition"
+          >
+            Details
+          </Link>
+
           <a
             href={listing.listing_url}
             target="_blank"
@@ -59,12 +72,12 @@ export default function PetListingCard({ listing }: { listing: PetListing }) {
           </a>
 
           {listing.seller_uid ? (
-            <a
+            <Link
               href={`/petme-baby/profile/${listing.seller_uid}`}
               className="px-4 py-2 rounded-lg border border-green-500 text-green-400 hover:bg-green-500/10 transition"
             >
               Seller
-            </a>
+            </Link>
           ) : null}
         </div>
       </div>
