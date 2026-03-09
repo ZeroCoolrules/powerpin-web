@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { ChangeEvent, useEffect, useState } from "react";
+import { supabaseBrowser } from "@/lib/supabase-browser";
 
 export default function CreateListingPage() {
+  const supabase = supabaseBrowser();
+
   const [form, setForm] = useState({
     seller_uid: "",
     source: "petme",
@@ -24,9 +26,67 @@ export default function CreateListingPage() {
   });
 
   const [status, setStatus] = useState("");
+  const [uploading, setUploading] = useState(false);
+
+  useEffect(() => {
+    async function loadSellerProfile() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) return;
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("user_id")
+        .eq("user_id", user.id)
+        .single();
+
+      if (profile?.user_id) {
+        setForm((prev) => ({ ...prev, seller_uid: profile.user_id }));
+      }
+    }
+
+    loadSellerProfile();
+  }, [supabase]);
 
   function updateField(name: string, value: string) {
     setForm((prev) => ({ ...prev, [name]: value }));
+  }
+
+  async function handleImageUpload(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    setStatus("Uploading image...");
+
+    const ext = file.name.split(".").pop() || "jpg";
+    const fileName = `pet-${Date.now()}.${ext}`;
+    const filePath = `pet-listings/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("petme-images")
+      .upload(filePath, file, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+
+    if (uploadError) {
+      setUploading(false);
+      setStatus(`Image upload failed: ${uploadError.message}`);
+      return;
+    }
+
+    const { data } = supabase.storage.from("petme-images").getPublicUrl(filePath);
+
+    setForm((prev) => ({
+      ...prev,
+      image_url: data.publicUrl,
+    }));
+
+    setUploading(false);
+    setStatus("Image uploaded.");
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -86,9 +146,8 @@ export default function CreateListingPage() {
 
     setStatus("Listing created successfully.");
 
-    setForm({
-      seller_uid: "",
-      source: "petme",
+    setForm((prev) => ({
+      ...prev,
       source_listing_id: "",
       title: "",
       description: "",
@@ -103,7 +162,7 @@ export default function CreateListingPage() {
       provider_name: "",
       note: "",
       document_url: "",
-    });
+    }));
   }
 
   return (
@@ -124,9 +183,9 @@ export default function CreateListingPage() {
             <div className="space-y-4">
               <input
                 value={form.seller_uid}
-                onChange={(e) => updateField("seller_uid", e.target.value)}
-                placeholder="Seller UID (optional)"
-                className="w-full rounded-xl border border-zinc-700 bg-black px-4 py-3"
+                readOnly
+                placeholder="Seller UID"
+                className="w-full rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-3 text-zinc-400"
               />
 
               <div className="grid md:grid-cols-2 gap-4">
@@ -204,6 +263,13 @@ export default function CreateListingPage() {
               />
 
               <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="w-full rounded-xl border border-zinc-700 bg-black px-4 py-3"
+              />
+
+              <input
                 value={form.listing_url}
                 onChange={(e) => updateField("listing_url", e.target.value)}
                 placeholder="Listing URL"
@@ -222,7 +288,7 @@ export default function CreateListingPage() {
               <input
                 value={form.record_type}
                 onChange={(e) => updateField("record_type", e.target.value)}
-                placeholder="Record Type (vaccination, exam, microchip, etc.)"
+                placeholder="Record Type"
                 className="w-full rounded-xl border border-zinc-700 bg-black px-4 py-3"
               />
 
@@ -252,9 +318,10 @@ export default function CreateListingPage() {
 
           <button
             type="submit"
-            className="px-5 py-3 rounded-xl bg-green-500 text-black font-semibold hover:bg-green-400 transition"
+            disabled={uploading}
+            className="px-5 py-3 rounded-xl bg-green-500 text-black font-semibold hover:bg-green-400 transition disabled:opacity-60"
           >
-            Save Listing
+            {uploading ? "Uploading..." : "Save Listing"}
           </button>
 
           {status ? <p className="text-sm text-zinc-300">{status}</p> : null}

@@ -152,7 +152,12 @@ export default async function ListingDetailPage({
                   Seller Profile
                 </Link>
               ) : null}
-
+				<Link
+				  href={`/petme-baby/listings/${pet.id}/add-health-record`}
+				  className="px-4 py-2 rounded-lg border border-zinc-700 text-white hover:bg-zinc-900 transition"
+				>
+				  Add Health Record
+			    </Link>
               <Link
                 href="/petme-baby/listings"
                 className="px-4 py-2 rounded-lg border border-zinc-700 text-white hover:bg-zinc-900 transition"
