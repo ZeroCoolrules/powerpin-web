@@ -1,0 +1,122 @@
+/* Qpids Place look: warm and light, so it never reads as Cupid's Corner's
+   dark violet. Coral for love, deep teal for trust, cream paper background. */
+.qp {
+  --qp-bg: #fff7f0;
+  --qp-surface: #ffffff;
+  --qp-blush: #ffe4dc;
+  --qp-ink: #2b1d2a;
+  --qp-muted: #7b6a77;
+  --qp-line: #f0dfd6;
+  --qp-coral: #f0545c;
+  --qp-coral-dark: #d63f48;
+  --qp-teal: #157a6e;
+  --qp-teal-soft: #dff3ef;
+  min-height: 100vh;
+  background: var(--qp-bg);
+  color: var(--qp-ink);
+  font-family: var(--qp-font-body), "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+/* PowerPin's global stylesheet greys out and narrows every <p>; undo that
+   inside Qpids Place so text inherits the theme colour and sizes. */
+.qp :where(p) {
+  max-width: none;
+  color: inherit;
+}
+.qp h1,
+.qp h2,
+.qp h3,
+.qp .qp-serif {
+  font-family: var(--qp-font-display), Georgia, "Times New Roman", serif;
+  letter-spacing: -0.01em;
+}
+.qp-card {
+  background: var(--qp-surface);
+  border: 1px solid var(--qp-line);
+  border-radius: 24px;
+  box-shadow: 0 1px 2px rgba(43, 29, 42, 0.04), 0 8px 24px rgba(43, 29, 42, 0.06);
+}
+.qp-btn {
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 999px;
+  padding: 12px 22px;
+  font-weight: 600;
+  transition: background 0.15s, transform 0.1s;
+}
+.qp-btn:active {
+  transform: scale(0.98);
+}
+.qp-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.qp-btn-primary {
+  background: var(--qp-coral);
+  color: #fff;
+}
+.qp-btn-primary:hover:not(:disabled) {
+  background: var(--qp-coral-dark);
+}
+.qp-btn-ghost {
+  background: transparent;
+  color: var(--qp-ink);
+  border: 1px solid var(--qp-line);
+}
+.qp-btn-ghost:hover:not(:disabled) {
+  background: var(--qp-blush);
+}
+.qp-input {
+  width: 100%;
+  border: 1px solid var(--qp-line);
+  background: #fff;
+  border-radius: 14px;
+  padding: 11px 14px;
+  color: var(--qp-ink);
+  outline: none;
+}
+.qp-input:focus {
+  border-color: var(--qp-coral);
+  box-shadow: 0 0 0 3px rgba(240, 84, 92, 0.15);
+}
+.qp-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--qp-muted);
+  margin-bottom: 6px;
+}
+.qp-chip {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 0.8rem;
+  background: var(--qp-blush);
+  color: var(--qp-ink);
+}
+.qp-chip-teal {
+  background: var(--qp-teal-soft);
+  color: var(--qp-teal);
+}
+.qp-muted {
+  color: var(--qp-muted);
+}
+.qp-error {
+  background: #fdecec;
+  color: #a8282f;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+}
+.qp-navlink {
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-weight: 600;
+  color: var(--qp-muted);
+}
+.qp-navlink[aria-current="page"] {
+  background: var(--qp-blush);
+  color: var(--qp-ink);
+}
