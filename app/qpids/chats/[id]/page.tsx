@@ -145,6 +145,11 @@ export default function ChatThread() {
         </Link>
         {conv && <Avatar name={title} photoUrl={conv.photoUrl} emoji={conv.emoji} color={conv.color} size={44} />}
         <h1 className="text-2xl font-bold">{title}</h1>
+        {isAI && (
+          <Link href={qp("coach")} className="qp-btn qp-btn-ghost ml-auto px-4 py-2 text-sm">
+            Talk by phone
+          </Link>
+        )}
       </div>
 
       {error && <p className="qp-error" role="alert">{error}</p>}

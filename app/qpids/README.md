@@ -19,6 +19,8 @@ Pro.
 | `/qpids/matches` | Matches and "people who like you" |
 | `/qpids/chats`, `/qpids/chats/[id]` | One-to-one chats and Cupid, the AI coach |
 | `/qpids/profile` | Edit profile, prompts, interests and photo |
+| `/qpids/coach` | Paid phone session with Cupid. Shows the price, takes payment in sparks, then shows the coach number and a one-time code. The number comes from the backend only after payment and is never in this repo. |
+| `/qpids/sparks` | Balance and spark packs (Stripe checkout on the backend) |
 
 ## Settings
 
