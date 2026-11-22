@@ -10,6 +10,7 @@ const NAV = [
   { href: "discover", label: "Discover" },
   { href: "matches", label: "Matches" },
   { href: "chats", label: "Chats" },
+  { href: "coach", label: "Coach" },
   { href: "profile", label: "Profile" },
 ];
 
