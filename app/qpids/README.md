@@ -25,6 +25,7 @@ Pro.
 | Variable | Purpose |
 |---|---|
 | `NEXT_PUBLIC_QPIDS_API_URL` | Base URL of the shared backend, for example the Render URL of Cupid's Corner. Defaults to `http://localhost:8787`. |
+| `QPIDS_BACKEND_URL` | Optional. When set, `/api/qpids-proxy/*` on this app forwards to the backend. Use it with `NEXT_PUBLIC_QPIDS_API_URL=/api/qpids-proxy` so the browser never calls the backend directly and no CORS setup is needed. |
 | `NEXT_PUBLIC_QPIDS_BRAND` | Brand slug sent as `X-Brand`. Defaults to `qpidsplace`. |
 | `NEXT_PUBLIC_QPIDS_ROOT` | Where the site is mounted. Defaults to `/qpids`. Set to `/` on a deployment that serves only the Qpids Place domain. |
 | `QPIDS_HOSTS` | Comma separated hostnames that should show Qpids Place at the root, for example `qpidsplace.com,www.qpidsplace.com`. Other hosts keep PowerPin unchanged. |
