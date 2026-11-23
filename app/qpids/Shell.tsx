@@ -6,16 +6,21 @@ import { useEffect } from "react";
 import { AuthProvider, useAuth } from "./lib/auth";
 import { qp } from "./lib/paths";
 
-const NAV = [
+const NAV: { href: string; label: string; wideOnly?: boolean }[] = [
   { href: "discover", label: "Discover" },
+  { href: "feed", label: "Feed" },
   { href: "matches", label: "Matches" },
   { href: "chats", label: "Chats" },
   { href: "coach", label: "Coach" },
+  { href: "blog", label: "Blog", wideOnly: true },
   { href: "profile", label: "Profile" },
 ];
 
 // Pages anyone can see; everything else needs a signed-in member.
-const PUBLIC = ["", "join", "login"];
+const PUBLIC = ["", "join", "login", "blog"];
+// Public pages that are drawn on the server, so search engines and link
+// previews can read them. They render without waiting for the sign-in check.
+const SERVER_DRAWN = ["blog"];
 
 function Logo() {
   return (
@@ -49,7 +54,7 @@ function Frame({ children }: { children: React.ReactNode }) {
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3">
           <Logo />
           {user ? (
-            <nav className="hidden items-center gap-1 sm:flex" aria-label="Main">
+            <nav className="hidden items-center gap-1 lg:flex" aria-label="Main">
               {NAV.map((n) => (
                 <Link key={n.href} href={qp(n.href)} className="qp-navlink" aria-current={section === n.href ? "page" : undefined}>
                   {n.label}
@@ -61,6 +66,9 @@ function Frame({ children }: { children: React.ReactNode }) {
             </nav>
           ) : (
             <div className="flex items-center gap-2">
+              <Link href={qp("blog")} className="qp-navlink hidden sm:inline-block" aria-current={section === "blog" ? "page" : undefined}>
+                Blog
+              </Link>
               <Link href={qp("login")} className="qp-btn qp-btn-ghost py-2">
                 Log in
               </Link>
@@ -71,24 +79,25 @@ function Frame({ children }: { children: React.ReactNode }) {
           )}
         </div>
       </header>
-      <main className="mx-auto max-w-5xl px-4 pb-28 pt-6 sm:pb-12">
-        {!ready || (!user && !isPublic) ? <p className="qp-muted py-20 text-center">Loading…</p> : children}
+      <main className="mx-auto max-w-5xl px-4 pb-28 pt-6 lg:pb-12">
+        {!SERVER_DRAWN.includes(section) && (!ready || (!user && !isPublic)) ? <p className="qp-muted py-20 text-center">Loading…</p> : children}
       </main>
       {user && (
         <nav
-          className="fixed inset-x-0 bottom-0 z-20 flex justify-around border-t py-2 sm:hidden"
+          className="fixed inset-x-0 bottom-0 z-20 flex justify-around border-t py-2 lg:hidden"
           style={{ borderColor: "var(--qp-line)", background: "var(--qp-surface)" }}
           aria-label="Main"
         >
-          {NAV.map((n) => (
-            <Link key={n.href} href={qp(n.href)} className="qp-navlink text-sm" aria-current={section === n.href ? "page" : undefined}>
+          {NAV.filter((n) => !n.wideOnly).map((n) => (
+            <Link key={n.href} href={qp(n.href)} className="qp-navlink qp-navlink-tight" aria-current={section === n.href ? "page" : undefined}>
               {n.label}
             </Link>
           ))}
         </nav>
       )}
-      <footer className="qp-muted mx-auto hidden max-w-5xl px-4 pb-10 text-sm sm:block">
-        © {new Date().getFullYear()} Qpids Place · 18+ only · Be kind, be real.
+      <footer className={`qp-muted mx-auto max-w-5xl px-4 text-sm ${user ? "hidden pb-10 lg:block" : "pb-10"}`}>
+        © {new Date().getFullYear()} Qpids Place · 18+ only · Be kind, be real. ·{" "}
+        <Link href={qp("blog")} className="underline">Blog</Link>
       </footer>
     </>
   );
