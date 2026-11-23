@@ -21,6 +21,9 @@ Pro.
 | `/qpids/profile` | Edit profile, prompts, interests and photo |
 | `/qpids/coach` | Paid phone session with Cupid. Shows the price, takes payment in sparks, then shows the coach number and a one-time code. The number comes from the backend only after payment and is never in this repo. |
 | `/qpids/sparks` | Balance and spark packs (Stripe checkout on the backend) |
+| `/qpids/feed` | Member feed: post text with an optional photo, like, comment, delete, report. Shared with Cupid's Corner, with blocks and bans applied by the backend. |
+| `/qpids/blog`, `/qpids/blog/[slug]` | Public blog, readable without signing in. Drawn on the server when `QPIDS_BACKEND_URL` (or an absolute `NEXT_PUBLIC_QPIDS_API_URL`) is set, so search engines and link previews see the article; otherwise it loads in the browser. Refreshes about once a minute. |
+| `/qpids/blog/write`, `/qpids/blog/write/[id]` | Blog editor for backend admins (`ADMIN_USERNAMES`): drafts, cover photo, preview, publish. The same articles show on Cupid's Corner. |
 
 ## Settings
 
