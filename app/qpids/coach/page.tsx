@@ -60,7 +60,7 @@ export default function CoachPage() {
     <div className="mx-auto max-w-2xl space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Talk to Cupid</h1>
-        <p className="qp-muted">A private phone session with your dating coach.</p>
+        <p className="qp-muted">A private phone session with Cupid, our AI dating coach. Cupid is an AI, not a person.</p>
       </div>
 
       {error && <p className="qp-error" role="alert">{error}</p>}
