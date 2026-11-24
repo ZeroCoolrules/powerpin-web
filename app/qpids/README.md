@@ -15,6 +15,8 @@ Pro.
 |---|---|
 | `/qpids` | Landing page with live member stats |
 | `/qpids/join`, `/qpids/login` | Sign up (18+) and log in. `/qpids/join?ref=CODE` is an invite link: the new member gets welcome sparks, and the inviter is rewarded once that member's first photo is approved. |
+| `/qpids/in/[slug]` | Launch page for one place, e.g. `/qpids/in/missouri`. Posts, flyers and QR codes point here. It shows the founding member offer and spots left (numbers come from the backend: `FOUNDING_MEMBER_LIMIT`, `FOUNDING_PREMIUM_DAYS`, `FOUNDING_SPARKS`) and links to `/qpids/join?campaign=missouri`, which records the sign-up under that place. |
+| `/qpids/safety` | Safety advice and the statement that we do not run criminal background checks. The same notice (`SafetyNotice.tsx`) is on the join page and on every member profile, which Illinois law (815 ILCS 518/10) requires. Keep the statement bold, in capitals and at least 12-point. |
 | `/qpids/discover` | Profile deck with match score, interest filter, "Near me" |
 | `/qpids/matches` | Matches, winks you've received (with "Wink back"), and "people who like you". Premium, paid for with sparks, shows who they are. |
 | `/qpids/members/[id]` | A member's full profile: answers to the profile questions, approved album photos, Wink, Report and Block. |
