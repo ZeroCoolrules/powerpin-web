@@ -11,7 +11,7 @@ type Stats = { members: number; matches: number; gifts: number; rooms: number };
 const STEPS = [
   { title: "Make a profile that sounds like you", body: "A photo, a few prompts, the things you love. No essays required." },
   { title: "Meet people who fit", body: "Discover ranks people by shared interests, distance and who is active, not by who paid most." },
-  { title: "Match, then talk", body: "When you both like each other, a chat opens. Gifts, video dates and Cupid's icebreakers are there when you want them." },
+  { title: "Match, then talk", body: "When you both like each other, a chat opens. Gifts, video dates and icebreakers from Cupid, our AI coach, are there when you want them." },
 ];
 
 export default function QpidsHome() {

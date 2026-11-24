@@ -239,7 +239,56 @@ function ProfileForm() {
       </form>
 
       <ProfileExtras userId={user.id} />
+      <DeleteAccount />
     </div>
+  );
+}
+
+// Members can leave whenever they like. The backend asks for the password
+// again and removes the profile, photos, matches and messages.
+function DeleteAccount() {
+  const { signOut } = useAuth();
+  const [open, setOpen] = useState(false);
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  async function remove(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    setBusy(true);
+    try {
+      await api("/me", { method: "DELETE", body: { password } });
+      signOut();
+      window.location.href = qp("");
+    } catch (err: any) {
+      setError(err.message);
+      setBusy(false);
+    }
+  }
+
+  return (
+    <section className="qp-card space-y-3 p-5">
+      <h2 className="text-xl font-bold">Delete my account</h2>
+      <p className="qp-muted text-sm">
+        This removes your profile, photos, matches and messages for good. Unused sparks and Premium time are lost. It cannot be undone.
+      </p>
+      {open ? (
+        <form onSubmit={remove} className="space-y-3">
+          <div>
+            <label className="qp-label" htmlFor="deletePassword">Type your password to confirm</label>
+            <input id="deletePassword" className="qp-input" type="password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          </div>
+          {error && <p className="qp-error" role="alert">{error}</p>}
+          <div className="flex flex-wrap gap-3">
+            <button className="qp-btn qp-btn-ghost" disabled={busy}>{busy ? "Deleting…" : "Delete my account for good"}</button>
+            <button type="button" className="qp-btn qp-btn-ghost" onClick={() => setOpen(false)}>Keep my account</button>
+          </div>
+        </form>
+      ) : (
+        <button type="button" className="qp-btn qp-btn-ghost" onClick={() => setOpen(true)}>Delete my account…</button>
+      )}
+    </section>
   );
 }
 

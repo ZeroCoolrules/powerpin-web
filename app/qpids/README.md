@@ -17,6 +17,8 @@ Pro.
 | `/qpids/join`, `/qpids/login` | Sign up (18+) and log in. `/qpids/join?ref=CODE` is an invite link: the new member gets welcome sparks, and the inviter is rewarded once that member's first photo is approved. |
 | `/qpids/in/[slug]` | Launch page for one place, e.g. `/qpids/in/missouri`. Posts, flyers and QR codes point here. It shows the founding member offer and spots left (numbers come from the backend: `FOUNDING_MEMBER_LIMIT`, `FOUNDING_PREMIUM_DAYS`, `FOUNDING_SPARKS`) and links to `/qpids/join?campaign=missouri`, which records the sign-up under that place. |
 | `/qpids/safety` | Safety advice and the statement that we do not run criminal background checks. The same notice (`SafetyNotice.tsx`) is on the join page and on every member profile, which Illinois law (815 ILCS 518/10) requires. Keep the statement bold, in capitals and at least 12-point. |
+| `/qpids/terms`, `/qpids/privacy`, `/qpids/guidelines` | Terms of Service, Privacy Policy and Community Guidelines, open to anyone and drawn on the server. Linked from the footer and from the agreement box on the join page. They name the business from `NEXT_PUBLIC_QPIDS_LEGAL_NAME`, `NEXT_PUBLIC_QPIDS_LEGAL_ADDRESS`, `NEXT_PUBLIC_QPIDS_CONTACT_EMAIL` and `NEXT_PUBLIC_QPIDS_GOVERNING_STATE` (see `lib/legal.ts`). The wording describes what the site really does, so update it, and the date in `lib/legal.ts`, when a feature changes what we collect. Not reviewed by a lawyer. |
+| `/qpids/child-safety` | Child Safety Standards, a public page Google Play requires of dating apps (standards, how to report, NCMEC reporting). `/qpids/privacy#delete-account` is the public address for account and data deletion requests that the Play listing asks for. |
 | `/qpids/discover` | Profile deck with match score, interest filter, "Near me" |
 | `/qpids/matches` | Matches, winks you've received (with "Wink back"), and "people who like you". Premium, paid for with sparks, shows who they are. |
 | `/qpids/members/[id]` | A member's full profile: answers to the profile questions, approved album photos, Wink, Report and Block. |
@@ -24,7 +26,7 @@ Pro.
 | `/qpids/meetups` | Open meetup board. A member posts when they're free and what they'd like to do; others ask to join and the host picks who comes. The board shows only a general area. The exact place is private to the host and the people they accept. Blocks, bans and reports apply. |
 | `/qpids/admin` | For backend admins (`ADMIN_USERNAMES`): the photo review queue and the list of profile questions. |
 | `/qpids/chats`, `/qpids/chats/[id]` | One-to-one chats and Cupid, the AI coach |
-| `/qpids/profile` | Edit profile, prompts, interests and photo. Also "More about you" (the profile questions), the photo album (each photo is reviewed before others see it), and a personal invite link. |
+| `/qpids/profile` | Edit profile, prompts, interests and photo. Also "Delete my account" (asks for the password, then removes everything), "More about you" (the profile questions), the photo album (each photo is reviewed before others see it), and a personal invite link. |
 | `/qpids/coach` | Paid phone session with Cupid. Shows the price, takes payment in sparks, then shows the coach number and a one-time code. The number comes from the backend only after payment and is never in this repo. |
 | `/qpids/sparks` | Balance and spark packs (Stripe checkout on the backend) |
 | `/qpids/feed` | Member feed: post text with an optional photo, like, comment, delete, report. Shared with Cupid's Corner, with blocks and bans applied by the backend. |

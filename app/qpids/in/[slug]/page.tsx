@@ -20,7 +20,7 @@ type Campaign = {
 
 const REASONS = [
   { title: "Post a meetup, pick who joins", body: "Coffee on Saturday, trivia night, a walk in the park. You choose who comes, and the exact place stays private until you say yes." },
-  { title: "Real people, checked photos", body: "A person looks at every photo before it shows. Adults only." },
+  { title: "Real people, checked photos", body: "A person reviews every photo members add. Adults only." },
   { title: "Help shape it", body: "We are new here. Founding members tell us what to build next, and we listen." },
 ];
 
