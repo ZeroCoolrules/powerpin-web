@@ -49,12 +49,27 @@ open `android/` in Android Studio.
 ## How the site knows it is in the app
 
 The app adds `QpidsPlaceApp/1.0` to the browser name. `app/qpids/lib/native.ts`
-reads it. Today the only use is the Sparks page, which leaves out card checkout
-inside the app because Google Play has its own rules for selling in-app
-currency.
+reads it. Today the only use is the Sparks page.
+
+## Buying sparks in the app
+
+Inside the app the Sparks page sells packs through Google Play Billing, using
+the `@capgo/native-purchases` plugin (Play Billing Library 9). The page asks
+Google Play for the packs and their prices, opens Google's purchase sheet, and
+sends the purchase to the backend (`POST /billing/play/redeem` in cupidsCorner),
+which confirms it with Google before adding sparks. The website keeps the card
+checkout.
+
+To switch it on:
+
+1. In Play Console, create three one-time products with the IDs `sparks_small`,
+   `sparks_medium` and `sparks_large`, priced like the website packs.
+2. Create a Google Cloud service account, give it access to the app in Play
+   Console (view financial data, manage orders), and put its JSON key in the
+   backend setting `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON` on Render.
+
+Until both are done the page says buying isn't open in the app yet.
 
 ## Not built yet
 
-- Buying sparks inside the app (needs Google Play Billing or Google's US
-  alternative billing programme).
 - Push notifications.
