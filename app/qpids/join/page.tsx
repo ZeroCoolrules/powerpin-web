@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
 import { api, type Member } from "../lib/api";
 import { useAuth } from "../lib/auth";
 import { qp } from "../lib/paths";
@@ -15,8 +15,17 @@ const LOOKING = [
   { value: "Interested in everyone", label: "Everyone" },
 ];
 
-export default function Join() {
+function JoinForm() {
   const router = useRouter();
+  // An invite link looks like /join?ref=CODE.
+  const ref = (useSearchParams().get("ref") || "").replace(/[^A-Za-z0-9]/g, "").slice(0, 16);
+  const [invite, setInvite] = useState<{ inviterName: string; welcome: number } | null>(null);
+  useEffect(() => {
+    if (!ref) return;
+    api<{ valid: boolean; inviterName: string; welcome: number }>(`/public/referral/${ref}`)
+      .then((r) => setInvite(r.valid ? r : null))
+      .catch(() => {});
+  }, [ref]);
   const { signIn } = useAuth();
   const [form, setForm] = useState({
     displayName: "",
@@ -41,7 +50,7 @@ export default function Join() {
     try {
       const { token, user } = await api<{ token: string; user: Member }>("/auth/signup", {
         method: "POST",
-        body: { ...form, age: Number(form.age), avatarEmoji: "💗", avatarColor: "#f0545c" },
+        body: { ...form, age: Number(form.age), avatarEmoji: "💗", avatarColor: "#f0545c", referralCode: ref || undefined },
       });
       signIn(token, user);
       router.push(qp("profile?welcome=1"));
@@ -57,6 +66,11 @@ export default function Join() {
       <div className="qp-card p-6 sm:p-8">
         <h1 className="mb-1 text-3xl font-bold">Join Qpids Place</h1>
         <p className="qp-muted mb-6">Free to join. Takes about a minute.</p>
+        {invite && (
+          <p className="mb-6 rounded-2xl p-3 text-sm" style={{ background: "var(--qp-teal-soft)", color: "var(--qp-teal)" }}>
+            {invite.inviterName} invited you.{invite.welcome > 0 ? ` You'll start with ✨ ${invite.welcome} extra sparks.` : ""}
+          </p>
+        )}
         <form onSubmit={submit} className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
@@ -125,5 +139,13 @@ export default function Join() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function Join() {
+  return (
+    <Suspense fallback={<p className="qp-muted py-20 text-center">Loading…</p>}>
+      <JoinForm />
+    </Suspense>
   );
 }

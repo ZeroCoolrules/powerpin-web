@@ -10,6 +10,7 @@ const NAV: { href: string; label: string; wideOnly?: boolean }[] = [
   { href: "discover", label: "Discover" },
   { href: "feed", label: "Feed" },
   { href: "matches", label: "Matches" },
+  { href: "meetups", label: "Meetups" },
   { href: "chats", label: "Chats" },
   { href: "coach", label: "Coach" },
   { href: "blog", label: "Blog", wideOnly: true },

@@ -14,11 +14,14 @@ Pro.
 | Path | What it does |
 |---|---|
 | `/qpids` | Landing page with live member stats |
-| `/qpids/join`, `/qpids/login` | Sign up (18+) and log in |
+| `/qpids/join`, `/qpids/login` | Sign up (18+) and log in. `/qpids/join?ref=CODE` is an invite link: the new member gets welcome sparks, and the inviter is rewarded once that member's first photo is approved. |
 | `/qpids/discover` | Profile deck with match score, interest filter, "Near me" |
-| `/qpids/matches` | Matches and "people who like you" |
+| `/qpids/matches` | Matches, winks you've received (with "Wink back"), and "people who like you". Premium, paid for with sparks, shows who they are. |
+| `/qpids/members/[id]` | A member's full profile: answers to the profile questions, approved album photos, Wink, Report and Block. |
+| `/qpids/meetups` | Open meetup board. A member posts when they're free and what they'd like to do; others ask to join and the host picks who comes. The board shows only a general area. The exact place is private to the host and the people they accept. Blocks, bans and reports apply. |
+| `/qpids/admin` | For backend admins (`ADMIN_USERNAMES`): the photo review queue and the list of profile questions. |
 | `/qpids/chats`, `/qpids/chats/[id]` | One-to-one chats and Cupid, the AI coach |
-| `/qpids/profile` | Edit profile, prompts, interests and photo |
+| `/qpids/profile` | Edit profile, prompts, interests and photo. Also "More about you" (the profile questions), the photo album (each photo is reviewed before others see it), and a personal invite link. |
 | `/qpids/coach` | Paid phone session with Cupid. Shows the price, takes payment in sparks, then shows the coach number and a one-time code. The number comes from the backend only after payment and is never in this repo. |
 | `/qpids/sparks` | Balance and spark packs (Stripe checkout on the backend) |
 | `/qpids/feed` | Member feed: post text with an optional photo, like, comment, delete, report. Shared with Cupid's Corner, with blocks and bans applied by the backend. |

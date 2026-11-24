@@ -209,9 +209,17 @@
   color: var(--qp-muted);
 }
 /* Six links share the phone's bottom bar. */
+/* Seven links have to fit across a small phone. */
 .qp-navlink-tight {
-  padding: 8px 6px;
-  font-size: 0.8rem;
+  padding: 8px 4px;
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+@media (max-width: 339px) {
+  .qp-navlink-tight {
+    padding: 8px 2px;
+    font-size: 0.64rem;
+  }
 }
 @media (min-width: 480px) {
   .qp-navlink-tight {
