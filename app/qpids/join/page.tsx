@@ -146,7 +146,12 @@ function JoinForm() {
           </div>
           <label className="flex items-start gap-3 text-sm">
             <input type="checkbox" className="mt-1" checked={form.acceptTerms} onChange={set("acceptTerms")} required />
-            <span>I'm 18 or older and I agree to the Terms, Privacy Policy and Community Guidelines.</span>
+            <span>
+              I'm 18 or older and I agree to the{" "}
+              <Link href={qp("terms")} target="_blank" className="underline">Terms</Link>,{" "}
+              <Link href={qp("privacy")} target="_blank" className="underline">Privacy Policy</Link> and{" "}
+              <Link href={qp("guidelines")} target="_blank" className="underline">Community Guidelines</Link>.
+            </span>
           </label>
           {error && <p className="qp-error" role="alert">{error}</p>}
           <button className="qp-btn qp-btn-primary w-full" disabled={busy}>

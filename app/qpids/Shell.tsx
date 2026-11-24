@@ -18,10 +18,10 @@ const NAV: { href: string; label: string; wideOnly?: boolean }[] = [
 ];
 
 // Pages anyone can see; everything else needs a signed-in member.
-const PUBLIC = ["", "join", "login", "blog", "in", "safety"];
+const PUBLIC = ["", "join", "login", "blog", "in", "safety", "terms", "privacy", "guidelines"];
 // Public pages that are drawn on the server, so search engines and link
 // previews can read them. They render without waiting for the sign-in check.
-const SERVER_DRAWN = ["blog"];
+const SERVER_DRAWN = ["blog", "terms", "privacy", "guidelines"];
 
 function Logo() {
   return (
@@ -98,7 +98,11 @@ function Frame({ children }: { children: React.ReactNode }) {
       )}
       <footer className={`qp-muted mx-auto max-w-5xl px-4 text-sm ${user ? "hidden pb-10 lg:block" : "pb-10"}`}>
         © {new Date().getFullYear()} Qpids Place · 18+ only · Be kind, be real. ·{" "}
-        <Link href={qp("blog")} className="underline">Blog</Link>
+        <Link href={qp("blog")} className="underline">Blog</Link> ·{" "}
+        <Link href={qp("terms")} className="underline">Terms</Link> ·{" "}
+        <Link href={qp("privacy")} className="underline">Privacy</Link> ·{" "}
+        <Link href={qp("guidelines")} className="underline">Guidelines</Link> ·{" "}
+        <Link href={qp("safety")} className="underline">Safety</Link>
       </footer>
     </>
   );
