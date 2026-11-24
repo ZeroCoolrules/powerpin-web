@@ -227,3 +227,42 @@
     font-size: 0.9rem;
   }
 }
+
+/* ---------- questionnaire ---------- */
+.qp-option {
+  display: block;
+  cursor: pointer;
+  border: 1px solid var(--qp-line);
+  border-radius: 14px;
+  padding: 10px 14px;
+  background: var(--qp-surface);
+}
+.qp-option:hover {
+  background: var(--qp-blush);
+}
+.qp-option[data-on="true"] {
+  border-color: var(--qp-teal);
+  background: var(--qp-teal-soft);
+  color: var(--qp-teal);
+  font-weight: 600;
+}
+.qp-option:focus-within {
+  outline: 2px solid var(--qp-coral);
+  outline-offset: 2px;
+}
+.qp-chip[data-on="true"] {
+  background: var(--qp-teal);
+  color: #fff;
+}
+.qp-bar {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--qp-line);
+  overflow: hidden;
+}
+.qp-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--qp-teal);
+}

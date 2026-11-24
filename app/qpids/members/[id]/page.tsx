@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { api, mediaUrl, type Member } from "../../lib/api";
-import type { ProfileExtras } from "../../lib/extras";
+import type { Compatibility, ProfileExtras } from "../../lib/extras";
 import { qp } from "../../lib/paths";
 import SafetyNotice from "../../SafetyNotice";
 
@@ -17,6 +17,7 @@ export default function MemberProfile() {
   const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [extras, setExtras] = useState<ProfileExtras | null>(null);
+  const [fit, setFit] = useState<Compatibility | null>(null);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [busy, setBusy] = useState(false);
@@ -26,6 +27,8 @@ export default function MemberProfile() {
     setError("");
     api<Profile>(`/users/${id}`).then(setProfile).catch((e) => setError(e.status === 404 ? "This profile isn't available." : e.message));
     api<ProfileExtras>(`/users/${id}/extras`).then(setExtras).catch(() => {});
+    setFit(null);
+    api<Compatibility>(`/users/${id}/compatibility`).then(setFit).catch(() => {});
   }, [id]);
 
   async function wink() {
@@ -103,6 +106,69 @@ export default function MemberProfile() {
           {error && <p className="qp-error" role="alert">{error}</p>}
         </div>
       </article>
+
+      {fit && !profile.isSelf && (
+        <section className="qp-card space-y-4 p-5">
+          {fit.ready ? (
+            <>
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-xl font-bold">How you fit</h2>
+                  <p className="qp-muted text-sm">From the {fit.shared} questions you've both answered.</p>
+                </div>
+                <p className="qp-serif text-4xl font-bold" style={{ color: "var(--qp-teal)" }}>{fit.percent}%</p>
+              </div>
+              <ul className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
+                {fit.areas?.map((a) => (
+                  <li key={a.key}>
+                    <div className="mb-1 flex justify-between text-sm">
+                      <span>{a.title}</span>
+                      <span className="font-semibold">{a.percent}%</span>
+                    </div>
+                    <div className="qp-bar" role="img" aria-label={`${a.title}: ${a.percent}%`}><span style={{ width: `${a.percent}%` }} /></div>
+                  </li>
+                ))}
+              </ul>
+              {fit.strengths && fit.strengths.length > 0 && (
+                <div>
+                  <h3 className="mb-1 font-bold">You line up on</h3>
+                  <ul className="list-disc space-y-1 pl-5 text-sm">
+                    {fit.strengths.map((q) => <li key={q.key}>{q.text.replace(/[:…]$/, "")}</li>)}
+                  </ul>
+                </div>
+              )}
+              {fit.talkAbout && fit.talkAbout.length > 0 && (
+                <div>
+                  <h3 className="mb-1 font-bold">Worth talking about early</h3>
+                  <ul className="list-disc space-y-1 pl-5 text-sm">
+                    {fit.talkAbout.map((q) => (
+                      <li key={q.key}>
+                        {q.text.replace(/[:…]$/, "")}
+                        {q.mustHave && <span className="qp-chip ml-2">A must for one of you</span>}
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="qp-muted mt-2 text-sm">You answered these differently. That isn't a no, just a good first conversation.</p>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 className="text-xl font-bold">How you fit</h2>
+                <p className="qp-muted text-sm">
+                  {fit.mineAnswered < (fit.needed || 8)
+                    ? "Answer the questionnaire to see how the two of you line up."
+                    : fit.theirsAnswered === 0
+                      ? `${u.displayName} hasn't answered the questionnaire yet.`
+                      : "You haven't answered enough of the same questions yet."}
+                </p>
+              </div>
+              {fit.mineAnswered < fit.total && <Link href={qp("quiz")} className="qp-btn qp-btn-ghost px-4 py-2 text-sm">Answer questions</Link>}
+            </div>
+          )}
+        </section>
+      )}
 
       {u.prompts?.length > 0 && (
         <section className="space-y-3">
