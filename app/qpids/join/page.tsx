@@ -6,6 +6,7 @@ import { Suspense, useEffect, useState } from "react";
 import { api, type Member } from "../lib/api";
 import { useAuth } from "../lib/auth";
 import { qp } from "../lib/paths";
+import SafetyNotice from "../SafetyNotice";
 
 const GENDERS = ["Woman", "Man", "Nonbinary"];
 // The matcher reads "looking for" from this text (women / men / everyone).
@@ -26,6 +27,18 @@ function JoinForm() {
       .then((r) => setInvite(r.valid ? r : null))
       .catch(() => {});
   }, [ref]);
+  // A state launch page sends people here as /join?campaign=missouri.
+  const campaign = (useSearchParams().get("campaign") || "").toLowerCase().replace(/[^a-z0-9-]/g, "").slice(0, 40);
+  const [launch, setLaunch] = useState<{ name: string; offer: { premiumDays: number; sparks: number; left: number } } | null>(null);
+  useEffect(() => {
+    if (!campaign) return;
+    api<{ campaign: { name: string; offer: { premiumDays: number; sparks: number; left: number } } }>(`/public/campaigns/${campaign}`)
+      .then((r) => setLaunch(r.campaign))
+      .catch(() => {});
+  }, [campaign]);
+  const perks = launch
+    ? [launch.offer.premiumDays > 0 ? `${launch.offer.premiumDays} days of Premium free` : "", launch.offer.sparks > 0 ? `✨ ${launch.offer.sparks} sparks` : ""].filter(Boolean)
+    : [];
   const { signIn } = useAuth();
   const [form, setForm] = useState({
     displayName: "",
@@ -50,7 +63,7 @@ function JoinForm() {
     try {
       const { token, user } = await api<{ token: string; user: Member }>("/auth/signup", {
         method: "POST",
-        body: { ...form, age: Number(form.age), avatarEmoji: "💗", avatarColor: "#f0545c", referralCode: ref || undefined },
+        body: { ...form, age: Number(form.age), avatarEmoji: "💗", avatarColor: "#f0545c", referralCode: ref || undefined, campaign: campaign || undefined },
       });
       signIn(token, user);
       router.push(qp("profile?welcome=1"));
@@ -69,6 +82,12 @@ function JoinForm() {
         {invite && (
           <p className="mb-6 rounded-2xl p-3 text-sm" style={{ background: "var(--qp-teal-soft)", color: "var(--qp-teal)" }}>
             {invite.inviterName} invited you.{invite.welcome > 0 ? ` You'll start with ✨ ${invite.welcome} extra sparks.` : ""}
+          </p>
+        )}
+        {launch && (
+          <p className="mb-6 rounded-2xl p-3 text-sm" style={{ background: "var(--qp-teal-soft)", color: "var(--qp-teal)" }}>
+            You're joining from {launch.name}.
+            {launch.offer.left > 0 && perks.length > 0 ? ` As a founding member you'll get ${perks.join(" and ")}.` : ""}
           </p>
         )}
         <form onSubmit={submit} className="space-y-4">
@@ -137,6 +156,9 @@ function JoinForm() {
         <p className="qp-muted mt-6 text-center text-sm">
           Already a member? <Link href={qp("login")} className="font-semibold" style={{ color: "var(--qp-coral)" }}>Log in</Link>
         </p>
+      </div>
+      <div className="mt-6">
+        <SafetyNotice full />
       </div>
     </div>
   );

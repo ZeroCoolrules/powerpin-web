@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { api, mediaUrl, type Member } from "../../lib/api";
 import type { Compatibility, ProfileExtras } from "../../lib/extras";
 import { qp } from "../../lib/paths";
+import SafetyNotice from "../../SafetyNotice";
 
 type Profile = { user: Member; isSelf: boolean; amIBlocking: boolean };
 
@@ -226,6 +227,8 @@ export default function MemberProfile() {
           <button className="underline" onClick={block}>{profile.amIBlocking ? "Unblock" : "Block"}</button>
         </p>
       )}
+
+      <SafetyNotice />
 
       {open && (
         <div className="fixed inset-0 z-30 flex items-center justify-center p-4" style={{ background: "rgba(43,29,42,0.8)" }} role="dialog" aria-modal="true" aria-label="Photo" onClick={() => setOpen(null)}>
