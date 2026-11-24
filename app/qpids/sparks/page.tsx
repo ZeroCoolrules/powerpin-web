@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { api } from "../lib/api";
 import { useAuth } from "../lib/auth";
+import { inAndroidApp } from "../lib/native";
 import { qp } from "../lib/paths";
 
 // Sparks are the shared currency across every brand on the backend. Buying
@@ -19,8 +20,15 @@ function SparksInner() {
   const [data, setData] = useState<{ configured: boolean; packs: Pack[] } | null>(null);
   const [buying, setBuying] = useState("");
   const [error, setError] = useState("");
+  // Google Play has its own rules for selling in-app currency, so the app
+  // build does not open the card checkout. Balances and spending work as usual.
+  const [inApp, setInApp] = useState(false);
 
   useEffect(() => {
+    if (inAndroidApp()) {
+      setInApp(true);
+      return;
+    }
     api<{ configured: boolean; packs: Pack[] }>("/billing/packs").then(setData).catch((e) => setError(e.message));
   }, []);
 
@@ -69,7 +77,12 @@ function SparksInner() {
       {status === "cancelled" && <p className="qp-muted" role="status">Checkout cancelled. You weren't charged.</p>}
       {error && <p className="qp-error" role="alert">{error}</p>}
 
-      {!data ? (
+      {inApp ? (
+        <div className="qp-card p-6 text-center">
+          <p className="qp-serif text-xl font-bold">Not in the app yet</p>
+          <p className="qp-muted">Buying sparks isn't available in the Android app yet. Everything you already have works here.</p>
+        </div>
+      ) : !data ? (
         !error && <p className="qp-muted">Loading…</p>
       ) : !data.configured ? (
         <div className="qp-card p-6 text-center">
