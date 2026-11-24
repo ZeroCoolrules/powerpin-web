@@ -135,7 +135,7 @@ export default function ChatThread() {
   }
 
   const isAI = conv?.type === "ai";
-  const title = isAI ? "Cupid, your dating coach" : conv?.title || "Chat";
+  const title = isAI ? "Cupid, your AI dating coach" : conv?.title || "Chat";
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-4" style={{ minHeight: "calc(100vh - 220px)" }}>
@@ -159,7 +159,7 @@ export default function ChatThread() {
           <p className="qp-muted py-8 text-center">Opening your chat…</p>
         ) : messages.length === 0 ? (
           <p className="qp-muted py-8 text-center">
-            {isAI ? "Ask Cupid for an opener, a date idea, or a second opinion." : "No messages yet. A simple hello works."}
+            {isAI ? "Cupid is an AI, not a person. Ask for an opener, a date idea, or a second opinion." : "No messages yet. A simple hello works."}
           </p>
         ) : (
           messages.map((m) =>

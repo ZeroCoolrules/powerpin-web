@@ -32,7 +32,7 @@ export default function Chats() {
               <Link href={qp(`chats/${c.id}`)} className="flex items-center gap-4 p-4 hover:bg-[var(--qp-bg)]">
                 <Avatar name={c.title} photoUrl={c.photoUrl} emoji={c.emoji} color={c.color} size={48} />
                 <div className="min-w-0 flex-1">
-                  <p className="font-bold">{c.type === "ai" ? "Cupid, your dating coach" : c.title}</p>
+                  <p className="font-bold">{c.type === "ai" ? "Cupid, your AI dating coach" : c.title}</p>
                   <p className="qp-muted truncate text-sm">{c.lastMessage?.body || "Say hello"}</p>
                 </div>
               </Link>
