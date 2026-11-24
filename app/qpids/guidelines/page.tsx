@@ -9,7 +9,7 @@ export default function Guidelines() {
     <LegalDoc title="Community Guidelines">
       <p>Qpids Place is for adults meeting other adults. If you break these rules we may remove content or suspend or close your account.</p>
       <ul>
-        <li><b>18+ only.</b> Report anyone who seems to be under 18. We remove them right away.</li>
+        <li><b>18+ only.</b> Report anyone who seems to be under 18. We remove them right away. See our <Link href={qp("child-safety")} className="font-semibold underline">Child Safety Standards</Link>.</li>
         <li><b>Be yourself.</b> No fake profiles, impersonation, or photos of other people.</li>
         <li><b>Respect no.</b> No harassment, threats, hate speech, or unwanted sexual messages.</li>
         <li><b>Keep photos and posts clean.</b> No nudity or sexual content in photos, posts, meetups or public chat.</li>

@@ -41,7 +41,8 @@ export default function LegalDoc({ title, children }: { title: string; children:
         <Link href={qp("terms")} className="underline">Terms</Link> ·{" "}
         <Link href={qp("privacy")} className="underline">Privacy</Link> ·{" "}
         <Link href={qp("guidelines")} className="underline">Community Guidelines</Link> ·{" "}
-        <Link href={qp("safety")} className="underline">Safety</Link>
+        <Link href={qp("safety")} className="underline">Safety</Link> ·{" "}
+        <Link href={qp("child-safety")} className="underline">Child Safety</Link>
       </p>
     </div>
   );

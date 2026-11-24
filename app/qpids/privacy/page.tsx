@@ -45,6 +45,15 @@ export default function Privacy() {
       <Section title="Your choices and rights">
         <p>You can edit your profile at any time, block people, and delete your account from your profile page. You can ask us for a copy of your information, or ask us to correct or delete it, by writing to <Contact />. We answer within 45 days. We will not treat you differently for making a request. Depending on where you live, you may have further rights under your state’s privacy law, and you can use the same contact to exercise them.</p>
       </Section>
+      <section id="delete-account" className="space-y-2">
+        <h2 className="text-xl font-bold">Deleting your account and data</h2>
+        <p>This applies to Qpids Place on the web and in the Qpids Place app.</p>
+        <ul>
+          <li><b>Yourself, right away:</b> sign in at this site, open your profile page, choose “Delete my account” and confirm with your password.</li>
+          <li><b>By request, without signing in:</b> write to <Contact /> from any address and tell us your username. We may ask a question to confirm the account is yours, and we delete it within 30 days.</li>
+        </ul>
+        <p>Deleting removes your profile, photos, quiz and profile answers, matches, messages, posts and meetups. We keep records of purchases for as long as tax and accounting rules require, and reports about rule-breaking for as long as needed to keep banned people out. You can also ask us to delete some of your data, such as a photo or your quiz answers, without closing your account.</p>
+      </section>
       <Section title="Security">
         <p>Passwords are stored hashed, the site is served over an encrypted connection, and access to member data is limited to the people who run the service. No system is perfectly secure, so please use a password you do not use anywhere else.</p>
       </Section>

@@ -18,10 +18,10 @@ const NAV: { href: string; label: string; wideOnly?: boolean }[] = [
 ];
 
 // Pages anyone can see; everything else needs a signed-in member.
-const PUBLIC = ["", "join", "login", "blog", "in", "safety", "terms", "privacy", "guidelines"];
+const PUBLIC = ["", "join", "login", "blog", "in", "safety", "terms", "privacy", "guidelines", "child-safety"];
 // Public pages that are drawn on the server, so search engines and link
 // previews can read them. They render without waiting for the sign-in check.
-const SERVER_DRAWN = ["blog", "terms", "privacy", "guidelines"];
+const SERVER_DRAWN = ["blog", "terms", "privacy", "guidelines", "child-safety"];
 
 function Logo() {
   return (
