@@ -123,6 +123,11 @@ export default function Discover() {
                 ))}
               </div>
             )}
+            {typeof current.match?.quizPercent === "number" && (
+              <p className="text-sm font-semibold" style={{ color: "var(--qp-teal)" }}>
+                {current.match.quizPercent}% fit on what matters to you both
+              </p>
+            )}
             {current.match?.reasons?.length ? (
               <p className="qp-muted text-sm">Why you might click: {current.match.reasons.join(", ")}</p>
             ) : null}

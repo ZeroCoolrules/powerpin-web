@@ -69,3 +69,27 @@ export function timeRange(startIso: string, endIso: string): string {
   const to = sameDay ? end.toLocaleTimeString([], time) : `${end.toLocaleDateString([], day)}, ${end.toLocaleTimeString([], time)}`;
   return `${from} to ${to}`;
 }
+
+export type QuizAnswer = { answer: number; importance: number };
+
+export type QuizSheet = {
+  areas: { key: string; title: string; blurb: string; questions: { key: string; text: string; options: string[]; kind: "scale" | "choice" }[] }[];
+  importance: string[];
+  answers: Record<string, QuizAnswer>;
+  answered: number;
+  total: number;
+  minShared: number;
+};
+
+export type Compatibility = {
+  ready: boolean;
+  percent?: number;
+  shared: number;
+  needed?: number;
+  areas?: { key: string; title: string; percent: number; shared: number }[];
+  strengths?: { key: string; text: string }[];
+  talkAbout?: { key: string; text: string; mustHave: boolean }[];
+  mineAnswered: number;
+  theirsAnswered: number;
+  total: number;
+};

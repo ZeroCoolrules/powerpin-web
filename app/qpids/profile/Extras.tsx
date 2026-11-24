@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { api, mediaUrl } from "../lib/api";
-import type { AlbumPhoto, FieldDef, Referral } from "../lib/extras";
+import type { AlbumPhoto, FieldDef, QuizSheet, Referral } from "../lib/extras";
 import { qp } from "../lib/paths";
 
 // The extra questions an admin has set up ("Height", "Wants children"...).
@@ -234,6 +234,30 @@ function Invite() {
   );
 }
 
+function QuizCard() {
+  const [quiz, setQuiz] = useState<{ answered: number; total: number } | null>(null);
+  useEffect(() => {
+    api<QuizSheet>("/quiz").then((q) => setQuiz({ answered: q.answered, total: q.total })).catch(() => {});
+  }, []);
+  if (!quiz) return null;
+  const done = quiz.answered >= quiz.total;
+  return (
+    <section className="qp-card flex flex-wrap items-center justify-between gap-4 p-5" style={{ background: "var(--qp-teal-soft)" }}>
+      <div className="min-w-0 flex-1">
+        <h2 className="text-xl font-bold">What matters to you</h2>
+        <p className="text-sm">
+          {quiz.answered === 0
+            ? "A few minutes of questions on the things couples trip over early. We use it to find people who really fit."
+            : `${quiz.answered} of ${quiz.total} answered. ${done ? "You can change an answer any time." : "The more you answer, the better your matches."}`}
+        </p>
+      </div>
+      <Link href={qp("quiz")} className="qp-btn qp-btn-primary px-4 py-2 text-sm">
+        {quiz.answered === 0 ? "Start" : done ? "Review" : "Keep going"}
+      </Link>
+    </section>
+  );
+}
+
 function AdminLink() {
   const [admin, setAdmin] = useState(false);
   useEffect(() => {
@@ -254,6 +278,7 @@ function AdminLink() {
 export default function ProfileExtras({ userId }: { userId: number }) {
   return (
     <>
+      <QuizCard />
       <MoreAboutYou />
       <Album />
       <Invite />

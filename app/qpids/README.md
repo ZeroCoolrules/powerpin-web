@@ -18,6 +18,7 @@ Pro.
 | `/qpids/discover` | Profile deck with match score, interest filter, "Near me" |
 | `/qpids/matches` | Matches, winks you've received (with "Wink back"), and "people who like you". Premium, paid for with sparks, shows who they are. |
 | `/qpids/members/[id]` | A member's full profile: answers to the profile questions, approved album photos, Wink, Report and Block. |
+| `/qpids/quiz` | Compatibility questionnaire: about forty questions in nine topics on what new couples trip over (arguing, money, family, pace, daily life, affection, values, plans, trust). Each answer comes with "how much it matters". It feeds the Discover order and the "How you fit" card on a member's profile, which shows a score, a breakdown by topic and what is worth talking about early. Individual answers are never shown to other members. Admins see totals on `/qpids/admin`. |
 | `/qpids/meetups` | Open meetup board. A member posts when they're free and what they'd like to do; others ask to join and the host picks who comes. The board shows only a general area. The exact place is private to the host and the people they accept. Blocks, bans and reports apply. |
 | `/qpids/admin` | For backend admins (`ADMIN_USERNAMES`): the photo review queue and the list of profile questions. |
 | `/qpids/chats`, `/qpids/chats/[id]` | One-to-one chats and Cupid, the AI coach |

@@ -238,6 +238,76 @@ function Fields() {
   );
 }
 
+type Insights = {
+  members: number;
+  areas: { key: string; title: string; questions: { key: string; text: string; answered: number; mustMatch: number; avgImportance: number; options: { label: string; count: number }[] }[] }[];
+};
+
+// What members as a whole answered on the questionnaire. No names.
+function QuizInsights() {
+  const [data, setData] = useState<Insights | null>(null);
+  const [open, setOpen] = useState<string | null>(null);
+  useEffect(() => {
+    api<Insights>("/admin/quiz/insights").then(setData).catch(() => {});
+  }, []);
+  if (!data) return null;
+  const all = data.areas.flatMap((a) => a.questions).filter((q) => q.answered > 0);
+  const top = [...all].sort((a, b) => b.mustMatch / b.answered - a.mustMatch / a.answered).slice(0, 5);
+  return (
+    <section className="space-y-4">
+      <h2 className="text-2xl font-bold">What members are looking for</h2>
+      <p className="qp-muted text-sm">
+        {data.members === 0
+          ? "Nobody has answered the questionnaire yet."
+          : `${data.members} ${data.members === 1 ? "member has" : "members have"} answered the questionnaire. Totals only, no names.`}
+      </p>
+      {top.length > 0 && (
+        <div className="qp-card p-4">
+          <h3 className="mb-2 text-lg font-bold">Most often a must-match</h3>
+          <ol className="list-decimal space-y-1 pl-5 text-sm">
+            {top.map((q) => (
+              <li key={q.key}>
+                {q.text.replace(/[:…]$/, "")} <span className="qp-muted">({Math.round((q.mustMatch / q.answered) * 100)}% of those who answered)</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
+      {data.members > 0 &&
+        data.areas.map((a) => (
+          <div key={a.key} className="qp-card">
+            <button className="flex w-full items-center justify-between p-4 text-left font-bold" aria-expanded={open === a.key} onClick={() => setOpen(open === a.key ? null : a.key)}>
+              {a.title}
+              <span aria-hidden="true">{open === a.key ? "−" : "+"}</span>
+            </button>
+            {open === a.key && (
+              <div className="space-y-5 p-4 pt-0">
+                {a.questions.map((q) => (
+                  <div key={q.key}>
+                    <p className="font-semibold">{q.text}</p>
+                    <p className="qp-muted mb-2 text-sm">{q.answered} answered · {q.mustMatch} said it must match</p>
+                    <ul className="space-y-1 text-sm">
+                      {q.options.map((o) => {
+                        const pct = q.answered ? Math.round((o.count / q.answered) * 100) : 0;
+                        return (
+                          <li key={o.label} className="grid grid-cols-[1fr_90px_40px] items-center gap-2">
+                            <span>{o.label}</span>
+                            <div className="qp-bar" role="img" aria-label={`${pct}%`}><span style={{ width: `${pct}%` }} /></div>
+                            <span className="text-right">{pct}%</span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+    </section>
+  );
+}
+
 export default function Admin() {
   const [allowed, setAllowed] = useState<boolean | null>(null);
   useEffect(() => {
@@ -257,6 +327,7 @@ export default function Admin() {
     <div className="space-y-10">
       <h1 className="text-3xl font-bold">Admin</h1>
       <PhotoQueue />
+      <QuizInsights />
       <Fields />
     </div>
   );
