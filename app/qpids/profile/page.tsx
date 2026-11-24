@@ -7,6 +7,7 @@ import { api, type Member } from "../lib/api";
 import { useAuth } from "../lib/auth";
 import { qp } from "../lib/paths";
 import Avatar from "../Avatar";
+import ProfileExtras from "./Extras";
 
 const GENDERS = ["Woman", "Man", "Nonbinary"];
 const LOOKING_FOR = [
@@ -236,6 +237,8 @@ function ProfileForm() {
           {welcome && <Link href={qp("discover")} className="qp-btn qp-btn-ghost">Start discovering</Link>}
         </div>
       </form>
+
+      <ProfileExtras userId={user.id} />
     </div>
   );
 }

@@ -123,9 +123,17 @@ export default function Discover() {
                 ))}
               </div>
             )}
+            {typeof current.match?.quizPercent === "number" && (
+              <p className="text-sm font-semibold" style={{ color: "var(--qp-teal)" }}>
+                {current.match.quizPercent}% fit on what matters to you both
+              </p>
+            )}
             {current.match?.reasons?.length ? (
               <p className="qp-muted text-sm">Why you might click: {current.match.reasons.join(", ")}</p>
             ) : null}
+            <Link href={qp(`members/${current.id}`)} className="inline-block text-sm font-semibold underline" style={{ color: "var(--qp-teal)" }}>
+              See full profile and photos
+            </Link>
           </div>
           <div className="grid grid-cols-2 gap-3 p-5 pt-0">
             <button className="qp-btn qp-btn-ghost" disabled={busy} onClick={() => swipe("pass")}>

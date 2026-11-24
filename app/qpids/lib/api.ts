@@ -84,7 +84,7 @@ export type Member = {
   isPremium?: boolean;
   isVerified?: boolean;
   lastSeenAt?: string | null;
-  match?: { percent: number; reasons: string[] };
+  match?: { percent: number; reasons: string[]; quizPercent?: number | null };
 };
 
 export type Conversation = {

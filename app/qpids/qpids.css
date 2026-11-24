@@ -209,13 +209,60 @@
   color: var(--qp-muted);
 }
 /* Six links share the phone's bottom bar. */
+/* Seven links have to fit across a small phone. */
 .qp-navlink-tight {
-  padding: 8px 6px;
-  font-size: 0.8rem;
+  padding: 8px 4px;
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+@media (max-width: 339px) {
+  .qp-navlink-tight {
+    padding: 8px 2px;
+    font-size: 0.64rem;
+  }
 }
 @media (min-width: 480px) {
   .qp-navlink-tight {
     padding: 8px 14px;
     font-size: 0.9rem;
   }
+}
+
+/* ---------- questionnaire ---------- */
+.qp-option {
+  display: block;
+  cursor: pointer;
+  border: 1px solid var(--qp-line);
+  border-radius: 14px;
+  padding: 10px 14px;
+  background: var(--qp-surface);
+}
+.qp-option:hover {
+  background: var(--qp-blush);
+}
+.qp-option[data-on="true"] {
+  border-color: var(--qp-teal);
+  background: var(--qp-teal-soft);
+  color: var(--qp-teal);
+  font-weight: 600;
+}
+.qp-option:focus-within {
+  outline: 2px solid var(--qp-coral);
+  outline-offset: 2px;
+}
+.qp-chip[data-on="true"] {
+  background: var(--qp-teal);
+  color: #fff;
+}
+.qp-bar {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--qp-line);
+  overflow: hidden;
+}
+.qp-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--qp-teal);
 }
