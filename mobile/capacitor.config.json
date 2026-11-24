@@ -1,0 +1,15 @@
+{
+  "appId": "xyz.qupidlist.qpidsplace",
+  "appName": "Qpids Place",
+  "webDir": "www",
+  "backgroundColor": "#FFF7F0",
+  "appendUserAgent": "QpidsPlaceApp/1.0",
+  "server": {
+    "url": "https://qupidlist.xyz",
+    "androidScheme": "https",
+    "errorPath": "offline.html"
+  },
+  "android": {
+    "allowMixedContent": false
+  }
+}
